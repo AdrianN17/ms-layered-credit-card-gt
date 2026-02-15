@@ -1,0 +1,808 @@
+openapi: 3.0.1
+info:
+  title: credit_card
+  description: ''
+  version: 1.0.0
+tags: []
+paths:
+  /cards/{cardId}:
+    delete:
+      summary: closeCard
+      deprecated: false
+      description: ''
+      operationId: closeCard
+      tags: []
+      parameters:
+        - name: cardId
+          in: path
+          description: ''
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '202':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tracking'
+          headers: {}
+        '400':
+          $ref: '#/components/responses/BadRequest'
+          description: ''
+        '404':
+          $ref: '#/components/responses/NotFound'
+          description: ''
+        '500':
+          $ref: '#/components/responses/InternalError'
+          description: ''
+      security: []
+  /cards/{cardId}/clone:
+    post:
+      summary: cloneCard
+      deprecated: false
+      description: ''
+      operationId: cloneCard
+      tags: []
+      parameters:
+        - name: cardId
+          in: path
+          description: ''
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '202':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tracking'
+          headers: {}
+        '400':
+          $ref: '#/components/responses/BadRequest'
+          description: ''
+        '404':
+          $ref: '#/components/responses/NotFound'
+          description: ''
+        '500':
+          $ref: '#/components/responses/InternalError'
+          description: ''
+      security: []
+  /clients/{clientId}/cards:
+    post:
+      summary: createCard
+      deprecated: false
+      description: ''
+      operationId: createCard
+      tags: []
+      parameters:
+        - name: clientId
+          in: path
+          description: ''
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                card:
+                  $ref: '#/components/schemas/CardRequest'
+                cardAccount:
+                  $ref: '#/components/schemas/CardAccountRequest'
+              required:
+                - card
+                - cardAccount
+            examples: {}
+        required: true
+      responses:
+        '202':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tracking'
+          headers: {}
+        '400':
+          $ref: '#/components/responses/BadRequest'
+          description: ''
+        '404':
+          $ref: '#/components/responses/NotFound'
+          description: ''
+        '500':
+          $ref: '#/components/responses/InternalError'
+          description: ''
+      security: []
+  /payments/{paymentId}:
+    delete:
+      summary: closePayment
+      deprecated: false
+      description: ''
+      operationId: closePayment
+      tags: []
+      parameters:
+        - name: paymentId
+          in: path
+          description: ''
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '202':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tracking'
+          headers: {}
+        '400':
+          $ref: '#/components/responses/BadRequest'
+          description: ''
+        '404':
+          $ref: '#/components/responses/NotFound'
+          description: ''
+        '500':
+          $ref: '#/components/responses/InternalError'
+          description: ''
+      security: []
+  /cards/{cardId}/payment:
+    post:
+      summary: createPayment
+      deprecated: false
+      description: ''
+      operationId: createPayment
+      tags: []
+      parameters:
+        - name: cardId
+          in: path
+          description: ''
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentRequest'
+            examples: {}
+        required: true
+      responses:
+        '202':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tracking'
+          headers: {}
+        '400':
+          $ref: '#/components/responses/BadRequest'
+          description: ''
+        '404':
+          $ref: '#/components/responses/NotFound'
+          description: ''
+        '500':
+          $ref: '#/components/responses/InternalError'
+          description: ''
+      security: []
+  /consumptions/{consumptionId}:
+    delete:
+      summary: closeConsumption
+      deprecated: false
+      description: ''
+      operationId: closeConsumption
+      tags: []
+      parameters:
+        - name: consumptionId
+          in: path
+          description: ''
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '202':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tracking'
+          headers: {}
+        '400':
+          $ref: '#/components/responses/BadRequest'
+          description: ''
+        '404':
+          $ref: '#/components/responses/NotFound'
+          description: ''
+        '500':
+          $ref: '#/components/responses/InternalError'
+          description: ''
+      security: []
+  /cards/{cardId}/consumption:
+    post:
+      summary: createConsumption
+      deprecated: false
+      description: ''
+      operationId: createConsumption
+      tags: []
+      parameters:
+        - name: cardId
+          in: path
+          description: ''
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConsumptionRequest'
+            examples: {}
+        required: true
+      responses:
+        '202':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tracking'
+          headers: {}
+        '400':
+          $ref: '#/components/responses/BadRequest'
+          description: ''
+        '404':
+          $ref: '#/components/responses/NotFound'
+          description: ''
+        '500':
+          $ref: '#/components/responses/InternalError'
+          description: ''
+      security: []
+  /consumptions/{consumptionId}/split:
+    post:
+      summary: splitConsumptionDebt
+      deprecated: false
+      description: ''
+      operationId: splitConsumptionDebt
+      tags: []
+      parameters:
+        - name: consumptionId
+          in: path
+          description: ''
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                quantity:
+                  type: integer
+                  minimum: 1
+                  maximum: 36
+              required:
+                - quantity
+            examples: {}
+        required: true
+      responses:
+        '202':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tracking'
+          headers: {}
+        '400':
+          $ref: '#/components/responses/BadRequest'
+          description: ''
+        '404':
+          $ref: '#/components/responses/NotFound'
+          description: ''
+        '500':
+          $ref: '#/components/responses/InternalError'
+          description: ''
+      security: []
+  /cards/{cardId}/balances:
+    get:
+      summary: getBalance
+      deprecated: false
+      description: ''
+      operationId: getBalance
+      tags: []
+      parameters:
+        - name: cardId
+          in: path
+          description: ''
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BalanceResponse'
+          headers: {}
+        '400':
+          $ref: '#/components/responses/BadRequest'
+          description: ''
+        '404':
+          $ref: '#/components/responses/NotFound'
+          description: ''
+        '500':
+          $ref: '#/components/responses/InternalError'
+          description: ''
+      security: []
+  /cards/{idCard}/changeBalance:
+    post:
+      summary: changeBalance
+      deprecated: false
+      description: ''
+      operationId: changeBalance
+      tags: []
+      parameters:
+        - name: idCard
+          in: path
+          description: ''
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '202':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tracking'
+          headers: {}
+        '400':
+          $ref: '#/components/responses/BadRequest'
+          description: ''
+        '404':
+          $ref: '#/components/responses/NotFound'
+          description: ''
+        '500':
+          $ref: '#/components/responses/InternalError'
+          description: ''
+      security: []
+  /clients/:
+    post:
+      summary: createClient
+      deprecated: false
+      description: ''
+      operationId: createClient
+      tags: []
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                client:
+                  $ref: '#/components/schemas/ClientRequest'
+                card:
+                  $ref: '#/components/schemas/CardRequest'
+                cardAccount:
+                  $ref: '#/components/schemas/CardAccountRequest'
+              required:
+                - client
+                - card
+                - cardAccount
+            examples: {}
+        required: true
+      responses:
+        '202':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tracking'
+          headers: {}
+        '400':
+          $ref: '#/components/responses/BadRequest'
+          description: ''
+        '404':
+          $ref: '#/components/responses/NotFound'
+          description: ''
+        '500':
+          $ref: '#/components/responses/InternalError'
+          description: ''
+      security: []
+  /clients/{clientId}:
+    get:
+      summary: getClients
+      deprecated: false
+      description: ''
+      operationId: getClients
+      tags: []
+      parameters:
+        - name: clientId
+          in: path
+          description: ''
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClientResponse'
+          headers: {}
+        '400':
+          $ref: '#/components/responses/BadRequest'
+          description: ''
+        '404':
+          $ref: '#/components/responses/NotFound'
+          description: ''
+        '500':
+          $ref: '#/components/responses/InternalError'
+          description: ''
+      security: []
+    delete:
+      summary: closeClient
+      deprecated: false
+      description: ''
+      operationId: closeClient
+      tags: []
+      parameters:
+        - name: clientId
+          in: path
+          description: ''
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '202':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tracking'
+          headers: {}
+        '400':
+          $ref: '#/components/responses/BadRequest'
+          description: ''
+        '404':
+          $ref: '#/components/responses/NotFound'
+          description: ''
+        '500':
+          $ref: '#/components/responses/InternalError'
+          description: ''
+      security: []
+components:
+  schemas:
+    ClientRequest:
+      type: object
+      properties:
+        names:
+          type: string
+        lastNames:
+          type: string
+        birthDate:
+          type: string
+          format: date
+        phone:
+          type: string
+          pattern: ^9\d{8}$
+        email:
+          type: string
+          format: email
+        documentNumber:
+          type: string
+          pattern: ^(?:\d{8}|\d{11}|[A-Za-z0-9]{6,12})$
+        documentType:
+          type: string
+          pattern: ^(DNI|CE|RUC|PASSPORT)$
+      required:
+        - names
+        - lastNames
+        - birthDate
+        - phone
+        - email
+        - documentNumber
+        - documentType
+    CardRequest:
+      type: object
+      properties:
+        typeCard:
+          type: string
+          pattern: ^(VISA|MASTERCARD)$
+        categoryCard:
+          type: string
+          pattern: ^(NORMAL|SILVER|GOLD|PLATINUM|BLACK|SIGNATURE|INFINITY)$
+      required:
+        - typeCard
+        - categoryCard
+    CardAccountRequest:
+      type: object
+      properties:
+        crediticialTotalAmount:
+          type: number
+        debtTax:
+          type: number
+        facturationDate:
+          type: integer
+          minimum: 1
+          maximum: 31
+          multipleOf: 1
+        paymentdate:
+          type: integer
+          minimum: 1
+          maximum: 31
+          multipleOf: 1
+        currency:
+          type: string
+          pattern: ^(PEN|USD)$
+      required:
+        - crediticialTotalAmount
+        - debtTax
+        - facturationDate
+        - paymentdate
+        - currency
+    PaymentRequest:
+      type: object
+      properties:
+        channel:
+          type: string
+          pattern: ^(WEB|APP)$
+        currency:
+          type: string
+          pattern: ^(PEN|USD)$
+        amount:
+          type: number
+        category:
+          type: string
+          pattern: ^(MES|ADELANTADO|TOTAL)$
+      required:
+        - amount
+        - currency
+        - channel
+        - category
+    ConsumptionRequest:
+      type: object
+      properties:
+        sellerName:
+          type: string
+        currency:
+          type: string
+          pattern: ^(PEN|USD)$
+        amount:
+          type: number
+      required:
+        - sellerName
+        - currency
+        - amount
+    ClientResponse:
+      type: object
+      properties:
+        clientId:
+          type: integer
+          format: int64
+        names:
+          type: string
+        lastNames:
+          type: string
+        birthDate:
+          type: string
+          format: date
+        phone:
+          type: string
+          pattern: ^9\d{8}$
+        email:
+          type: string
+          format: email
+        documentNumber:
+          type: string
+          pattern: ^(?:\d{8}|\d{11}|[A-Za-z0-9]{6,12})$
+        documentType:
+          type: string
+          pattern: ^(DNI|CE|RUC|PASSPORT)$
+        createdDate:
+          type: string
+          format: date-time
+        updatedDate:
+          type: string
+          format: date-time
+        cards:
+          type: array
+          items:
+            $ref: '#/components/schemas/CardResponse'
+      required:
+        - names
+        - lastNames
+        - birthDate
+        - phone
+        - email
+        - documentNumber
+        - documentType
+        - clientId
+        - createdDate
+        - updatedDate
+        - cards
+    CardResponse:
+      type: object
+      properties:
+        cardId:
+          type: integer
+          format: int64
+        typeCard:
+          type: string
+          pattern: ^(VISA|MASTERCARD)$
+        categoryCard:
+          type: string
+          pattern: ^(NORMAL|SILVER|GOLD|PLATINIUM|BLACK|SIGNATURE|INFINITY)$
+        numberCard:
+          type: string
+        createdDate:
+          type: string
+          format: date-time
+        updatedDate:
+          type: string
+          format: date-time
+        cardAccount:
+          $ref: '#/components/schemas/CardAccountResponse'
+      required:
+        - typeCard
+        - categoryCard
+        - cardId
+        - numberCard
+        - createdDate
+        - updatedDate
+        - cardAccount
+    CardAccountResponse:
+      type: object
+      properties:
+        cardAccountId:
+          type: integer
+          format: int64
+        crediticialTotalAmount:
+          type: number
+        debtTax:
+          type: number
+        facturationDate:
+          type: integer
+          minimum: 1
+          maximum: 31
+          multipleOf: 1
+        paymentdate:
+          type: integer
+          minimum: 1
+          maximum: 31
+          multipleOf: 1
+        currency:
+          type: string
+          pattern: ^(PEN|USD)$
+      required:
+        - crediticialTotalAmount
+        - debtTax
+        - facturationDate
+        - paymentdate
+        - currency
+        - cardAccountId
+    BalanceDataResponse:
+      type: object
+      properties:
+        originName:
+          type: string
+        amount:
+          type: number
+        date:
+          type: string
+          format: date-time
+        status:
+          type: string
+        typeTransaccion:
+          type: string
+        currency:
+          type: string
+        origin:
+          type: string
+        category:
+          type: string
+      required:
+        - originName
+        - amount
+        - date
+        - status
+        - typeTransaccion
+        - currency
+    BalanceResponse:
+      type: object
+      properties:
+        cardId:
+          type: integer
+          format: int64
+        consumptionAmount:
+          type: number
+        paymentAmount:
+          type: number
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date-time
+        exchangeRate:
+          type: number
+        balanceDataset:
+          type: array
+          items:
+            $ref: '#/components/schemas/BalanceDataResponse'
+      required:
+        - cardId
+        - consumptionAmount
+        - paymentAmount
+        - startDate
+        - endDate
+        - balanceDataset
+        - exchangeRate
+    Tracking:
+      type: object
+      properties:
+        trackingId:
+          type: string
+          format: uuid
+        operationDate:
+          type: string
+          format: date-time
+      required:
+        - trackingId
+        - operationDate
+    DefaultResponse4xx:
+      type: object
+      properties:
+        description:
+          type: string
+        errors:
+          type: array
+          items:
+            type: string
+      required:
+        - description
+        - errors
+    DefaultResponse:
+      type: object
+      properties:
+        description:
+          type: string
+      required:
+        - description
+  responses:
+    BadRequest:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/DefaultResponse4xx'
+    NotFound:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/DefaultResponse'
+    InternalError:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/DefaultResponse'
+  securitySchemes: {}
+servers: []
+security: []
