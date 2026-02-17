@@ -39,8 +39,8 @@ public class ConsumptionEntity extends GenericEntity {
     @Column(name = "consumptionDate")
     private LocalDateTime consumptionDate;
 
-    @Column(name = "consumptionApprobationDae")
-    private LocalDateTime consumptionApprobationDae;
+    @Column(name = "consumptionApprobationDate")
+    private LocalDateTime consumptionApprobationDate;
 
 
 }

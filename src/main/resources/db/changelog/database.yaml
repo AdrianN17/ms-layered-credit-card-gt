@@ -85,7 +85,7 @@ databaseChangeLog:
                   type: VARCHAR(10)
               - column:
                   name: dateCard
-                  type: DATE
+                  type: VARCHAR(7)
               - column:
                   name: createdDate
                   type: TIMESTAMP
@@ -129,6 +129,9 @@ databaseChangeLog:
                   name: paymentDate
                   type: SMALLINT
               - column:
+                  name: cardStatus
+                  type: SMALLINT
+              - column:
                   name: createdDate
                   type: TIMESTAMP
               - column:
@@ -167,6 +170,8 @@ databaseChangeLog:
               - column:
                   name: paymentApprobationDate
                   type: TIMESTAMP
+                  constraints:
+                    nullable: true
               - column:
                   name: channel
                   type: SMALLINT
@@ -213,8 +218,10 @@ databaseChangeLog:
                   name: consumptionDate
                   type: TIMESTAMP
               - column:
-                  name: consumptionApprobationDae
+                  name: consumptionApprobationDate
                   type: TIMESTAMP
+                  constraints:
+                    nullable: true
               - column:
                   name: createdDate
                   type: TIMESTAMP
@@ -242,6 +249,15 @@ databaseChangeLog:
               - column:
                   name: cardId
                   type: INT
+              - column:
+                  name: totalAmount
+                  type: DECIMAL(19,2)
+              - column:
+                  name: availableAmount
+                  type: DECIMAL(19,2)
+              - column:
+                  name: oldAmount
+                  type: DECIMAL(19,2)
               - column:
                   name: consumptionAmount
                   type: DECIMAL(19,2)
@@ -327,7 +343,7 @@ databaseChangeLog:
             constraintName: fk_balances_cardid
 
   - changeSet:
-      id: 012-create-procedure-clone-card-and-accounts
+      id: 012-create-procedure-clone-card
       author: liquibase
       dbms: mssql
       changes:
@@ -336,8 +352,11 @@ databaseChangeLog:
             stripComments: false
             endDelimiter: GO
             sql: |-
-              CREATE PROCEDURE usp_clone_card_and_accounts
+              CREATE PROCEDURE usp_clone_card
                 @sourceCardId INT,
+                @numberCard VARCHAR(255),
+                @cvv VARCHAR(10),
+                @dateCard VARCHAR(7),
                 @newCardId INT OUTPUT
               AS
               BEGIN
@@ -353,21 +372,15 @@ databaseChangeLog:
                     RETURN;
                   END
 
-                  -- Insertar nueva tarjeta (clon) vinculada al mismo clientId pero con status = 0
-                  INSERT INTO Cards (clientId, typeCard, numberCard, categoryCard, cvv, dateCard, createdDate, updatedDate, status)
-                  SELECT clientId, typeCard, numberCard, categoryCard, cvv, dateCard, GETDATE(), NULL, 1
+                  -- Insertar nueva tarjeta (clon) vinculada al mismo clientId
+                  INSERT INTO Cards (clientId, typeCard, numberCard, categoryCard, cvv, dateCard, cardStatus, createdDate, updatedDate, status)
+                  SELECT clientId, typeCard, @numberCard, categoryCard, @cvv, @dateCard, 1, GETDATE(), NULL, 1
                   FROM Cards WHERE cardId = @sourceCardId;
 
                   SET @newCardId = SCOPE_IDENTITY();
 
-                  -- Clonar las CardAccounts asociadas a la tarjeta origen y enlazarlas al nuevo cardId
-                  INSERT INTO CardAccounts (cardId, crediticialTotalAmount, debtTax, currency, facturationDate, paymentDate, createdDate, updatedDate, status)
-                  SELECT @newCardId, crediticialTotalAmount, debtTax, currency, facturationDate, paymentDate, GETDATE(), NULL, 1
-                  FROM CardAccounts WHERE cardId = @sourceCardId;
-              
-                  -- Cerrar tarjeta y cuenta de tarjeta origen
-                    UPDATE Cards SET status = 0, updatedDate = GETDATE() WHERE cardId = @sourceCardId;
-                    UPDATE CardAccounts SET status = 0, updatedDate = GETDATE() WHERE cardId = @sourceCardId;
+                  -- Cerrar tarjeta origen (marcar como inactiva)
+                  UPDATE Cards SET status = 0, updatedDate = GETDATE() WHERE cardId = @sourceCardId;
 
                   COMMIT TRANSACTION;
                 END TRY
@@ -381,3 +394,139 @@ databaseChangeLog:
               END
               GO
 
+  - changeSet:
+      id: 013-create-procedure-clone-cardaccount
+      author: liquibase
+      dbms: mssql
+      changes:
+        - sql:
+            splitStatements: false
+            stripComments: false
+            endDelimiter: GO
+            sql: |-
+              CREATE PROCEDURE usp_clone_cardaccount
+                @sourceCardAccountId INT,
+                @newCardAccountId INT OUTPUT
+              AS
+              BEGIN
+                SET NOCOUNT ON;
+                BEGIN TRY
+                  BEGIN TRANSACTION;
+
+                  -- Verificar existencia de la card account origen
+                  IF NOT EXISTS (SELECT 1 FROM CardAccounts WHERE cardAccountId = @sourceCardAccountId)
+                  BEGIN
+                    RAISERROR('Source cardAccount not found',16,1);
+                    ROLLBACK TRANSACTION;
+                    RETURN;
+                  END
+
+                  -- Insertar nueva CardAccount (clon) vinculada al mismo cardId
+                  INSERT INTO CardAccounts (cardId, crediticialTotalAmount, debtTax, currency, facturationDate, paymentDate, createdDate, updatedDate, status)
+                  SELECT cardId, crediticialTotalAmount, debtTax, currency, facturationDate, paymentDate, GETDATE(), NULL, 1
+                  FROM CardAccounts WHERE cardAccountId = @sourceCardAccountId;
+
+                  SET @newCardAccountId = SCOPE_IDENTITY();
+
+                  -- Cerrar cardAccount origen (marcar como inactiva)
+                  UPDATE CardAccounts SET status = 0, updatedDate = GETDATE() WHERE cardAccountId = @sourceCardAccountId;
+
+                  COMMIT TRANSACTION;
+                END TRY
+                BEGIN CATCH
+                  IF XACT_STATE() <> 0
+                    ROLLBACK TRANSACTION;
+                  DECLARE @errMsg NVARCHAR(4000) = ERROR_MESSAGE();
+                  RAISERROR(@errMsg,16,1);
+                  RETURN;
+                END CATCH
+              END
+              GO
+
+  - changeSet:
+      id: 014-update-approbation-payments
+      author: liquibase
+      dbms: mssql
+      changes:
+        - sql:
+            splitStatements: false
+            stripComments: false
+            endDelimiter: GO
+            sql: |-
+              CREATE PROCEDURE usp_update_payments_approbation_date
+                @targetDate DATE,
+                @approbationDate DATETIME,
+                @updatedCount INT OUTPUT
+              AS
+              BEGIN
+                SET NOCOUNT ON;
+                DECLARE @start DATETIME = CAST(@targetDate AS DATETIME);
+                DECLARE @end DATETIME = DATEADD(DAY, 1, @start);
+
+                BEGIN TRY
+                  BEGIN TRANSACTION;
+
+                  UPDATE Payments
+                  SET paymentApprobationDate = @approbationDate,
+                      updatedDate = GETDATE()
+                  WHERE paymentApprobationDate IS NULL
+                    AND paymentDate >= @start
+                    AND paymentDate < @end;
+
+                  SET @updatedCount = @@ROWCOUNT;
+
+                  COMMIT TRANSACTION;
+                END TRY
+                BEGIN CATCH
+                  IF XACT_STATE() <> 0
+                    ROLLBACK TRANSACTION;
+                  DECLARE @errMsg NVARCHAR(4000) = ERROR_MESSAGE();
+                  RAISERROR(@errMsg,16,1);
+                  RETURN;
+                END CATCH
+              END
+              GO
+
+  - changeSet:
+      id: 015-update-approbation-consumptions
+      author: liquibase
+      dbms: mssql
+      changes:
+        - sql:
+            splitStatements: false
+            stripComments: false
+            endDelimiter: GO
+            sql: |-
+              CREATE PROCEDURE usp_update_consumptions_approbation_date
+                @targetDate DATE,
+                @approbationDate DATETIME,
+                @updatedCount INT OUTPUT
+              AS
+              BEGIN
+                SET NOCOUNT ON;
+                DECLARE @start DATETIME = CAST(@targetDate AS DATETIME);
+                DECLARE @end DATETIME = DATEADD(DAY, 1, @start);
+
+                BEGIN TRY
+                  BEGIN TRANSACTION;
+
+                  UPDATE Consumptions
+                  SET consumptionApprobationDate = @approbationDate,
+                      updatedDate = GETDATE()
+                  WHERE consumptionApprobationDate IS NULL
+                    AND consumptionDate >= @start
+                    AND consumptionDate < @end;
+
+                  SET @updatedCount = @@ROWCOUNT;
+
+                  COMMIT TRANSACTION;
+                END TRY
+                BEGIN CATCH
+                  IF XACT_STATE() <> 0
+                    ROLLBACK TRANSACTION;
+                  DECLARE @errMsg NVARCHAR(4000) = ERROR_MESSAGE();
+                  RAISERROR(@errMsg,16,1);
+                  RETURN;
+                END CATCH
+              END
+              GO

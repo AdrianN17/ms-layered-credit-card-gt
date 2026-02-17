@@ -3,6 +3,8 @@ package com.bank.credit_card.clients.commons;
 import java.util.Arrays;
 import java.util.Optional;
 
+import static com.bank.credit_card.generic.util.GenericErrorsUtility.thrownBadRequest;
+
 public enum TypeCard {
     VISA("VISA", 1),
     MASTERCARD("MASTERCARD", 2);
@@ -36,7 +38,7 @@ public enum TypeCard {
     }
 
     public static TypeCard fromValue(int value) {
-        return ofValue(value).orElseThrow(() -> new IllegalArgumentException("Unknown TypeCard value: " + value));
+        return ofValue(value).orElseThrow(() -> thrownBadRequest("Unknown TypeCard value: " + value));
     }
 
     // Unified method: ofCode (compares against the 'code' field)
@@ -49,7 +51,7 @@ public enum TypeCard {
     }
 
     public static TypeCard fromCode(String code) {
-        return ofCode(code).orElseThrow(() -> new IllegalArgumentException("Unknown TypeCard code: " + code));
+        return ofCode(code).orElseThrow(() -> thrownBadRequest("Unknown TypeCard code: " + code));
     }
 
     public static boolean isValidValue(Integer value) {

@@ -1,5 +1,6 @@
 package com.bank.credit_card.clients.entity.vo;
 
+import com.bank.credit_card.clients.commons.CardStatus;
 import com.bank.credit_card.generic.commons.Currency;
 import com.bank.credit_card.generic.entity.GenericEntity;
 import jakarta.persistence.*;
@@ -36,4 +37,7 @@ public class CardAccountEntityVO extends GenericEntity {
 
     @Column(name = "paymentDate")
     private Short paymentDate;
+
+    @Column(name = "cardStatus")
+    private CardStatus cardStatus;
 }

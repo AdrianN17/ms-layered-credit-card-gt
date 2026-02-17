@@ -3,6 +3,8 @@ package com.bank.credit_card.payments.commons;
 import java.util.Arrays;
 import java.util.Optional;
 
+import static com.bank.credit_card.generic.util.GenericErrorsUtility.thrownBadRequest;
+
 public enum ChannelPayment {
     WEB("WEB", 1),
     APP("APP", 2);
@@ -36,7 +38,7 @@ public enum ChannelPayment {
     }
 
     public static ChannelPayment fromValue(int value) {
-        return ofValue(value).orElseThrow(() -> new IllegalArgumentException("Unknown ChannelPayment value: " + value));
+        return ofValue(value).orElseThrow(() -> thrownBadRequest("Unknown ChannelPayment value: " + value));
     }
 
     public static Optional<ChannelPayment> ofCode(String code) {
@@ -48,7 +50,7 @@ public enum ChannelPayment {
     }
 
     public static ChannelPayment fromCode(String code) {
-        return ofCode(code).orElseThrow(() -> new IllegalArgumentException("Unknown ChannelPayment code: " + code));
+        return ofCode(code).orElseThrow(() -> thrownBadRequest("Unknown ChannelPayment code: " + code));
     }
 
     public static boolean isValidValue(Integer value) {

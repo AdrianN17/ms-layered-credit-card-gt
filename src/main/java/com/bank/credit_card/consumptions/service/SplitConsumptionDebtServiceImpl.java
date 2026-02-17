@@ -5,13 +5,17 @@ import com.bank.credit_card.consumptions.dto.request.SplitConsumptionDebtRequest
 import com.bank.credit_card.consumptions.mapper.ConsumptionMapper;
 import com.bank.credit_card.consumptions.repository.ConsumptionRepository;
 import com.bank.credit_card.consumptions.repository.TaxVORepository;
-import com.bank.credit_card.exceptions.CustomBadRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.stream.IntStream;
+
+import static com.bank.credit_card.consumptions.constant.ConsumptionConstant.CONSUMPTION_NOT_FOUND;
+import static com.bank.credit_card.consumptions.constant.ConsumptionConstant.TAX_ASSOCIATED_CARD_ACCOUNT_NOT_FOUND;
+import static com.bank.credit_card.generic.util.GenericErrorsUtility.thrownBadRequest;
+import static com.bank.credit_card.generic.util.GenericErrorsUtility.thrownNotFound;
 
 @Service
 @AllArgsConstructor
@@ -26,11 +30,12 @@ public class SplitConsumptionDebtServiceImpl implements SplitConsumptionDebtServ
     public void split(Long consumptionId, SplitConsumptionDebtRequestDto splitConsumptionDebtRequestDto) {
         var consumptionEntity = consumptionRepository.findById(consumptionId)
                 .orElseThrow(() ->
-                        new CustomBadRequest("Consumption not found"));
+                        thrownNotFound(CONSUMPTION_NOT_FOUND));
 
         var amount = consumptionEntity.getAmount();
-        var date = consumptionEntity.getConsumptionApprobationDae();
-        var tax = taxVORepository.getDebtTaxByConsumptionId(consumptionEntity.getCardId());
+        var date = consumptionEntity.getConsumptionApprobationDate();
+        var tax = taxVORepository.getDebtTaxByConsumptionId(consumptionEntity.getCardId())
+                .orElseThrow(() -> thrownBadRequest(TAX_ASSOCIATED_CARD_ACCOUNT_NOT_FOUND));
         var amountSplit = amount.divide(BigDecimal.valueOf(splitConsumptionDebtRequestDto.quantity()))
                 .add(amount.multiply(tax));
 

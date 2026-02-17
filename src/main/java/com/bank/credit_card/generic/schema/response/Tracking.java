@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.Objects;
 import java.util.UUID;
@@ -20,8 +21,7 @@ public class Tracking {
 
     private UUID trackingId;
 
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    private OffsetDateTime operationDate;
+    private LocalDateTime operationDate;
 
     public Tracking() {
         super();
@@ -30,7 +30,7 @@ public class Tracking {
     /**
      * Constructor with only required parameters
      */
-    public Tracking(UUID trackingId, OffsetDateTime operationDate) {
+    public Tracking(UUID trackingId, LocalDateTime operationDate) {
         this.trackingId = trackingId;
         this.operationDate = operationDate;
     }
@@ -57,7 +57,7 @@ public class Tracking {
         this.trackingId = trackingId;
     }
 
-    public Tracking operationDate(OffsetDateTime operationDate) {
+    public Tracking operationDate(LocalDateTime operationDate) {
         this.operationDate = operationDate;
         return this;
     }
@@ -71,11 +71,11 @@ public class Tracking {
     @Valid
     @Schema(name = "operationDate", requiredMode = Schema.RequiredMode.REQUIRED)
     @JsonProperty("operationDate")
-    public OffsetDateTime getOperationDate() {
+    public LocalDateTime getOperationDate() {
         return operationDate;
     }
 
-    public void setOperationDate(OffsetDateTime operationDate) {
+    public void setOperationDate(LocalDateTime operationDate) {
         this.operationDate = operationDate;
     }
 

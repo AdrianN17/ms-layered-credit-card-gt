@@ -2,8 +2,10 @@ package com.bank.credit_card.payments.util;
 
 import com.bank.credit_card.payments.commons.CategoryPayment;
 import com.bank.credit_card.payments.commons.ChannelPayment;
+import lombok.experimental.UtilityClass;
 import org.mapstruct.Named;
 
+@UtilityClass
 public class EnumPaymentUtility {
 
     @Named("mapToChannelPayment")

@@ -7,13 +7,14 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 
 @Repository
 public interface TaxVORepository extends GenericRepository<ConsumptionEntity, Long> {
 
-    @Query(value = "SELECT ca.debtTax FROM CardAccounts ca " +
+    @Query(value = "SELECT TOP 1 ca.debtTax FROM CardAccounts ca " +
             "JOIN Cards c ON ca.cardId = c.cardId " +
             "WHERE c.cardId = :cardId",
             nativeQuery = true)
-    BigDecimal getDebtTaxByConsumptionId(@Param("cardId") Long cardId);
+    Optional<BigDecimal> getDebtTaxByConsumptionId(@Param("cardId") Long cardId);
 }

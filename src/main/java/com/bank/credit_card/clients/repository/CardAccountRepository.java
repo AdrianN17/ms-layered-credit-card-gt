@@ -11,7 +11,7 @@ import java.util.Optional;
 @Repository
 public interface CardAccountRepository extends GenericRepository<CardAccountEntity, Long> {
 
-    @Query(value = "SELECT ca.cardAccountId FROM CardAccounts ca WHERE ca.cardId = :cardId AND ca.status = 1",
+    @Query(value = "SELECT TOP 1 ca.cardAccountId FROM CardAccounts ca WHERE ca.cardId = :cardId AND ca.status = 1",
             nativeQuery = true)
     Optional<Long> findCardAccountIdByCardId(@Param("cardId") Long cardId);
 

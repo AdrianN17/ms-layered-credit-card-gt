@@ -3,6 +3,8 @@ package com.bank.credit_card.clients.commons;
 import java.util.Arrays;
 import java.util.Optional;
 
+import static com.bank.credit_card.generic.util.GenericErrorsUtility.thrownBadRequest;
+
 public enum DocumentType {
     DNI("DNI", 1),
     CE("CE", 2),
@@ -46,11 +48,11 @@ public enum DocumentType {
     }
 
     public static DocumentType fromCode(String code) {
-        return ofCode(code).orElseThrow(() -> new IllegalArgumentException("Unknown DocumentType code: " + code));
+        return ofCode(code).orElseThrow(() -> thrownBadRequest("Unknown DocumentType code: " + code));
     }
 
     public static DocumentType fromValue(int value) {
-        return ofValue(value).orElseThrow(() -> new IllegalArgumentException("Unknown DocumentType value: " + value));
+        return ofValue(value).orElseThrow(() -> thrownBadRequest("Unknown DocumentType value: " + value));
     }
 
     public static boolean isValidCode(String code) {

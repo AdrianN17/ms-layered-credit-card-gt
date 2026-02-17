@@ -1,10 +1,13 @@
 package com.bank.credit_card.clients.util;
 
+import com.bank.credit_card.clients.commons.CardStatus;
 import com.bank.credit_card.clients.commons.CategoryCard;
 import com.bank.credit_card.clients.commons.DocumentType;
 import com.bank.credit_card.clients.commons.TypeCard;
+import lombok.experimental.UtilityClass;
 import org.mapstruct.Named;
 
+@UtilityClass
 public class EnumCardUtility {
 
     @Named("mapToTypeCard")
@@ -35,5 +38,10 @@ public class EnumCardUtility {
     @Named("documentTypeToString")
     public String documentTypeToString(DocumentType documentType) {
         return documentType.getCode();
+    }
+
+    @Named("cardStatusToString")
+    public String cardStatusToString(CardStatus cardStatus) {
+        return cardStatus.getCode();
     }
 }

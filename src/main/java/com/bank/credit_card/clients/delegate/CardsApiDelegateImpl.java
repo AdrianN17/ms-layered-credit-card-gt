@@ -12,6 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.BindingResult;
 
+import static com.bank.credit_card.generic.util.GenericResponsesUtility.generateTracking;
+
 @Component
 @AllArgsConstructor
 public class CardsApiDelegateImpl implements CardsApiDelegate {
@@ -24,8 +26,9 @@ public class CardsApiDelegateImpl implements CardsApiDelegate {
 
     @Override
     public ResponseEntity<Tracking> cloneCard(Long cardId) {
-        cardAccountService.clone(cardService.clone(cardId));
-        return null;
+        cardService.clone(cardId);
+        cardAccountService.clone(cardAccountService.getId(cardId));
+        return generateTracking();
     }
 
     @Override
@@ -33,7 +36,7 @@ public class CardsApiDelegateImpl implements CardsApiDelegate {
         cardService.close(cardId);
         var cardAccountId = cardAccountService.getId(cardId);
         cardAccountService.close(cardAccountId);
-        return null;
+        return generateTracking();
     }
 
     @Override
@@ -48,6 +51,6 @@ public class CardsApiDelegateImpl implements CardsApiDelegate {
 
         var cardAccountDto = cardAccountMapper.toDto(createCardRequest.getCardAccount(), cardId);
         cardAccountService.create(cardAccountDto);
-        return null;
+        return generateTracking();
     }
 }

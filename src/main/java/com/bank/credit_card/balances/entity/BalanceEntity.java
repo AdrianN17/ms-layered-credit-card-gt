@@ -27,6 +27,15 @@ public class BalanceEntity extends GenericEntity {
     @Column(name = "cardId")
     private Long cardId;
 
+    @Column(name = "totalAmount")
+    private BigDecimal totalAmount;
+
+    @Column(name = "availableAmount")
+    private BigDecimal availableAmount;
+
+    @Column(name = "oldAmount")
+    private BigDecimal oldAmount;
+
     @Column(name = "consumptionAmount")
     private BigDecimal consumptionAmount;
 

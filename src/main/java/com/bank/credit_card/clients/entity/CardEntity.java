@@ -9,10 +9,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
-
-import static java.util.Objects.isNull;
-
 @Entity
 @Table(name = "Cards")
 @Data
@@ -39,21 +35,9 @@ public class CardEntity extends GenericEntity {
     private CategoryCard categoryCard;
 
     @Column(name = "dateCard")
-    private LocalDate dateCard;
+    private String dateCard;
 
     @Column(name = "cvv")
     private String cvv;
-
-    public CardEntity duplicate() {
-
-        return CardEntity.builder()
-                .clientId(this.getClientId())
-                .typeCard(this.getTypeCard())
-                .numberCard(this.getNumberCard())
-                .categoryCard(this.getCategoryCard())
-                .dateCard(this.getDateCard())
-                .cvv(this.getCvv())
-                .build();
-    }
-
 }
+

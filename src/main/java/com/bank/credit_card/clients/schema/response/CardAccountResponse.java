@@ -31,6 +31,8 @@ public class CardAccountResponse {
 
     private String currency;
 
+    private String cardStatus;
+
     public CardAccountResponse() {
         super();
     }
@@ -38,17 +40,23 @@ public class CardAccountResponse {
     /**
      * Constructor with only required parameters
      */
-    public CardAccountResponse(Long cardAccountId, BigDecimal crediticialTotalAmount, BigDecimal debtTax, Short facturationDate, Short paymentDate, String currency) {
+    public CardAccountResponse(Long cardAccountId, BigDecimal crediticialTotalAmount, BigDecimal debtTax, Short facturationDate, Short paymentDate, String currency, String cardStatus) {
         this.cardAccountId = cardAccountId;
         this.crediticialTotalAmount = crediticialTotalAmount;
         this.debtTax = debtTax;
         this.facturationDate = facturationDate;
         this.paymentDate = paymentDate;
         this.currency = currency;
+        this.cardStatus = cardStatus;
     }
 
     public CardAccountResponse cardAccountId(Long cardAccountId) {
         this.cardAccountId = cardAccountId;
+        return this;
+    }
+
+    public CardAccountResponse cardStatus(String cardStatus) {
+        this.cardStatus = cardStatus;
         return this;
     }
 
@@ -126,7 +134,7 @@ public class CardAccountResponse {
      */
     @NotNull
     @Min(1)
-    @Max(31)
+    @Max(28)
     @Schema(name = "facturationDate", requiredMode = Schema.RequiredMode.REQUIRED)
     @JsonProperty("facturationDate")
     public Short getFacturationDate() {
@@ -151,7 +159,7 @@ public class CardAccountResponse {
      */
     @NotNull
     @Min(1)
-    @Max(31)
+    @Max(28)
     @Schema(name = "paymentDate", requiredMode = Schema.RequiredMode.REQUIRED)
     @JsonProperty("paymentDate")
     public Short getPaymentDate() {
@@ -184,6 +192,21 @@ public class CardAccountResponse {
         this.currency = currency;
     }
 
+    /**
+     * Get cardStatus
+     *
+     * @return cardStatus
+     */
+     @Schema(name = "cardStatus")
+     @JsonProperty("cardStatus")
+     public String getCardStatus() {
+         return cardStatus;
+     }
+
+    public void setCardStatus(String cardStatus) {
+        this.cardStatus = cardStatus;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -198,12 +221,13 @@ public class CardAccountResponse {
                 Objects.equals(this.debtTax, cardAccountResponse.debtTax) &&
                 Objects.equals(this.facturationDate, cardAccountResponse.facturationDate) &&
                 Objects.equals(this.paymentDate, cardAccountResponse.paymentDate) &&
-                Objects.equals(this.currency, cardAccountResponse.currency);
+                Objects.equals(this.currency, cardAccountResponse.currency) &&
+                Objects.equals(this.cardStatus, cardAccountResponse.cardStatus);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(cardAccountId, crediticialTotalAmount, debtTax, facturationDate, paymentDate, currency);
+        return Objects.hash(cardAccountId, crediticialTotalAmount, debtTax, facturationDate, paymentDate, currency, cardStatus);
     }
 
     @Override
@@ -216,6 +240,7 @@ public class CardAccountResponse {
         sb.append("    facturationDate: ").append(toIndentedString(facturationDate)).append("\n");
         sb.append("    paymentDate: ").append(toIndentedString(paymentDate)).append("\n");
         sb.append("    currency: ").append(toIndentedString(currency)).append("\n");
+        sb.append("    cardStatus: ").append(toIndentedString(cardStatus)).append("\n");
         sb.append("}");
         return sb.toString();
     }
@@ -231,4 +256,3 @@ public class CardAccountResponse {
         return o.toString().replace("\n", "\n    ");
     }
 }
-

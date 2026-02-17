@@ -3,6 +3,8 @@ package com.bank.credit_card.payments.commons;
 import java.util.Arrays;
 import java.util.Optional;
 
+import static com.bank.credit_card.generic.util.GenericErrorsUtility.thrownBadRequest;
+
 public enum CategoryPayment {
     MES("MES", 1),
     ADELANTADO("ADELANTADO", 2),
@@ -37,7 +39,7 @@ public enum CategoryPayment {
     }
 
     public static CategoryPayment fromValue(int value) {
-        return ofValue(value).orElseThrow(() -> new IllegalArgumentException("Unknown CategoryPayment value: " + value));
+        return ofValue(value).orElseThrow(() -> thrownBadRequest("Unknown CategoryPayment value: " + value));
     }
 
     public static Optional<CategoryPayment> ofCode(String code) {
@@ -49,7 +51,7 @@ public enum CategoryPayment {
     }
 
     public static CategoryPayment fromCode(String code) {
-        return ofCode(code).orElseThrow(() -> new IllegalArgumentException("Unknown CategoryPayment code: " + code));
+        return ofCode(code).orElseThrow(() -> thrownBadRequest("Unknown CategoryPayment code: " + code));
     }
 
     public static boolean isValidValue(Integer value) {

@@ -3,6 +3,8 @@ package com.bank.credit_card.generic.commons;
 import java.util.Arrays;
 import java.util.Optional;
 
+import static com.bank.credit_card.generic.util.GenericErrorsUtility.thrownBadRequest;
+
 public enum Status {
     INACTIVE("INACTIVE", 0),
     ACTIVE("ACTIVE", 1);
@@ -29,11 +31,11 @@ public enum Status {
     }
 
     public static Status fromCode(String code) {
-        return ofCode(code).orElseThrow(() -> new IllegalArgumentException("Unknown Status code: " + code));
+        return ofCode(code).orElseThrow(() -> thrownBadRequest("Unknown Status code: " + code));
     }
 
     public static Status fromValue(int value) {
-        return ofValue(value).orElseThrow(() -> new IllegalArgumentException("Unknown Status value: " + value));
+        return ofValue(value).orElseThrow(() -> thrownBadRequest("Unknown Status value: " + value));
     }
 
     public static Optional<Status> ofCode(String code) {

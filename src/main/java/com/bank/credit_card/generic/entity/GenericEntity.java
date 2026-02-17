@@ -9,6 +9,8 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 
+import static com.bank.credit_card.generic.util.GenericDateUtility.getCurrentLocalDateTime;
+
 @MappedSuperclass
 @Getter
 @Setter
@@ -24,12 +26,12 @@ public class GenericEntity {
 
     public void softDelete() {
         this.setStatus(Status.INACTIVE);
-        this.setUpdatedDate(LocalDateTime.now());
+        this.setUpdatedDate(getCurrentLocalDateTime());
     }
 
     @PrePersist
     void persit() {
         this.setStatus(Status.ACTIVE);
-        this.setCreatedDate(LocalDateTime.now());
+        this.setCreatedDate(getCurrentLocalDateTime());
     }
 }

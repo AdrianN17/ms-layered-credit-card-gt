@@ -5,6 +5,6 @@ import com.bank.credit_card.generic.schema.response.Tracking;
 import org.springframework.http.ResponseEntity;
 
 public interface BalancesDelegate {
-    ResponseEntity<Tracking> changeBalance(Long idCard);
-    ResponseEntity<BalanceResponse> getBalance(String cardId);
+    ResponseEntity<Tracking> changeBalance(Long cardId);
+    ResponseEntity<BalanceResponse> getBalance(Long cardId);
 }

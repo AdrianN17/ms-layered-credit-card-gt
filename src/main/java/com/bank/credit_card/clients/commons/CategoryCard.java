@@ -3,6 +3,8 @@ package com.bank.credit_card.clients.commons;
 import java.util.Arrays;
 import java.util.Optional;
 
+import static com.bank.credit_card.generic.util.GenericErrorsUtility.thrownBadRequest;
+
 public enum CategoryCard {
     NORMAL("NORMAL", 1),
     SILVER("SILVER", 2),
@@ -41,7 +43,7 @@ public enum CategoryCard {
     }
 
     public static CategoryCard fromValue(int value) {
-        return ofValue(value).orElseThrow(() -> new IllegalArgumentException("Unknown CategoryCard value: " + value));
+        return ofValue(value).orElseThrow(() -> thrownBadRequest("Unknown CategoryCard value: " + value));
     }
 
     public static Optional<CategoryCard> ofCode(String code) {
@@ -53,7 +55,7 @@ public enum CategoryCard {
     }
 
     public static CategoryCard fromCode(String code) {
-        return ofCode(code).orElseThrow(() -> new IllegalArgumentException("Unknown CategoryCard code: " + code));
+        return ofCode(code).orElseThrow(() -> thrownBadRequest("Unknown CategoryCard code: " + code));
     }
 
     public static boolean isValidValue(Integer value) {

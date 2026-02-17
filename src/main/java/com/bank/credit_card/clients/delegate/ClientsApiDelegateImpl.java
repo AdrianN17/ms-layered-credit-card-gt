@@ -15,6 +15,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.BindingResult;
 
+import static com.bank.credit_card.generic.util.GenericErrorsUtility.thrownBadRequest;
+import static com.bank.credit_card.generic.util.GenericResponsesUtility.generateTracking;
+
 @Component
 @AllArgsConstructor
 public class ClientsApiDelegateImpl implements ClientsApiDelegate {
@@ -28,30 +31,28 @@ public class ClientsApiDelegateImpl implements ClientsApiDelegate {
     @Override
     public ResponseEntity<Tracking> closeClient(Long clientId) {
         cardAccountService.close(cardService.close(clientService.close(clientId)));
-        return null;
+        return generateTracking();
     }
 
     @Override
     public ResponseEntity<Tracking> createClient(CreateClientRequest createClientRequest, BindingResult bindingResult) {
 
-        if (bindingResult.hasErrors())
-            throw new CustomBadRequest(bindingResult);
+        thrownBadRequest(bindingResult);
 
         var clientDto = clientMapper.toDto(createClientRequest.getClient());
         var clientId = clientService.create(clientDto);
-        var cardDto= cardMapper.toDto(createClientRequest.getCard(), clientId);
+        var cardDto = cardMapper.toDto(createClientRequest.getCard(), clientId);
         var cardId = cardService.create(cardDto);
-        var cardAccountDto= cardAccountMapper.toDto(createClientRequest.getCardAccount(), cardId);
+        var cardAccountDto = cardAccountMapper.toDto(createClientRequest.getCardAccount(), cardId);
         var cardAccountId = cardAccountService.create(cardAccountDto);
 
-        return null;
+        return generateTracking();
     }
 
     @Override
     public ResponseEntity<ClientResponse> getClients(Long clientId) {
 
         var client = clientMapper.toResponse(clientService.getClient(clientId));
-
-        return null;
+        return ResponseEntity.ok(client);
     }
 }

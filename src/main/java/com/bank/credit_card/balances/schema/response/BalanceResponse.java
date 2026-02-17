@@ -9,7 +9,6 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -23,14 +22,16 @@ public class BalanceResponse {
 
     private Long cardId;
 
+    private Long balanceId;
+
+    private String currency;
+
     private BigDecimal consumptionAmount;
 
     private BigDecimal paymentAmount;
 
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate startDate;
 
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDate endDate;
 
     private BigDecimal exchangeRate;
@@ -45,8 +46,10 @@ public class BalanceResponse {
     /**
      * Constructor with only required parameters
      */
-    public BalanceResponse(Long cardId, BigDecimal consumptionAmount, BigDecimal paymentAmount, LocalDate startDate, LocalDate endDate, BigDecimal exchangeRate, List<@Valid BalanceDataResponse> balanceDataset) {
+    public BalanceResponse(Long cardId, Long balanceId, String currency, BigDecimal consumptionAmount, BigDecimal paymentAmount, LocalDate startDate, LocalDate endDate, BigDecimal exchangeRate, List<@Valid BalanceDataResponse> balanceDataset) {
         this.cardId = cardId;
+        this.balanceId = balanceId;
+        this.currency = currency;
         this.consumptionAmount = consumptionAmount;
         this.paymentAmount = paymentAmount;
         this.startDate = startDate;
@@ -74,6 +77,46 @@ public class BalanceResponse {
 
     public void setCardId(Long cardId) {
         this.cardId = cardId;
+    }
+
+    public BalanceResponse balanceId(Long balanceId) {
+        this.balanceId = balanceId;
+        return this;
+    }
+
+    /**
+     * Get balanceId
+     *
+     * @return balanceId
+     */
+    @Schema(name = "balanceId")
+    @JsonProperty("balanceId")
+    public Long getBalanceId() {
+        return balanceId;
+    }
+
+    public void setBalanceId(Long balanceId) {
+        this.balanceId = balanceId;
+    }
+
+    public BalanceResponse currency(String currency) {
+        this.currency = currency;
+        return this;
+    }
+
+    /**
+     * Get currency
+     *
+     * @return currency
+     */
+    @Schema(name = "currency")
+    @JsonProperty("currency")
+    public String getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(String currency) {
+        this.currency = currency;
     }
 
     public BalanceResponse consumptionAmount(BigDecimal consumptionAmount) {
@@ -226,6 +269,8 @@ public class BalanceResponse {
         }
         BalanceResponse balanceResponse = (BalanceResponse) o;
         return Objects.equals(this.cardId, balanceResponse.cardId) &&
+                Objects.equals(this.balanceId, balanceResponse.balanceId) &&
+                Objects.equals(this.currency, balanceResponse.currency) &&
                 Objects.equals(this.consumptionAmount, balanceResponse.consumptionAmount) &&
                 Objects.equals(this.paymentAmount, balanceResponse.paymentAmount) &&
                 Objects.equals(this.startDate, balanceResponse.startDate) &&
@@ -236,7 +281,7 @@ public class BalanceResponse {
 
     @Override
     public int hashCode() {
-        return Objects.hash(cardId, consumptionAmount, paymentAmount, startDate, endDate, exchangeRate, balanceDataset);
+        return Objects.hash(cardId, balanceId, currency, consumptionAmount, paymentAmount, startDate, endDate, exchangeRate, balanceDataset);
     }
 
     @Override
@@ -244,6 +289,8 @@ public class BalanceResponse {
         StringBuilder sb = new StringBuilder();
         sb.append("class BalanceResponse {\n");
         sb.append("    cardId: ").append(toIndentedString(cardId)).append("\n");
+        sb.append("    balanceId: ").append(toIndentedString(balanceId)).append("\n");
+        sb.append("    currency: ").append(toIndentedString(currency)).append("\n");
         sb.append("    consumptionAmount: ").append(toIndentedString(consumptionAmount)).append("\n");
         sb.append("    paymentAmount: ").append(toIndentedString(paymentAmount)).append("\n");
         sb.append("    startDate: ").append(toIndentedString(startDate)).append("\n");
@@ -265,4 +312,3 @@ public class BalanceResponse {
         return o.toString().replace("\n", "\n    ");
     }
 }
-

@@ -16,6 +16,14 @@ public interface CardMapper {
 
     CardEntity toEntity(CardRequestDto dto);
 
+    @Mapping(source = "dto.clientId", target = "clientId")
+    @Mapping(source = "dto.typeCard", target = "typeCard")
+    @Mapping(source = "dto.categoryCard", target = "categoryCard")
+    @Mapping(source = "dateCard", target = "dateCard")
+    @Mapping(source = "cvv", target = "cvv")
+    @Mapping(source = "numberCard", target = "numberCard")
+    CardEntity toEntity(CardRequestDto dto, String numberCard, String cvv, String dateCard);
+
     CardRequestDto toDto(CardEntity entity);
 
     @Mapping(source = "cardRequest.typeCard", target = "typeCard", qualifiedByName = "mapToTypeCard")

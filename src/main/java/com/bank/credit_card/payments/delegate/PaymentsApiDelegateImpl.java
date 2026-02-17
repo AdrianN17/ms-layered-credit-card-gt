@@ -10,6 +10,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.BindingResult;
 
+import static com.bank.credit_card.generic.util.GenericDateUtility.getCurrentLocalDateTime;
+import static com.bank.credit_card.generic.util.GenericErrorsUtility.thrownBadRequest;
+import static com.bank.credit_card.generic.util.GenericResponsesUtility.generateTracking;
+
 @Component
 @AllArgsConstructor
 public class PaymentsApiDelegateImpl implements PaymentsApiDelegate {
@@ -20,15 +24,13 @@ public class PaymentsApiDelegateImpl implements PaymentsApiDelegate {
     @Override
     public ResponseEntity<Tracking> closePayment(Long paymentId) {
         paymentService.close(paymentId);
-        return null;
+        return generateTracking();
     }
 
     @Override
     public ResponseEntity<Tracking> createPayment(Long cardId, PaymentRequest paymentRequest, BindingResult bindingResult) {
-        if (bindingResult.hasErrors())
-            throw new CustomBadRequest(bindingResult);
-
-        paymentService.create(paymentMapper.toDto(paymentRequest, cardId));
-        return null;
+        thrownBadRequest(bindingResult);
+        paymentService.create(paymentMapper.toDto(paymentRequest, cardId, getCurrentLocalDateTime()));
+        return generateTracking();
     }
 }

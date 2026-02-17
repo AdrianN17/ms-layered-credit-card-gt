@@ -1,5 +1,6 @@
 package com.bank.credit_card.clients.entity;
 
+import com.bank.credit_card.clients.commons.CardStatus;
 import com.bank.credit_card.generic.commons.Currency;
 import com.bank.credit_card.generic.entity.GenericEntity;
 import jakarta.persistence.*;
@@ -41,16 +42,6 @@ public class CardAccountEntity extends GenericEntity {
     @Column(name = "paymentDate")
     private Short paymentDate;
 
-
-    public CardAccountEntity duplicate(Long newCardId) {
-
-        return CardAccountEntity.builder()
-                .cardId(newCardId)
-                .crediticialTotalAmount(this.getCrediticialTotalAmount())
-                .debtTax(this.getDebtTax())
-                .currency(this.getCurrency())
-                .facturationDate(this.getFacturationDate())
-                .paymentDate(this.getPaymentDate())
-                .build();
-    }
+    @Column(name = "cardStatus")
+    private CardStatus cardStatus;
 }

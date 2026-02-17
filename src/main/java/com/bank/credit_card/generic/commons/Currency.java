@@ -3,6 +3,8 @@ package com.bank.credit_card.generic.commons;
 import java.util.Arrays;
 import java.util.Optional;
 
+import static com.bank.credit_card.generic.util.GenericErrorsUtility.thrownBadRequest;
+
 public enum Currency {
     PEN("PEN", 1),
     USD("USD", 2);
@@ -29,11 +31,11 @@ public enum Currency {
     }
 
     public static Currency fromCode(String code) {
-        return ofCode(code).orElseThrow(() -> new IllegalArgumentException("Unknown Currency code: " + code));
+        return ofCode(code).orElseThrow(() -> thrownBadRequest("Unknown Currency code: " + code));
     }
 
     public static Currency fromValue(int value) {
-        return ofValue(value).orElseThrow(() -> new IllegalArgumentException("Unknown Currency value: " + value));
+        return ofValue(value).orElseThrow(() -> thrownBadRequest("Unknown Currency value: " + value));
     }
 
     public static Optional<Currency> ofCode(String code) {

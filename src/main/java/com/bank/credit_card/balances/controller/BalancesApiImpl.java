@@ -13,12 +13,12 @@ public class BalancesApiImpl implements BalancesApi {
     private final BalancesDelegate balancesDelegate;
 
     @Override
-    public ResponseEntity<Tracking> changeBalance(Long idCard) {
-        return balancesDelegate.changeBalance(idCard);
+    public ResponseEntity<Tracking> changeBalance(Long cardId) {
+        return balancesDelegate.changeBalance(cardId);
     }
 
     @Override
-    public ResponseEntity<BalanceResponse> getBalance(String cardId) {
+    public ResponseEntity<BalanceResponse> getBalance(Long cardId) {
         return balancesDelegate.getBalance(cardId);
     }
 }

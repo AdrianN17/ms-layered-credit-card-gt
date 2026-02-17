@@ -6,16 +6,20 @@ import com.bank.credit_card.consumptions.schema.request.ConsumptionRequest;
 import com.bank.credit_card.consumptions.schema.request.SplitConsumptionDebtRequest;
 import com.bank.credit_card.consumptions.service.ConsumptionService;
 import com.bank.credit_card.consumptions.service.SplitConsumptionDebtService;
-import com.bank.credit_card.exceptions.CustomBadRequest;
 import com.bank.credit_card.generic.schema.response.Tracking;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.BindingResult;
 
+import static com.bank.credit_card.generic.util.GenericDateUtility.getCurrentLocalDate;
+import static com.bank.credit_card.generic.util.GenericDateUtility.getCurrentLocalDateTime;
+import static com.bank.credit_card.generic.util.GenericErrorsUtility.thrownBadRequest;
+import static com.bank.credit_card.generic.util.GenericResponsesUtility.generateTracking;
+
 @Component
 @AllArgsConstructor
-public class ConsumptionsApiDelegateImpl implements ConsumptionsApiDelegate{
+public class ConsumptionsApiDelegateImpl implements ConsumptionsApiDelegate {
 
     private final ConsumptionService consumptionService;
     private final SplitConsumptionDebtMapper splitConsumptionDebtMapper;
@@ -25,22 +29,20 @@ public class ConsumptionsApiDelegateImpl implements ConsumptionsApiDelegate{
     @Override
     public ResponseEntity<Tracking> closeConsumption(Long consumptionId) {
         consumptionService.close(consumptionId);
-        return null;
+        return generateTracking();
     }
 
     @Override
     public ResponseEntity<Tracking> splitConsumptionDebt(Long consumptionId, SplitConsumptionDebtRequest splitConsumptionDebtRequest, BindingResult bindingResult) {
-        if (bindingResult.hasErrors())
-            throw new CustomBadRequest(bindingResult);
+        thrownBadRequest(bindingResult);
         splitConsumptionDebtService.split(consumptionId, splitConsumptionDebtMapper.toDto(splitConsumptionDebtRequest));
-        return null;
+        return generateTracking();
     }
 
     @Override
     public ResponseEntity<Tracking> createConsumption(Long cardId, ConsumptionRequest consumptionRequest, BindingResult bindingResult) {
-        if (bindingResult.hasErrors())
-            throw new CustomBadRequest(bindingResult);
-        consumptionService.create(consumptionMapper.toDto(consumptionRequest, cardId));
-        return null;
+        thrownBadRequest(bindingResult);
+        consumptionService.create(consumptionMapper.toDto(consumptionRequest, cardId, getCurrentLocalDateTime()));
+        return generateTracking();
     }
 }

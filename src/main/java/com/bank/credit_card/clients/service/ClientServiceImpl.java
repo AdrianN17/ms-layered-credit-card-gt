@@ -11,6 +11,10 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import static com.bank.credit_card.clients.constant.ClientConstant.CLIENT_NOT_FOUND;
+import static com.bank.credit_card.generic.util.GenericErrorsUtility.thrownBadRequest;
+import static com.bank.credit_card.generic.util.GenericErrorsUtility.thrownNotFound;
+
 @Service
 @AllArgsConstructor
 public class ClientServiceImpl extends GenericServiceImpl implements ClientService {
@@ -30,7 +34,7 @@ public class ClientServiceImpl extends GenericServiceImpl implements ClientServi
     public Long close(Long clientId) {
 
         var clientEntity = clientRepository.findById(clientId)
-                .orElseThrow(() -> new RuntimeException("Client not found"));
+                .orElseThrow(() -> thrownNotFound(CLIENT_NOT_FOUND));
 
         clientEntity.softDelete();
 
@@ -43,7 +47,7 @@ public class ClientServiceImpl extends GenericServiceImpl implements ClientServi
     public ClientResponseDto getClient(Long clientId) {
 
         var clientEntity = clientRepositoryVO.findById(clientId)
-                .orElseThrow(() -> new CustomBadRequest("Client not found"));
+                .orElseThrow(() -> thrownNotFound(CLIENT_NOT_FOUND));
 
         return clientMapper.toDto(clientEntity);
     }

@@ -37,7 +37,7 @@ public class CardEntityVO extends GenericEntity {
     private CategoryCard categoryCard;
 
     @Column(name = "dateCard")
-    private LocalDate dateCard;
+    private String dateCard;
 
     @Column(name = "cvv")
     private String cvv;

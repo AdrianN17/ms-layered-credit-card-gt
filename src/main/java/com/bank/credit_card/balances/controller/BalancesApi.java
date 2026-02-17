@@ -63,7 +63,7 @@ public interface BalancesApi {
             produces = {"application/json"}
     )
     ResponseEntity<Tracking> changeBalance(
-            @Parameter(name = "idCard", description = "", required = true, in = ParameterIn.PATH) @PathVariable("idCard") Long idCard
+            @Parameter(name = "idCard", description = "", required = true, in = ParameterIn.PATH) @PathVariable("cardId") Long idCard
     );
 
 
@@ -102,7 +102,7 @@ public interface BalancesApi {
             produces = {"application/json"}
     )
     ResponseEntity<BalanceResponse> getBalance(
-            @Parameter(name = "cardId", description = "", required = true, in = ParameterIn.PATH) @PathVariable("cardId") String cardId
+            @Parameter(name = "cardId", description = "", required = true, in = ParameterIn.PATH) @PathVariable("cardId") Long cardId
     );
 
 }
