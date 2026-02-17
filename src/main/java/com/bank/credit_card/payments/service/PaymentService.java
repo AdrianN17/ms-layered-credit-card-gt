@@ -1,9 +1,8 @@
 package com.bank.credit_card.payments.service;
 
-import com.bank.credit_card.payments.dto.PaymentDto;
+import com.bank.credit_card.generic.service.GenericService;
+import com.bank.credit_card.payments.dto.request.PaymentRequestDto;
 
-public interface PaymentService {
-    void createPayment(PaymentDto paymentDto);
+public interface PaymentService extends GenericService<PaymentRequestDto, Long> {
 
-    void closePayment(Long paymentId);
 }

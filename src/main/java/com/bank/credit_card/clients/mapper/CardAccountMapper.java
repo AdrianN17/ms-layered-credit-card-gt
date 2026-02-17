@@ -1,7 +1,9 @@
 package com.bank.credit_card.clients.mapper;
 
-import com.bank.credit_card.clients.dto.CardAccountDto;
+import com.bank.credit_card.clients.dto.request.CardAccountRequestDto;
+import com.bank.credit_card.clients.dto.response.CardAccountResponseDto;
 import com.bank.credit_card.clients.entity.CardAccountEntity;
+import com.bank.credit_card.clients.entity.vo.CardAccountEntityVO;
 import com.bank.credit_card.clients.schema.request.CardAccountRequest;
 import com.bank.credit_card.clients.schema.response.CardAccountResponse;
 import com.bank.credit_card.clients.util.EnumCardUtility;
@@ -12,24 +14,24 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring", uses = {EnumGenericUtility.class, EnumCardUtility.class})
 public interface CardAccountMapper {
 
-    CardAccountEntity toEntity(CardAccountDto dto);
+    CardAccountEntity toEntity(CardAccountRequestDto dto);
 
-    CardAccountDto toDto(CardAccountEntity entity);
+    CardAccountRequestDto toDto(CardAccountEntity entity);
 
-    @Mapping(target = "cardAccountId", ignore = true)
+
+    @Mapping(source = "cardAccountRequest.crediticialTotalAmount", target = "crediticialTotalAmount")
+    @Mapping(source = "cardAccountRequest.debtTax", target = "debtTax")
+    @Mapping(source = "cardAccountRequest.currency", target = "currency", qualifiedByName = "mapToCurrency")
+    @Mapping(source = "cardAccountRequest.facturationDate", target = "facturationDate")
+    @Mapping(source = "cardAccountRequest.paymentDate", target = "paymentDate")
+    @Mapping(source = "cardId", target = "cardId")
+    CardAccountRequestDto toDto(CardAccountRequest cardAccountRequest, Long cardId);
+
+
+    CardAccountResponseDto toDto(CardAccountEntityVO entity);
+
+
     @Mapping(source = "crediticialTotalAmount", target = "crediticialTotalAmount")
-    @Mapping(source = "debtTax", target = "debtTax")
-    @Mapping(source = "currency", target = "currency", qualifiedByName = "mapToCurrency")
-    @Mapping(source = "facturationDate", target = "facturationDate")
-    @Mapping(source = "paymentDate", target = "paymentDate")
-    CardAccountDto toDto(CardAccountRequest cardAccountRequest);
-
-
-    @Mapping(source = "cardAccountId", target = "cardAccountId")
-    @Mapping(source = "crediticialTotalAmount", target = "crediticialTotalAmount")
-    @Mapping(source = "debtTax", target = "debtTax")
     @Mapping(source = "currency", target = "currency", qualifiedByName = "currencyToString")
-    @Mapping(source = "facturationDate", target = "facturationDate")
-    @Mapping(source = "paymentDate", target = "paymentDate")
-    CardAccountResponse toResponse(CardAccountDto cardAccountDto);
+    CardAccountResponse toResponse(CardAccountResponseDto cardAccountResponseDto);
 }

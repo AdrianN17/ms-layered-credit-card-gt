@@ -40,10 +40,10 @@ paths:
       security: []
   /cards/{cardId}/clone:
     post:
-      summary: cloneCard
+      summary: clone
       deprecated: false
       description: ''
-      operationId: cloneCard
+      operationId: clone
       tags: []
       parameters:
         - name: cardId

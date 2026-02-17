@@ -1,12 +1,11 @@
-package com.bank.credit_card.clients.dto;
+package com.bank.credit_card.clients.dto.request;
 
 import com.bank.credit_card.generic.commons.Currency;
 
 import java.math.BigDecimal;
 
-public record CardAccountDto(
-
-        Integer cardAccountId,
+public record CardAccountRequestDto(
+        Long cardId,
         BigDecimal crediticialTotalAmount,
         BigDecimal debtTax,
         Currency currency,

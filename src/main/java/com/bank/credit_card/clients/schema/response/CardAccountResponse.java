@@ -25,9 +25,9 @@ public class CardAccountResponse {
 
     private BigDecimal debtTax;
 
-    private Integer facturationDate;
+    private Short facturationDate;
 
-    private Integer paymentDate;
+    private Short paymentDate;
 
     private String currency;
 
@@ -38,7 +38,7 @@ public class CardAccountResponse {
     /**
      * Constructor with only required parameters
      */
-    public CardAccountResponse(Long cardAccountId, BigDecimal crediticialTotalAmount, BigDecimal debtTax, Integer facturationDate, Integer paymentDate, String currency) {
+    public CardAccountResponse(Long cardAccountId, BigDecimal crediticialTotalAmount, BigDecimal debtTax, Short facturationDate, Short paymentDate, String currency) {
         this.cardAccountId = cardAccountId;
         this.crediticialTotalAmount = crediticialTotalAmount;
         this.debtTax = debtTax;
@@ -112,7 +112,7 @@ public class CardAccountResponse {
         this.debtTax = debtTax;
     }
 
-    public CardAccountResponse facturationDate(Integer facturationDate) {
+    public CardAccountResponse facturationDate(Short facturationDate) {
         this.facturationDate = facturationDate;
         return this;
     }
@@ -129,15 +129,15 @@ public class CardAccountResponse {
     @Max(31)
     @Schema(name = "facturationDate", requiredMode = Schema.RequiredMode.REQUIRED)
     @JsonProperty("facturationDate")
-    public Integer getFacturationDate() {
+    public Short getFacturationDate() {
         return facturationDate;
     }
 
-    public void setFacturationDate(Integer facturationDate) {
+    public void setFacturationDate(Short facturationDate) {
         this.facturationDate = facturationDate;
     }
 
-    public CardAccountResponse paymentdate(Integer paymentdate) {
+    public CardAccountResponse paymentdate(Short paymentdate) {
         this.paymentDate = paymentdate;
         return this;
     }
@@ -154,11 +154,11 @@ public class CardAccountResponse {
     @Max(31)
     @Schema(name = "paymentDate", requiredMode = Schema.RequiredMode.REQUIRED)
     @JsonProperty("paymentDate")
-    public Integer getPaymentDate() {
+    public Short getPaymentDate() {
         return paymentDate;
     }
 
-    public void setPaymentDate(Integer paymentDate) {
+    public void setPaymentDate(Short paymentDate) {
         this.paymentDate = paymentDate;
     }
 

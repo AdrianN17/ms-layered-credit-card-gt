@@ -23,6 +23,9 @@ public class CardAccountEntity extends GenericEntity {
     @Column(name = "cardAccountId")
     private Long cardAccountId;
 
+    @Column(name = "cardId")
+    private Long cardId;
+
     @Column(name = "crediticialTotalAmount")
     private BigDecimal crediticialTotalAmount;
 
@@ -39,19 +42,15 @@ public class CardAccountEntity extends GenericEntity {
     private Short paymentDate;
 
 
-    public CardAccountEntity duplicate() {
-        CardAccountEntity copy = CardAccountEntity.builder()
-                .crediticialTotalAmount(this.crediticialTotalAmount)
-                .debtTax(this.debtTax)
-                .currency(this.currency)
-                .facturationDate(this.facturationDate)
-                .paymentDate(this.paymentDate)
+    public CardAccountEntity duplicate(Long newCardId) {
+
+        return CardAccountEntity.builder()
+                .cardId(newCardId)
+                .crediticialTotalAmount(this.getCrediticialTotalAmount())
+                .debtTax(this.getDebtTax())
+                .currency(this.getCurrency())
+                .facturationDate(this.getFacturationDate())
+                .paymentDate(this.getPaymentDate())
                 .build();
-
-        copy.setStatus(this.getStatus());
-        copy.setCreatedDate(this.getCreatedDate());
-        copy.setUpdatedDate(this.getUpdatedDate());
-
-        return copy;
     }
 }

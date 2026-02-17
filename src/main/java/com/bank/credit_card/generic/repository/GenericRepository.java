@@ -29,4 +29,6 @@ public interface GenericRepository<T, ID> extends JpaRepository<T, ID> {
     default boolean existsById(ID id) {
         return existsByIdAndStatus(id, Status.ACTIVE);
     }
+
+
 }

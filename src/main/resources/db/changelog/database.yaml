@@ -84,6 +84,9 @@ databaseChangeLog:
                   name: cvv
                   type: VARCHAR(10)
               - column:
+                  name: dateCard
+                  type: DATE
+              - column:
                   name: createdDate
                   type: TIMESTAMP
               - column:
@@ -322,3 +325,59 @@ databaseChangeLog:
             referencedTableName: Cards
             referencedColumnNames: cardId
             constraintName: fk_balances_cardid
+
+  - changeSet:
+      id: 012-create-procedure-clone-card-and-accounts
+      author: liquibase
+      dbms: mssql
+      changes:
+        - sql:
+            splitStatements: false
+            stripComments: false
+            endDelimiter: GO
+            sql: |-
+              CREATE PROCEDURE usp_clone_card_and_accounts
+                @sourceCardId INT,
+                @newCardId INT OUTPUT
+              AS
+              BEGIN
+                SET NOCOUNT ON;
+                BEGIN TRY
+                  BEGIN TRANSACTION;
+
+                  -- Verificar existencia de la tarjeta origen
+                  IF NOT EXISTS (SELECT 1 FROM Cards WHERE cardId = @sourceCardId)
+                  BEGIN
+                    RAISERROR('Source card not found',16,1);
+                    ROLLBACK TRANSACTION;
+                    RETURN;
+                  END
+
+                  -- Insertar nueva tarjeta (clon) vinculada al mismo clientId pero con status = 0
+                  INSERT INTO Cards (clientId, typeCard, numberCard, categoryCard, cvv, dateCard, createdDate, updatedDate, status)
+                  SELECT clientId, typeCard, numberCard, categoryCard, cvv, dateCard, GETDATE(), NULL, 1
+                  FROM Cards WHERE cardId = @sourceCardId;
+
+                  SET @newCardId = SCOPE_IDENTITY();
+
+                  -- Clonar las CardAccounts asociadas a la tarjeta origen y enlazarlas al nuevo cardId
+                  INSERT INTO CardAccounts (cardId, crediticialTotalAmount, debtTax, currency, facturationDate, paymentDate, createdDate, updatedDate, status)
+                  SELECT @newCardId, crediticialTotalAmount, debtTax, currency, facturationDate, paymentDate, GETDATE(), NULL, 1
+                  FROM CardAccounts WHERE cardId = @sourceCardId;
+              
+                  -- Cerrar tarjeta y cuenta de tarjeta origen
+                    UPDATE Cards SET status = 0, updatedDate = GETDATE() WHERE cardId = @sourceCardId;
+                    UPDATE CardAccounts SET status = 0, updatedDate = GETDATE() WHERE cardId = @sourceCardId;
+
+                  COMMIT TRANSACTION;
+                END TRY
+                BEGIN CATCH
+                  IF XACT_STATE() <> 0
+                    ROLLBACK TRANSACTION;
+                  DECLARE @errMsg NVARCHAR(4000) = ERROR_MESSAGE();
+                  RAISERROR(@errMsg,16,1);
+                  RETURN;
+                END CATCH
+              END
+              GO
+

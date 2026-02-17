@@ -1,27 +1,24 @@
 package com.bank.credit_card.clients.service;
 
-import com.bank.credit_card.clients.dto.CardDto;
-import com.bank.credit_card.clients.entity.CardEntity;
+import com.bank.credit_card.clients.dto.request.CardRequestDto;
 import com.bank.credit_card.clients.mapper.CardMapper;
 import com.bank.credit_card.clients.repository.CardRepository;
 import com.bank.credit_card.exceptions.CustomBadRequest;
+import com.bank.credit_card.generic.service.GenericServiceImpl;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static java.util.Objects.isNull;
-
 @Service
 @AllArgsConstructor
-public class CardServiceImpl implements CardService {
+public class CardServiceImpl extends GenericServiceImpl implements CardService {
 
     private final CardRepository cardRepository;
     private final CardMapper cardMapper;
-    private final ClientService clientService;
 
     @Override
     @Transactional
-    public void closeCard(Long cardId) {
+    public Long close(Long cardId) {
 
         var cardEntity = cardRepository.findById(cardId)
                 .orElseThrow(() -> new CustomBadRequest("Card not found"));
@@ -29,16 +26,19 @@ public class CardServiceImpl implements CardService {
         cardEntity.softDelete();
         cardRepository.save(cardEntity);
 
+        return cardEntity.getCardId();
     }
 
     @Override
-    public void createCard(CardDto cardDto) {
-        cardRepository.save(cardMapper.toEntity(cardDto));
+    public Long create(CardRequestDto cardDto) {
+        var card = cardRepository.save(cardMapper.toEntity(cardDto));
+        return card.getCardId();
     }
 
-    @Override
+    /*@Override
     @Transactional
-    public void cloneCard(Long cardId) {
+    @Deprecated
+    public CloningDto clone(Long cardId) {
 
         var cardEntity = cardRepository.findById(cardId)
                 .orElseThrow(() -> new CustomBadRequest("Card not found"));
@@ -47,15 +47,8 @@ public class CardServiceImpl implements CardService {
         cardRepository.save(newCardEntity);
 
         cardEntity.softDelete();
+        cardRepository.save(cardEntity);
 
-        if (!isNull(cardEntity.getCardAccount())) {
-            cardEntity.getCardAccount().softDelete();
-        }
-
-    }
-
-    @Override
-    public void createCardForClient(CardDto cardDto, Long clientId) {
-        clientService.registerCardToClient(cardDto, clientId);
-    }
+        return new CloningDto(cardEntity.getCardId(), newCardEntity.getCardId());
+    }*/
 }

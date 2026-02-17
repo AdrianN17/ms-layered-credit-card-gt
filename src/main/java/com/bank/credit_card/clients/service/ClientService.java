@@ -1,16 +1,11 @@
 package com.bank.credit_card.clients.service;
 
-import com.bank.credit_card.clients.dto.CardDto;
-import com.bank.credit_card.clients.dto.ClientDto;
+import com.bank.credit_card.clients.dto.request.ClientRequestDto;
+import com.bank.credit_card.clients.dto.response.ClientResponseDto;
+import com.bank.credit_card.generic.service.GenericService;
 
-public interface ClientService {
+public interface ClientService extends GenericService<ClientRequestDto, Long> {
 
-    void createClient(ClientDto clientDto);
-
-    void closeClient(Long clientId);
-
-    ClientDto getClientById(Long clientId);
-
-    void registerCardToClient(CardDto cardDto, Long clientId);
+    ClientResponseDto getClient(Long clientId);
 }
 

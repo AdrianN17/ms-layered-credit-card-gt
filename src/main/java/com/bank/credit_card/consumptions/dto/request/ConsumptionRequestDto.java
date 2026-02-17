@@ -1,20 +1,17 @@
-package com.bank.credit_card.consumptions.dto;
+package com.bank.credit_card.consumptions.dto.request;
 
 import com.bank.credit_card.generic.commons.Currency;
+import lombok.Builder;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-import lombok.Builder;
-
 @Builder
-public record ConsumptionDto(
-        Long consumptionId,
+public record ConsumptionRequestDto(
         Long cardId,
         String sellerName,
         Currency currency,
         BigDecimal amount,
-        LocalDateTime consumptionDate,
-        LocalDateTime consumptionApprobationDae
+        LocalDateTime consumptionDate
 ) {
 }

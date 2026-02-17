@@ -9,6 +9,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 import static java.util.Objects.isNull;
 
 @Entity
@@ -24,6 +26,9 @@ public class CardEntity extends GenericEntity {
     @Column(name = "cardId")
     private Long cardId;
 
+    @Column(name = "clientId")
+    private Long clientId;
+
     @Column(name = "typeCard")
     private TypeCard typeCard;
 
@@ -33,30 +38,22 @@ public class CardEntity extends GenericEntity {
     @Column(name = "categoryCard")
     private CategoryCard categoryCard;
 
+    @Column(name = "dateCard")
+    private LocalDate dateCard;
+
     @Column(name = "cvv")
     private String cvv;
 
-    @OneToOne(mappedBy = "cardEntity", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private CardAccountEntity cardAccount;
-
     public CardEntity duplicate() {
-        CardEntity copy = CardEntity.builder()
-                .typeCard(this.typeCard)
-                .numberCard(this.numberCard)
-                .categoryCard(this.categoryCard)
-                .cvv(this.cvv)
+
+        return CardEntity.builder()
+                .clientId(this.getClientId())
+                .typeCard(this.getTypeCard())
+                .numberCard(this.getNumberCard())
+                .categoryCard(this.getCategoryCard())
+                .dateCard(this.getDateCard())
+                .cvv(this.getCvv())
                 .build();
-
-        if (!isNull(this.cardAccount)) {
-            CardAccountEntity accountCopy = this.cardAccount.duplicate();
-            copy.setCardAccount(accountCopy);
-        }
-
-        copy.setCreatedDate(this.getCreatedDate());
-        copy.setUpdatedDate(this.getUpdatedDate());
-        copy.setStatus(this.getStatus());
-
-        return copy;
     }
 
 }

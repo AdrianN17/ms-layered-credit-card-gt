@@ -43,8 +43,4 @@ public class ClientEntity extends GenericEntity {
 
     @Column(name = "email")
     private String email;
-
-    @OneToMany(mappedBy = "client", cascade = CascadeType.ALL)
-    private List<CardEntity> cardEntities;
-
 }

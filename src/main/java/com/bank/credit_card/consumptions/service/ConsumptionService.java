@@ -1,12 +1,8 @@
 package com.bank.credit_card.consumptions.service;
 
-import com.bank.credit_card.consumptions.dto.ConsumptionDto;
-import com.bank.credit_card.consumptions.dto.SplitConsumptionDebtDto;
+import com.bank.credit_card.consumptions.dto.request.ConsumptionRequestDto;
+import com.bank.credit_card.generic.service.GenericService;
 
-public interface ConsumptionService {
-    void createConsumption(ConsumptionDto consumptionDto);
+public interface ConsumptionService extends GenericService<ConsumptionRequestDto, Long> {
 
-    void closeConsumption(Long consumptionId);
-
-    void splitConsumption(Long consumptionId, SplitConsumptionDebtDto splitConsumptionDebtDto);
 }

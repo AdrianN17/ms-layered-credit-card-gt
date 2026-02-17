@@ -31,12 +31,18 @@
 		<spring-cloud-azure.version>7.0.0</spring-cloud-azure.version>
         <org.mapstruct.version>1.6.3</org.mapstruct.version>
         <openapi.generator.version>7.3.0</openapi.generator.version>
+        <!-- Spring Cloud BOM version (align with Spring Boot 4.x) -->
+        <spring-cloud.version>2023.0.6</spring-cloud.version>
 	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
+        </dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-liquibase</artifactId>
@@ -111,7 +117,14 @@
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
-		</dependencies>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
 	</dependencyManagement>
 
 	<build>

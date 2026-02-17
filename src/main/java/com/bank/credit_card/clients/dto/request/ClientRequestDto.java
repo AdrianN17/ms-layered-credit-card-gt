@@ -1,19 +1,17 @@
-package com.bank.credit_card.clients.dto;
+package com.bank.credit_card.clients.dto.request;
 
 import com.bank.credit_card.clients.commons.DocumentType;
 
 import java.time.LocalDate;
 import java.util.List;
 
-public record ClientDto(
-        Long clientId,
+public record ClientRequestDto(
         String names,
         String documentNumber,
         DocumentType documentType,
         String lastNames,
         LocalDate birthDate,
         String phone,
-        String email,
-        List<CardDto> cardDtos
+        String email
 ) {
 }

@@ -1,7 +1,7 @@
 package com.bank.credit_card.payments.service;
 
 import com.bank.credit_card.exceptions.CustomBadRequest;
-import com.bank.credit_card.payments.dto.PaymentDto;
+import com.bank.credit_card.payments.dto.request.PaymentRequestDto;
 import com.bank.credit_card.payments.mapper.PaymentMapper;
 import com.bank.credit_card.payments.repository.PaymentRepository;
 import lombok.AllArgsConstructor;
@@ -15,16 +15,20 @@ public class PaymentServiceImpl implements PaymentService {
     private final PaymentMapper paymentMapper;
 
     @Override
-    public void createPayment(PaymentDto paymentDto) {
-        paymentRepository.save(paymentMapper.toEntity(paymentDto));
+    public Long create(PaymentRequestDto paymentRequestDto) {
+        var payment =  paymentRepository.save(paymentMapper.toEntity(paymentRequestDto));
+        return payment.getPaymentId();
     }
 
     @Override
-    public void closePayment(Long paymentId) {
+    public Long close(Long paymentId) {
 
-        paymentRepository.findById(paymentId)
+        var payment = paymentRepository.findById(paymentId)
                 .orElseThrow(() ->
-                        new CustomBadRequest("Payment not found"))
-                .softDelete();
+                        new CustomBadRequest("Payment not found"));
+        payment.softDelete();
+        paymentRepository.save(payment);
+
+        return payment.getPaymentId();
     }
 }

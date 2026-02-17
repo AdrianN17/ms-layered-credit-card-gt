@@ -33,7 +33,7 @@ public interface CardsApi {
 
 
     /**
-     * POST /cards/{cardId}/clone : cloneCard
+     * POST /cards/{cardId}/clone : clone
      *
      * @param cardId (required)
      * @return (status code 202)
@@ -42,8 +42,8 @@ public interface CardsApi {
      * or  (status code 500)
      */
     @Operation(
-            operationId = "cloneCard",
-            summary = "cloneCard",
+            operationId = "clone",
+            summary = "clone",
             description = "",
             tags = {},
             responses = {

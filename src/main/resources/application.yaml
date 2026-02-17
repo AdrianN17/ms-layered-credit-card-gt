@@ -1,3 +1,14 @@
 spring:
   application:
     name: credit-cardEntity
+
+exchanges:
+  url: https://api.exchanges.example.com
+  endpoint: /v1/latest
+  apiKey: YOUR_EXCHANGE_API_KEY
+
+documents:
+  url: https://api.documents.example.com
+  endpoint:
+    dni: /v1/documents/{documentId}
+  authorization: Bearer YOUR_DOCUMENTS_TOKEN
