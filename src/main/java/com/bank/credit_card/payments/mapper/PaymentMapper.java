@@ -17,10 +17,10 @@ public interface PaymentMapper {
 
     @Mapping(target = "cardId", source = "cardId")
     @Mapping(target = "paymentDate", source = "paymentDate")
-    @Mapping(target = "amount", source="paymentRequest.amount")
-    @Mapping(target = "currency", source="paymentRequest.currency", qualifiedByName = "mapToCurrency")
-    @Mapping(target = "channel", source="paymentRequest.channel", qualifiedByName = "mapToChannelPayment")
-    @Mapping(target = "category", source="paymentRequest.category", qualifiedByName = "mapToCategoryPayment")
+    @Mapping(target = "amount", source = "paymentRequest.amount")
+    @Mapping(target = "currency", source = "paymentRequest.currency", qualifiedByName = "mapToCurrency")
+    @Mapping(target = "channel", source = "paymentRequest.channel", qualifiedByName = "mapToChannelPayment")
+    @Mapping(target = "category", source = "paymentRequest.category", qualifiedByName = "mapToCategoryPayment")
     PaymentRequestDto toDto(PaymentRequest paymentRequest, Long cardId, LocalDateTime paymentDate);
 
 }

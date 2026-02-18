@@ -8,7 +8,6 @@ import com.bank.credit_card.clients.schema.response.ClientResponse;
 import com.bank.credit_card.clients.service.CardAccountService;
 import com.bank.credit_card.clients.service.CardService;
 import com.bank.credit_card.clients.service.ClientService;
-import com.bank.credit_card.exceptions.CustomBadRequest;
 import com.bank.credit_card.generic.schema.response.Tracking;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;

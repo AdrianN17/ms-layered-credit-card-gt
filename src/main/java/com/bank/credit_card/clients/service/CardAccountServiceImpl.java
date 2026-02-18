@@ -5,6 +5,7 @@ import com.bank.credit_card.clients.dto.request.CloningDto;
 import com.bank.credit_card.clients.mapper.CardAccountMapper;
 import com.bank.credit_card.clients.repository.CardAccountRepository;
 import com.bank.credit_card.clients.repository.procedure.CloneCardAccountRepositoryCustom;
+import com.bank.credit_card.generic.publish.publisher.GenericEventPublisher;
 import com.bank.credit_card.generic.service.GenericServiceImpl;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 import static com.bank.credit_card.clients.commons.CardStatus.OPERATIVA;
 import static com.bank.credit_card.clients.constant.CardAccountConstant.CARD_ACCOUNT_NOT_FOUND;
 import static com.bank.credit_card.clients.constant.CardAccountConstant.CARD_ACCOUNT_OF_CARD_NOT_FOUND;
+import static com.bank.credit_card.clients.util.PublishCardAccountUtility.*;
 import static com.bank.credit_card.generic.util.GenericErrorsUtility.thrownBadRequest;
 import static com.bank.credit_card.generic.util.GenericErrorsUtility.thrownNotFound;
 
@@ -22,6 +24,7 @@ public class CardAccountServiceImpl extends GenericServiceImpl implements CardAc
     private final CardAccountRepository cardAccountRepository;
     private final CardAccountMapper cardAccountMapper;
     private final CloneCardAccountRepositoryCustom cloneCardAccountRepositoryCustom;
+    private final GenericEventPublisher genericEventPublisher;
 
     @Override
     public Long getId(Long cardId) {
@@ -36,12 +39,14 @@ public class CardAccountServiceImpl extends GenericServiceImpl implements CardAc
         }
 
         var newCardAccountId = cloneCardAccountRepositoryCustom.cloneCardAccount(cardAccountId);
+        cloneEvent(genericEventPublisher, cardAccountId, newCardAccountId);
         return new CloningDto(cardAccountId, newCardAccountId);
     }
 
     @Override
     public Long create(CardAccountRequestDto cardAccountDto) {
         var cardAccount = cardAccountRepository.save(cardAccountMapper.toEntity(cardAccountDto, OPERATIVA));
+        createEvent(genericEventPublisher, cardAccount.getCardAccountId());
         return cardAccount.getCardAccountId();
     }
 
@@ -52,6 +57,7 @@ public class CardAccountServiceImpl extends GenericServiceImpl implements CardAc
 
         cardAccountEntity.softDelete();
         cardAccountRepository.save(cardAccountEntity);
+        closeEvent(genericEventPublisher, cardAccountId);
         return cardAccountEntity.getCardAccountId();
     }
 }

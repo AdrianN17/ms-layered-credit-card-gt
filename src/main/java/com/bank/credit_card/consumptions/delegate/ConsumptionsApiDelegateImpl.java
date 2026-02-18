@@ -12,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.BindingResult;
 
-import static com.bank.credit_card.generic.util.GenericDateUtility.getCurrentLocalDate;
 import static com.bank.credit_card.generic.util.GenericDateUtility.getCurrentLocalDateTime;
 import static com.bank.credit_card.generic.util.GenericErrorsUtility.thrownBadRequest;
 import static com.bank.credit_card.generic.util.GenericResponsesUtility.generateTracking;

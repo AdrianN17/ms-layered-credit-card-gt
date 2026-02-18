@@ -3,7 +3,6 @@ package com.bank.credit_card.clients.dto.request;
 import com.bank.credit_card.clients.commons.DocumentType;
 
 import java.time.LocalDate;
-import java.util.List;
 
 public record ClientRequestDto(
         String names,

@@ -197,11 +197,11 @@ public class CardAccountResponse {
      *
      * @return cardStatus
      */
-     @Schema(name = "cardStatus")
-     @JsonProperty("cardStatus")
-     public String getCardStatus() {
-         return cardStatus;
-     }
+    @Schema(name = "cardStatus")
+    @JsonProperty("cardStatus")
+    public String getCardStatus() {
+        return cardStatus;
+    }
 
     public void setCardStatus(String cardStatus) {
         this.cardStatus = cardStatus;

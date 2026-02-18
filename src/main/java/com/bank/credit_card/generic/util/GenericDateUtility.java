@@ -17,7 +17,7 @@ public class GenericDateUtility {
     }
 
     public static LocalDateTime getStartDay(Short dayOfMonth) {
-       return  getCurrentLocalDate()
+        return getCurrentLocalDate()
                 .withDayOfMonth(dayOfMonth)
                 .atStartOfDay();
     }

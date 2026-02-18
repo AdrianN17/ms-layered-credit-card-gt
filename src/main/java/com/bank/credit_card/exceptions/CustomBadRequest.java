@@ -2,7 +2,7 @@ package com.bank.credit_card.exceptions;
 
 import org.springframework.validation.BindingResult;
 
-public class CustomBadRequest extends RuntimeException{
+public class CustomBadRequest extends RuntimeException {
 
     private BindingResult bindingResult;
 
@@ -37,7 +37,7 @@ public class CustomBadRequest extends RuntimeException{
     }
 
     public CustomBadRequest(BindingResult bindingResult) {
-        this.bindingResult=bindingResult;
+        this.bindingResult = bindingResult;
     }
 
     public BindingResult getBindingResult() {

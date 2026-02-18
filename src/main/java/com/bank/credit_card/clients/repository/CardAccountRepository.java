@@ -2,9 +2,9 @@ package com.bank.credit_card.clients.repository;
 
 import com.bank.credit_card.clients.entity.CardAccountEntity;
 import com.bank.credit_card.generic.repository.GenericRepository;
-import org.springframework.stereotype.Repository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 

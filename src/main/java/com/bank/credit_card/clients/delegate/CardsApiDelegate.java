@@ -7,6 +7,8 @@ import org.springframework.validation.BindingResult;
 
 public interface CardsApiDelegate {
     ResponseEntity<Tracking> cloneCard(Long cardId);
+
     ResponseEntity<Tracking> closeCard(Long cardId);
+
     ResponseEntity<Tracking> createCard(Long clientId, CreateCardRequest createCardRequest, BindingResult bindingResult);
 }

@@ -35,6 +35,7 @@ public interface BalanceMapper {
     BalanceResponseDto toDto(BalanceEntity entity, List<BalanceDataResponseDto> balanceDataResponseDtos);
 
     BalanceDataResponseDto toDto(ConsumptionProjection dto);
+
     BalanceDataResponseDto toDto(PaymentProjection dto);
 }
 

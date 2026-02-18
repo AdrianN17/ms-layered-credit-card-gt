@@ -41,6 +41,6 @@ public interface CardAccountMapper {
 
     @Mapping(source = "crediticialTotalAmount", target = "crediticialTotalAmount")
     @Mapping(source = "currency", target = "currency", qualifiedByName = "currencyToString")
-    @Mapping(source="cardStatus", target="cardStatus", qualifiedByName = "cardStatusToString")
+    @Mapping(source = "cardStatus", target = "cardStatus", qualifiedByName = "cardStatusToString")
     CardAccountResponse toResponse(CardAccountResponseDto cardAccountResponseDto);
 }

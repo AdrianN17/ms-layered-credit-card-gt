@@ -6,6 +6,7 @@ import java.math.BigDecimal;
 
 public interface ConsumptionResumeProjection {
     BigDecimal getTotalAmount();
+
     Short getCurrency();
 
     default Currency getCurrencyEnum() {

@@ -6,7 +6,9 @@ import java.math.BigDecimal;
 
 public interface CardAccountDataProjection {
     Short getFacturationDate();
+
     BigDecimal getTotalAmount();
+
     Short getCurrency();
 
     default Currency getCurrencyEnum() {

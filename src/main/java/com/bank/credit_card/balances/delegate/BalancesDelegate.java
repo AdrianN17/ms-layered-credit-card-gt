@@ -6,5 +6,6 @@ import org.springframework.http.ResponseEntity;
 
 public interface BalancesDelegate {
     ResponseEntity<Tracking> changeBalance(Long cardId);
+
     ResponseEntity<BalanceResponse> getBalance(Long cardId);
 }

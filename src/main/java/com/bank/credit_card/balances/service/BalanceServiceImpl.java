@@ -5,6 +5,7 @@ import com.bank.credit_card.balances.dto.response.BalanceDataResponseDto;
 import com.bank.credit_card.balances.dto.response.BalanceResponseDto;
 import com.bank.credit_card.balances.mapper.BalanceMapper;
 import com.bank.credit_card.balances.repository.BalanceRepository;
+import com.bank.credit_card.generic.publish.publisher.GenericEventPublisher;
 import com.bank.credit_card.generic.service.GenericServiceImpl;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,8 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import static com.bank.credit_card.balances.constant.BalanceConstant.*;
+import static com.bank.credit_card.balances.util.PublishBalanceUtility.closeEvent;
+import static com.bank.credit_card.balances.util.PublishBalanceUtility.createEvent;
 import static com.bank.credit_card.generic.util.GenericDateUtility.getEndDay;
 import static com.bank.credit_card.generic.util.GenericDateUtility.getStartDay;
 import static com.bank.credit_card.generic.util.GenericErrorsUtility.thrownNotFound;
@@ -27,10 +30,12 @@ public class BalanceServiceImpl extends GenericServiceImpl implements BalanceSer
 
     private final BalanceRepository balanceRepository;
     private final BalanceMapper balanceMapper;
+    private final GenericEventPublisher genericEventPublisher;
 
     @Override
     public Long create(BalanceRequestDto balanceRequestDto) {
         var balance = balanceRepository.save(balanceMapper.toEntity(balanceRequestDto));
+        createEvent(genericEventPublisher, balance.getIdBalance());
         return balance.getIdBalance();
     }
 
@@ -77,7 +82,7 @@ public class BalanceServiceImpl extends GenericServiceImpl implements BalanceSer
 
         balanceEntity.softDelete();
         balanceRepository.save(balanceEntity);
-
+        closeEvent(genericEventPublisher, balanceId);
         return balanceEntity.getIdBalance();
     }
 
@@ -88,10 +93,8 @@ public class BalanceServiceImpl extends GenericServiceImpl implements BalanceSer
                         thrownNotFound(CARD_ACCOUNT_DATA_ID_NOT_FOUND));
 
         var oldBalanceAvailable = balanceRepository.findOldBalanceIdById(cardId).orElse(cardAccountData.getTotalAmount());
-
         var startDate = getStartDay(cardAccountData.getFacturationDate());
         var endDate = getEndDay(startDate.minusMonths(1));
-
         var totalPayments = balanceRepository.findTotalPaymentAmountByCardId(cardId, startDate, endDate);
         var totalConsumptions = balanceRepository.findTotalConsumptionAmountByCardId(cardId, startDate, endDate);
         var exchangeRate = BigDecimal.valueOf(3.1F);

@@ -8,6 +8,8 @@ import org.springframework.validation.BindingResult;
 
 public interface ClientsApiDelegate {
     ResponseEntity<Tracking> closeClient(Long clientId);
+
     ResponseEntity<Tracking> createClient(CreateClientRequest createClientRequest, BindingResult bindingResult);
+
     ResponseEntity<ClientResponse> getClients(Long clientId);
 }

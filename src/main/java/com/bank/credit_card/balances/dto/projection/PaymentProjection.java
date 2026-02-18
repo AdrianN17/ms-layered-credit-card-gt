@@ -11,9 +11,13 @@ import static com.bank.credit_card.balances.commons.TypeTransaction.PAYMENT;
 
 public interface PaymentProjection {
     BigDecimal getAmout();
+
     Short getCurrency();
+
     LocalDateTime getDate();
+
     Short getChannel();
+
     Short getCategory();
 
 

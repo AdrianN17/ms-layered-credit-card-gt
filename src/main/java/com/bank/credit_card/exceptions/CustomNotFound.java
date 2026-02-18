@@ -1,6 +1,6 @@
 package com.bank.credit_card.exceptions;
 
-public class CustomNotFound extends RuntimeException{
+public class CustomNotFound extends RuntimeException {
 
     /**
      * Constructs a new runtime exception with the specified detail message.

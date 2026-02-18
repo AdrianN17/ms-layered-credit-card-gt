@@ -1,6 +1,6 @@
 package com.bank.credit_card.generic.service;
 
-public interface GenericService<D,ID> {
+public interface GenericService<D, ID> {
 
     ID create(D d);
 

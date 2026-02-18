@@ -6,5 +6,6 @@ import com.bank.credit_card.generic.service.GenericService;
 
 public interface CardAccountService extends GenericService<CardAccountRequestDto, Long> {
     Long getId(Long cardId);
+
     CloningDto clone(Long cardId);
 }

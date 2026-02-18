@@ -1,6 +1,5 @@
 package com.bank.credit_card.payments.delegate;
 
-import com.bank.credit_card.exceptions.CustomBadRequest;
 import com.bank.credit_card.generic.schema.response.Tracking;
 import com.bank.credit_card.payments.mapper.PaymentMapper;
 import com.bank.credit_card.payments.schema.request.PaymentRequest;

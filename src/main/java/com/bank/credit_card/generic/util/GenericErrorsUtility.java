@@ -8,19 +8,16 @@ import org.springframework.validation.BindingResult;
 @UtilityClass
 public class GenericErrorsUtility {
 
-    public static void thrownBadRequest (BindingResult bindingResult)
-    {
+    public static void thrownBadRequest(BindingResult bindingResult) {
         if (bindingResult.hasErrors())
             throw new CustomBadRequest(bindingResult);
     }
 
-    public static CustomBadRequest thrownBadRequest (String message)
-    {
+    public static CustomBadRequest thrownBadRequest(String message) {
         return new CustomBadRequest(message);
     }
 
-    public static CustomNotFound thrownNotFound (String message)
-    {
+    public static CustomNotFound thrownNotFound(String message) {
         return new CustomNotFound(message);
     }
 }

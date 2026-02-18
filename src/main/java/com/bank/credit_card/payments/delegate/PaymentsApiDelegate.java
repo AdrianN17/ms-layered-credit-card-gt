@@ -7,5 +7,6 @@ import org.springframework.validation.BindingResult;
 
 public interface PaymentsApiDelegate {
     ResponseEntity<Tracking> closePayment(Long paymentId);
+
     ResponseEntity<Tracking> createPayment(Long cardId, PaymentRequest paymentRequest, BindingResult bindingResult);
 }

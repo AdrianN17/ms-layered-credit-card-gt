@@ -8,7 +8,10 @@ import java.util.Optional;
 
 public interface BalanceService extends GenericService<BalanceRequestDto, Long> {
     BalanceRequestDto generateBalanceByCardId(Long cardId);
+
     Optional<Long> getIdOptional(Long cardId);
+
     Long getId(Long cardId);
+
     BalanceResponseDto getBalance(Long balanceId);
 }

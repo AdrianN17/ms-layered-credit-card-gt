@@ -1,7 +1,8 @@
 package com.bank.credit_card.clients.util;
 
-import java.time.LocalDate;
 import lombok.experimental.UtilityClass;
+
+import java.time.LocalDate;
 
 @UtilityClass
 public class CardGeneratorUtility {
