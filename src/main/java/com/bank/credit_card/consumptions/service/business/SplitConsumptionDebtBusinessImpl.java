@@ -1,4 +1,4 @@
-package com.bank.credit_card.consumptions.service;
+package com.bank.credit_card.consumptions.service.business;
 
 import com.bank.credit_card.consumptions.dto.request.ConsumptionRequestDto;
 import com.bank.credit_card.consumptions.dto.request.SplitConsumptionDebtRequestDto;
@@ -22,7 +22,7 @@ import static com.bank.credit_card.generic.util.GenericErrorsUtility.thrownNotFo
 @Slf4j
 @Service
 @AllArgsConstructor
-public class SplitConsumptionDebtServiceImpl implements SplitConsumptionDebtService {
+public class SplitConsumptionDebtBusinessImpl implements SplitConsumptionDebtBusiness {
 
     private final ConsumptionRepository consumptionRepository;
     private final ConsumptionMapper consumptionMapper;

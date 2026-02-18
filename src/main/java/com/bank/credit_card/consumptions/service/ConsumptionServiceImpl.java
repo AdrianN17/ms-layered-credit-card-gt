@@ -2,9 +2,9 @@ package com.bank.credit_card.consumptions.service;
 
 import com.bank.credit_card.consumptions.dto.request.ConsumptionRequestDto;
 import com.bank.credit_card.consumptions.mapper.ConsumptionMapper;
-import com.bank.credit_card.consumptions.policy.DefaultPointsPolicy;
 import com.bank.credit_card.consumptions.repository.ConsumptionRepository;
 import com.bank.credit_card.consumptions.repository.procedure.ConsumptionRepositoryCustom;
+import com.bank.credit_card.consumptions.service.business.PointBusinessImpl;
 import com.bank.credit_card.generic.publish.publisher.GenericEventPublisher;
 import com.bank.credit_card.generic.service.GenericServiceImpl;
 import lombok.AllArgsConstructor;
@@ -26,7 +26,7 @@ public class ConsumptionServiceImpl extends GenericServiceImpl implements Consum
     private final ConsumptionRepository consumptionRepository;
     private final ConsumptionMapper consumptionMapper;
     private final ConsumptionRepositoryCustom consumptionRepositoryCustom;
-    private final DefaultPointsPolicy defaultPointsPolicy;
+    private final PointBusinessImpl defaultPointsPolicy;
     private final GenericEventPublisher genericEventPublisher;
 
     @Override

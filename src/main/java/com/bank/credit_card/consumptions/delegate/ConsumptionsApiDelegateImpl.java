@@ -5,7 +5,7 @@ import com.bank.credit_card.consumptions.mapper.SplitConsumptionDebtMapper;
 import com.bank.credit_card.consumptions.schema.request.ConsumptionRequest;
 import com.bank.credit_card.consumptions.schema.request.SplitConsumptionDebtRequest;
 import com.bank.credit_card.consumptions.service.ConsumptionService;
-import com.bank.credit_card.consumptions.service.SplitConsumptionDebtService;
+import com.bank.credit_card.consumptions.service.business.SplitConsumptionDebtBusiness;
 import com.bank.credit_card.generic.schema.response.Tracking;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +23,7 @@ public class ConsumptionsApiDelegateImpl implements ConsumptionsApiDelegate {
     private final ConsumptionService consumptionService;
     private final SplitConsumptionDebtMapper splitConsumptionDebtMapper;
     private final ConsumptionMapper consumptionMapper;
-    private final SplitConsumptionDebtService splitConsumptionDebtService;
+    private final SplitConsumptionDebtBusiness splitConsumptionDebtBusiness;
 
     @Override
     public ResponseEntity<Tracking> closeConsumption(Long consumptionId) {
@@ -34,7 +34,7 @@ public class ConsumptionsApiDelegateImpl implements ConsumptionsApiDelegate {
     @Override
     public ResponseEntity<Tracking> splitConsumptionDebt(Long consumptionId, SplitConsumptionDebtRequest splitConsumptionDebtRequest, BindingResult bindingResult) {
         thrownBadRequest(bindingResult);
-        splitConsumptionDebtService.split(consumptionId, splitConsumptionDebtMapper.toDto(splitConsumptionDebtRequest));
+        splitConsumptionDebtBusiness.split(consumptionId, splitConsumptionDebtMapper.toDto(splitConsumptionDebtRequest));
         return generateTracking();
     }
 

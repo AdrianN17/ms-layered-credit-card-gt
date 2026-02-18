@@ -1,16 +1,16 @@
-package com.bank.credit_card.consumptions.policy;
+package com.bank.credit_card.consumptions.service.business;
 
 import com.bank.credit_card.clients.commons.CategoryCard;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-@Component
-public class DefaultPointsPolicy implements PointsPolicy {
+@Service
+public class PointBusinessImpl implements PointBusiness {
 
     @Override
-    public int calculatePoints(BigDecimal amount, CategoryCard categoryCard) {
+    public Integer calculatePoints(BigDecimal amount, CategoryCard categoryCard) {
         BigDecimal ratio = switch (categoryCard) {
             case NORMAL -> BigDecimal.valueOf(10);
             case SILVER -> BigDecimal.valueOf(8);

@@ -1,7 +1,7 @@
 package com.bank.credit_card.consumptions.util;
 
 import com.bank.credit_card.clients.commons.CategoryCard;
-import com.bank.credit_card.consumptions.policy.DefaultPointsPolicy;
+import com.bank.credit_card.consumptions.service.business.PointBusinessImpl;
 import com.bank.credit_card.events.model.BonusPoints;
 import com.bank.credit_card.events.model.TransactionEvent;
 import com.bank.credit_card.generic.publish.publisher.GenericEventPublisher;
@@ -46,7 +46,7 @@ public class PublishConsumptionUtility {
     }
 
     public static void publishPoints(GenericEventPublisher genericEventPublisher,
-                                     DefaultPointsPolicy defaultPointsPolicy,
+                                     PointBusinessImpl defaultPointsPolicy,
                                      Optional<Short> categoryId,
                                      Long consumptionId,
                                      Long cardId,
