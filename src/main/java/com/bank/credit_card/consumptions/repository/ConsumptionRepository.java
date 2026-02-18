@@ -22,4 +22,6 @@ public interface ConsumptionRepository extends GenericRepository<ConsumptionEnti
             "WHERE c.cardId = :cardId",
             nativeQuery = true)
     Optional<Short> getTypeCardByCardId(@Param("cardId") Long cardId);
+
+
 }

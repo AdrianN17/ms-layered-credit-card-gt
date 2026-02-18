@@ -22,7 +22,7 @@ public interface BalanceRepository extends GenericRepository<BalanceEntity, Long
     Optional<Long> findLastBalanceIdByCardId(@Param("cardId") Long cardId);
 
     @Query(value = "SELECT TOP 1 " +
-            "facturationDate as facturationDate, crediticialTotalAmount as totalAmount, currency as currency  " +
+            "facturationDate as facturationDate, crediticialTotalAmount as totalAmount, currency as currency, debtTax as debtTax" +
             "FROM cardAccounts WHERE cardId = :cardId AND status = 1 ORDER BY startDate DESC", nativeQuery = true)
     Optional<CardAccountDataProjection> findLastCardAccountDataByCardId(@Param("cardId") Long cardId);
 

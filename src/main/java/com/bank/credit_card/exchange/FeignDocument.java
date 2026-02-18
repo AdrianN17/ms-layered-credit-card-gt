@@ -12,6 +12,6 @@ public interface FeignDocument {
 
     @RequestMapping(method = RequestMethod.GET, value = "/dni?numero=documentId")
     Optional<DocumentResponse> getDocument(
-            @PathVariable("documentId") Long documentId
+            @PathVariable("documentId") String documentId
     );
 }

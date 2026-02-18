@@ -15,4 +15,12 @@ public interface CardAccountRepository extends GenericRepository<CardAccountEnti
             nativeQuery = true)
     Optional<Long> findCardAccountIdByCardId(@Param("cardId") Long cardId);
 
+
+    @Query(value = "SELECT CASE WHEN EXISTS (" +
+            "SELECT 1 FROM CardAccounts ca JOIN Cards c2 ON ca.cardId = c2.cardId " +
+            "WHERE c2.clientId = (SELECT clientId FROM Cards WHERE cardId = :cardId) " +
+            "AND ca.cardStatus = 3 AND ca.status = 1) THEN CAST(1 AS BIT) ELSE CAST(0 AS BIT) END",
+            nativeQuery = true)
+    Boolean existsInDebtCard(@Param("cardId") Long cardId);
+
 }

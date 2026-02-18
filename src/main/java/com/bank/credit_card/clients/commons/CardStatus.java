@@ -6,10 +6,9 @@ import java.util.Optional;
 import static com.bank.credit_card.generic.util.GenericErrorsUtility.thrownBadRequest;
 
 public enum CardStatus {
-    OPERATIVA("OPERATIVA", 1),
-    SOBREGIRADA("SOBREGIRADA", 2),
-    EN_MORA("EN_MORA", 3),
-    BLOQUEADA("BLOQUEADA", 4);
+    OPERATIVE("OPERATIVA", 1),
+    OVERCHARGE("SOBREGIRADA", 2),
+    IN_DEBT("DEUDOR", 3);
 
     private final String code;
     private final int value;

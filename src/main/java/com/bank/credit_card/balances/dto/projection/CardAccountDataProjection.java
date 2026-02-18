@@ -11,6 +11,8 @@ public interface CardAccountDataProjection {
 
     Short getCurrency();
 
+    BigDecimal getDebtTax();
+
     default Currency getCurrencyEnum() {
         return Currency.fromValue(getCurrency());
     }
