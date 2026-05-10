@@ -10,51 +10,6 @@
 
 databaseChangeLog:
   - changeSet:
-      id: 001-create-clients
-      author: liquibase
-      changes:
-        - createTable:
-            tableName: Clients
-            columns:
-              - column:
-                  name: clientId
-                  type: INT
-                  autoIncrement: true
-                  constraints:
-                    primaryKey: true
-                    nullable: false
-              - column:
-                  name: names
-                  type: VARCHAR(255)
-              - column:
-                  name: documentNumber
-                  type: VARCHAR(255)
-              - column:
-                  name: documentType
-                  type: SMALLINT
-              - column:
-                  name: lastNames
-                  type: VARCHAR(255)
-              - column:
-                  name: birthDate
-                  type: DATE
-              - column:
-                  name: createdDate
-                  type: TIMESTAMP
-              - column:
-                  name: updatedDate
-                  type: TIMESTAMP
-              - column:
-                  name: phone
-                  type: VARCHAR(255)
-              - column:
-                  name: email
-                  type: VARCHAR(255)
-              - column:
-                  name: status
-                  type: SMALLINT
-
-  - changeSet:
       id: 002-create-cardEntities
       author: liquibase
       changes:
@@ -63,29 +18,17 @@ databaseChangeLog:
             columns:
               - column:
                   name: cardId
-                  type: INT
-                  autoIncrement: true
+                  type: BIGINT
+                  autoIncrement: false
                   constraints:
                     primaryKey: true
                     nullable: false
               - column:
-                  name: clientId
-                  type: INT
-              - column:
                   name: typeCard
                   type: SMALLINT
               - column:
-                  name: numberCard
-                  type: VARCHAR(255)
-              - column:
                   name: categoryCard
                   type: SMALLINT
-              - column:
-                  name: cvv
-                  type: VARCHAR(10)
-              - column:
-                  name: dateCard
-                  type: VARCHAR(7)
               - column:
                   name: createdDate
                   type: TIMESTAMP
@@ -105,25 +48,24 @@ databaseChangeLog:
             columns:
               - column:
                   name: cardAccountId
-                  type: INT
-                  autoIncrement: true
+                  type: BIGINT
+                  autoIncrement: false
                   constraints:
                     primaryKey: true
                     nullable: false
               - column:
                   name: cardId
-                  type: INT
+                  type: BIGINT
+                  constraints:
+                    nullable: false
               - column:
-                  name: crediticialTotalAmount
+                  name: creditTotal
                   type: DECIMAL(19,2)
               - column:
                   name: debtTax
                   type: DECIMAL(19,2)
               - column:
                   name: currency
-                  type: SMALLINT
-              - column:
-                  name: facturationDate
                   type: SMALLINT
               - column:
                   name: paymentDate
@@ -141,96 +83,7 @@ databaseChangeLog:
                   name: status
                   type: SMALLINT
 
-  - changeSet:
-      id: 004-create-payments
-      author: liquibase
-      changes:
-        - createTable:
-            tableName: Payments
-            columns:
-              - column:
-                  name: paymentId
-                  type: INT
-                  autoIncrement: true
-                  constraints:
-                    primaryKey: true
-                    nullable: false
-              - column:
-                  name: cardId
-                  type: INT
-              - column:
-                  name: amount
-                  type: DECIMAL(19,2)
-              - column:
-                  name: currency
-                  type: SMALLINT
-              - column:
-                  name: paymentDate
-                  type: TIMESTAMP
-              - column:
-                  name: paymentApprobationDate
-                  type: TIMESTAMP
-                  constraints:
-                    nullable: true
-              - column:
-                  name: channel
-                  type: SMALLINT
-              - column:
-                  name: createdDate
-                  type: TIMESTAMP
-              - column:
-                  name: updatedDate
-                  type: TIMESTAMP
-              - column:
-                  name: category
-                  type: SMALLINT
-              - column:
-                  name: status
-                  type: SMALLINT
 
-  - changeSet:
-      id: 005-create-consumptions
-      author: liquibase
-      changes:
-        - createTable:
-            tableName: Consumptions
-            columns:
-              - column:
-                  name: consumptionId
-                  type: INT
-                  autoIncrement: true
-                  constraints:
-                    primaryKey: true
-                    nullable: false
-              - column:
-                  name: cardId
-                  type: INT
-              - column:
-                  name: sellerName
-                  type: VARCHAR(255)
-              - column:
-                  name: currency
-                  type: SMALLINT
-              - column:
-                  name: amount
-                  type: DECIMAL(19,2)
-              - column:
-                  name: consumptionDate
-                  type: TIMESTAMP
-              - column:
-                  name: consumptionApprobationDate
-                  type: TIMESTAMP
-                  constraints:
-                    nullable: true
-              - column:
-                  name: createdDate
-                  type: TIMESTAMP
-              - column:
-                  name: updatedDate
-                  type: TIMESTAMP
-              - column:
-                  name: status
-                  type: SMALLINT
 
   - changeSet:
       id: 006-create-balances
@@ -241,14 +94,19 @@ databaseChangeLog:
             columns:
               - column:
                   name: idBalance
-                  type: INT
-                  autoIncrement: true
+                  type: BIGINT
+                  autoIncrement: false
                   constraints:
                     primaryKey: true
                     nullable: false
               - column:
                   name: cardId
-                  type: INT
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: currency
+                  type: SMALLINT
               - column:
                   name: totalAmount
                   type: DECIMAL(19,2)
@@ -259,17 +117,8 @@ databaseChangeLog:
                   name: oldAmount
                   type: DECIMAL(19,2)
               - column:
-                  name: consumptionAmount
-                  type: DECIMAL(19,2)
-              - column:
-                  name: paymentAmount
-                  type: DECIMAL(19,2)
-              - column:
                   name: exchangeRate
                   type: DECIMAL(19,2)
-              - column:
-                  name: currency
-                  type: SMALLINT
               - column:
                   name: startDate
                   type: DATE
@@ -285,19 +134,45 @@ databaseChangeLog:
               - column:
                   name: status
                   type: SMALLINT
-
-  # Foreign keys: uno por changeSet para mantener orden y poder aplicarlos/revertirlos individualmente
   - changeSet:
-      id: 007-fk-cardEntities-clientid
+      id: 007-create-benefit
       author: liquibase
       changes:
-        - addForeignKeyConstraint:
-            baseTableName: Cards
-            baseColumnNames: clientId
-            referencedTableName: Clients
-            referencedColumnNames: clientId
-            constraintName: fk_cards_clientid
+        - createTable:
+            tableName: Benefits
+            columns:
+              - column:
+                  name: idBenefit
+                  type: BIGINT
+                  autoIncrement: false
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: cardId
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: hasDiscount
+                  type: BIT
+              - column:
+                  name: totalPoints
+                  type: INT
+              - column:
+                  name: multiplierPoints
+                  type: DECIMAL(5,2)
+              - column:
+                  name: createdDate
+                  type: TIMESTAMP
+              - column:
+                  name: updatedDate
+                  type: TIMESTAMP
+              - column:
+                  name: status
+                  type: SMALLINT
 
+  # Foreign keys: uno por changeSet para mantener orden y poder aplicarlos/revertirlos individualmente
   - changeSet:
       id: 008-fk-cardaccounts-cardid
       author: liquibase
@@ -308,28 +183,6 @@ databaseChangeLog:
             referencedTableName: Cards
             referencedColumnNames: cardId
             constraintName: fk_cardaccounts_cardid
-
-  - changeSet:
-      id: 009-fk-payments-cardid
-      author: liquibase
-      changes:
-        - addForeignKeyConstraint:
-            baseTableName: Payments
-            baseColumnNames: cardId
-            referencedTableName: Cards
-            referencedColumnNames: cardId
-            constraintName: fk_payments_cardid
-
-  - changeSet:
-      id: 010-fk-consumptions-cardid
-      author: liquibase
-      changes:
-        - addForeignKeyConstraint:
-            baseTableName: Consumptions
-            baseColumnNames: cardId
-            referencedTableName: Cards
-            referencedColumnNames: cardId
-            constraintName: fk_consumptions_cardid
 
   - changeSet:
       id: 011-fk-balances-cardid
@@ -343,190 +196,13 @@ databaseChangeLog:
             constraintName: fk_balances_cardid
 
   - changeSet:
-      id: 012-create-procedure-clone-card
+      id: 012-fk-benefits-cardid
       author: liquibase
-      dbms: mssql
       changes:
-        - sql:
-            splitStatements: false
-            stripComments: false
-            endDelimiter: GO
-            sql: |-
-              CREATE PROCEDURE usp_clone_card
-                @sourceCardId INT,
-                @numberCard VARCHAR(255),
-                @cvv VARCHAR(10),
-                @dateCard VARCHAR(7),
-                @newCardId INT OUTPUT
-              AS
-              BEGIN
-                SET NOCOUNT ON;
-                BEGIN TRY
-                  BEGIN TRANSACTION;
+        - addForeignKeyConstraint:
+            baseTableName: Benefits
+            baseColumnNames: cardId
+            referencedTableName: Cards
+            referencedColumnNames: cardId
+            constraintName: fk_benefits_cardid
 
-                  -- Verificar existencia de la tarjeta origen
-                  IF NOT EXISTS (SELECT 1 FROM Cards WHERE cardId = @sourceCardId)
-                  BEGIN
-                    RAISERROR('Source card not found',16,1);
-                    ROLLBACK TRANSACTION;
-                    RETURN;
-                  END
-
-                  -- Insertar nueva tarjeta (clon) vinculada al mismo clientId
-                  INSERT INTO Cards (clientId, typeCard, numberCard, categoryCard, cvv, dateCard, cardStatus, createdDate, updatedDate, status)
-                  SELECT clientId, typeCard, @numberCard, categoryCard, @cvv, @dateCard, 1, GETDATE(), NULL, 1
-                  FROM Cards WHERE cardId = @sourceCardId;
-
-                  SET @newCardId = SCOPE_IDENTITY();
-
-                  -- Cerrar tarjeta origen (marcar como inactiva)
-                  UPDATE Cards SET status = 0, updatedDate = GETDATE() WHERE cardId = @sourceCardId;
-
-                  COMMIT TRANSACTION;
-                END TRY
-                BEGIN CATCH
-                  IF XACT_STATE() <> 0
-                    ROLLBACK TRANSACTION;
-                  DECLARE @errMsg NVARCHAR(4000) = ERROR_MESSAGE();
-                  RAISERROR(@errMsg,16,1);
-                  RETURN;
-                END CATCH
-              END
-              GO
-
-  - changeSet:
-      id: 013-create-procedure-clone-cardaccount
-      author: liquibase
-      dbms: mssql
-      changes:
-        - sql:
-            splitStatements: false
-            stripComments: false
-            endDelimiter: GO
-            sql: |-
-              CREATE PROCEDURE usp_clone_cardaccount
-                @sourceCardAccountId INT,
-                @newCardAccountId INT OUTPUT
-              AS
-              BEGIN
-                SET NOCOUNT ON;
-                BEGIN TRY
-                  BEGIN TRANSACTION;
-
-                  -- Verificar existencia de la card account origen
-                  IF NOT EXISTS (SELECT 1 FROM CardAccounts WHERE cardAccountId = @sourceCardAccountId)
-                  BEGIN
-                    RAISERROR('Source cardAccount not found',16,1);
-                    ROLLBACK TRANSACTION;
-                    RETURN;
-                  END
-
-                  -- Insertar nueva CardAccount (clon) vinculada al mismo cardId
-                  INSERT INTO CardAccounts (cardId, crediticialTotalAmount, debtTax, currency, facturationDate, paymentDate, createdDate, updatedDate, status)
-                  SELECT cardId, crediticialTotalAmount, debtTax, currency, facturationDate, paymentDate, GETDATE(), NULL, 1
-                  FROM CardAccounts WHERE cardAccountId = @sourceCardAccountId;
-
-                  SET @newCardAccountId = SCOPE_IDENTITY();
-
-                  -- Cerrar cardAccount origen (marcar como inactiva)
-                  UPDATE CardAccounts SET status = 0, updatedDate = GETDATE() WHERE cardAccountId = @sourceCardAccountId;
-
-                  COMMIT TRANSACTION;
-                END TRY
-                BEGIN CATCH
-                  IF XACT_STATE() <> 0
-                    ROLLBACK TRANSACTION;
-                  DECLARE @errMsg NVARCHAR(4000) = ERROR_MESSAGE();
-                  RAISERROR(@errMsg,16,1);
-                  RETURN;
-                END CATCH
-              END
-              GO
-
-  - changeSet:
-      id: 014-update-approbation-payments
-      author: liquibase
-      dbms: mssql
-      changes:
-        - sql:
-            splitStatements: false
-            stripComments: false
-            endDelimiter: GO
-            sql: |-
-              CREATE PROCEDURE usp_update_payments_approbation_date
-                @targetDate DATE,
-                @approbationDate DATETIME,
-                @updatedCount INT OUTPUT
-              AS
-              BEGIN
-                SET NOCOUNT ON;
-                DECLARE @start DATETIME = CAST(@targetDate AS DATETIME);
-                DECLARE @end DATETIME = DATEADD(DAY, 1, @start);
-
-                BEGIN TRY
-                  BEGIN TRANSACTION;
-
-                  UPDATE Payments
-                  SET paymentApprobationDate = @approbationDate,
-                      updatedDate = GETDATE()
-                  WHERE paymentApprobationDate IS NULL
-                    AND paymentDate >= @start
-                    AND paymentDate < @end;
-
-                  SET @updatedCount = @@ROWCOUNT;
-
-                  COMMIT TRANSACTION;
-                END TRY
-                BEGIN CATCH
-                  IF XACT_STATE() <> 0
-                    ROLLBACK TRANSACTION;
-                  DECLARE @errMsg NVARCHAR(4000) = ERROR_MESSAGE();
-                  RAISERROR(@errMsg,16,1);
-                  RETURN;
-                END CATCH
-              END
-              GO
-
-  - changeSet:
-      id: 015-update-approbation-consumptions
-      author: liquibase
-      dbms: mssql
-      changes:
-        - sql:
-            splitStatements: false
-            stripComments: false
-            endDelimiter: GO
-            sql: |-
-              CREATE PROCEDURE usp_update_consumptions_approbation_date
-                @targetDate DATE,
-                @approbationDate DATETIME,
-                @updatedCount INT OUTPUT
-              AS
-              BEGIN
-                SET NOCOUNT ON;
-                DECLARE @start DATETIME = CAST(@targetDate AS DATETIME);
-                DECLARE @end DATETIME = DATEADD(DAY, 1, @start);
-
-                BEGIN TRY
-                  BEGIN TRANSACTION;
-
-                  UPDATE Consumptions
-                  SET consumptionApprobationDate = @approbationDate,
-                      updatedDate = GETDATE()
-                  WHERE consumptionApprobationDate IS NULL
-                    AND consumptionDate >= @start
-                    AND consumptionDate < @end;
-
-                  SET @updatedCount = @@ROWCOUNT;
-
-                  COMMIT TRANSACTION;
-                END TRY
-                BEGIN CATCH
-                  IF XACT_STATE() <> 0
-                    ROLLBACK TRANSACTION;
-                  DECLARE @errMsg NVARCHAR(4000) = ERROR_MESSAGE();
-                  RAISERROR(@errMsg,16,1);
-                  RETURN;
-                END CATCH
-              END
-              GO
