@@ -1,8 +1,8 @@
 package com.bank.credit_card.card.controller;
 
-import com.bank.credit_card.aop.annotation.TransactionalUseCase;
 import com.bank.credit_card.card.schema.request.InitiateCardRequest;
 import com.bank.credit_card.card.schema.response.RetrieveBalance200Response;
+import com.bank.credit_card.generic.aop.annotation.TransactionalUseCase;
 import com.bank.credit_card.generic.schema.response.DefaultResponse2xx;
 import com.bank.credit_card.generic.schema.response.DefaultResponse4xx;
 import com.bank.credit_card.generic.schema.response.Long202Response;

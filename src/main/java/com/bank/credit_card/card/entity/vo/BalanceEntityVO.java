@@ -1,8 +1,8 @@
 package com.bank.credit_card.card.entity.vo;
 
-import com.bank.credit_card.domain.base.enums.CurrencyEnum;
-import com.bank.credit_card.infraestructure.persistence.db.generic.converter.CurrencyEnumConverter;
-import com.bank.credit_card.infraestructure.persistence.db.generic.entity.GenericEntity;
+import com.bank.credit_card.generic.converter.CurrencyEnumConverter;
+import com.bank.credit_card.generic.entity.GenericEntity;
+import com.bank.credit_card.generic.enums.CurrencyEnum;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;

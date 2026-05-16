@@ -1,6 +1,6 @@
 package com.bank.credit_card.generic.converter;
 
-import com.bank.credit_card.domain.base.enums.StatusEnum;
+import com.bank.credit_card.generic.enums.StatusEnum;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 

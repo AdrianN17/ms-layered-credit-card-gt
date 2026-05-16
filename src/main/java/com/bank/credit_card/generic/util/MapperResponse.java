@@ -1,6 +1,12 @@
 package com.bank.credit_card.generic.util;
 
-import com.bank.credit_card.infraestructure.web.api.schema.response.*;
+import com.bank.credit_card.card.schema.response.CardResponse;
+import com.bank.credit_card.card.schema.response.RetrieveBalance200Response;
+import com.bank.credit_card.consumption.schema.response.ConsumptionResponse;
+import com.bank.credit_card.consumption.schema.response.RetrieveConsumption200Response;
+import com.bank.credit_card.generic.schema.response.*;
+import com.bank.credit_card.payment.schema.response.PaymentResponse;
+import com.bank.credit_card.payment.schema.response.RetrievePayment200Response;
 import lombok.experimental.UtilityClass;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

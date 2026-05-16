@@ -1,9 +1,9 @@
 package com.bank.credit_card.consumption.controller;
 
-import com.bank.credit_card.aop.annotation.TransactionalUseCase;
 import com.bank.credit_card.consumption.schema.request.ExchangeConsumptionRequest;
 import com.bank.credit_card.consumption.schema.request.InitiateConsumptionRequest;
 import com.bank.credit_card.consumption.schema.response.RetrieveConsumption200Response;
+import com.bank.credit_card.generic.aop.annotation.TransactionalUseCase;
 import com.bank.credit_card.generic.schema.response.DefaultResponse2xx;
 import com.bank.credit_card.generic.schema.response.DefaultResponse4xx;
 import com.bank.credit_card.generic.schema.response.UUID202Response;

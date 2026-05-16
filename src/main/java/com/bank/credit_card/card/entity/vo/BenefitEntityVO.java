@@ -1,6 +1,6 @@
 package com.bank.credit_card.card.entity.vo;
 
-import com.bank.credit_card.infraestructure.persistence.db.generic.entity.GenericEntity;
+import com.bank.credit_card.generic.entity.GenericEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
