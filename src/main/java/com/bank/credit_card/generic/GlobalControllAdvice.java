@@ -87,10 +87,15 @@ public class GlobalControllAdvice {
 
     // ── BAD REQUEST (400) ─────────────────────────────────────────────────────
 
-    @ExceptionHandler(BadRequestException.class)
+    @ExceptionHandler({
+            BadRequestException.class,
+            NullPointerException.class,
+            IllegalArgumentException.class
+    })
     public ResponseEntity<Map<String, Object>> handleBadRequestException(
-            BadRequestException ex, WebRequest request) {
-        return buildResponse(HttpStatus.BAD_REQUEST, "BAD_REQUEST", ex.getMessage(), request);
+            RuntimeException ex, WebRequest request) {
+        String message = ex.getMessage() != null ? ex.getMessage() : "Bad request";
+        return buildResponse(HttpStatus.BAD_REQUEST, "BAD_REQUEST", message, request);
     }
 
     // ── UNAUTHORIZED (401) ────────────────────────────────────────────────────
@@ -125,22 +130,6 @@ public class GlobalControllAdvice {
         return buildResponse(HttpStatus.BAD_GATEWAY, "BAD_GATEWAY", ex.getMessage(), request);
     }
 
-    // ── NullPointerException (400) - Para requireNonNull ─────────────────────
-
-    @ExceptionHandler(NullPointerException.class)
-    public ResponseEntity<Map<String, Object>> handleNullPointerException(
-            NullPointerException ex, WebRequest request) {
-        return buildResponse(HttpStatus.BAD_REQUEST, "NULL_VALUE",
-                ex.getMessage() != null ? ex.getMessage() : "Required value is null", request);
-    }
-
-    // ── IllegalArgumentException (400) - Para valueOf/ofCode ─────────────────
-
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<Map<String, Object>> handleIllegalArgumentException(
-            IllegalArgumentException ex, WebRequest request) {
-        return buildResponse(HttpStatus.BAD_REQUEST, "INVALID_ARGUMENT", ex.getMessage(), request);
-    }
 
     // ── Fallback general (500) ────────────────────────────────────────────────
 
