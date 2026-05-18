@@ -85,6 +85,36 @@ public class GlobalControllAdvice {
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
 
+    // ── Validación manual con BindingResult (BAD REQUEST → 400) ──────────────
+
+    @ExceptionHandler(RequestValidationException.class)
+    public ResponseEntity<Map<String, Object>> handleRequestValidationException(
+            RequestValidationException ex, WebRequest request) {
+
+        List<Map<String, String>> fieldErrors = ex.getBindingResult().getFieldErrors()
+                .stream()
+                .map(fe -> {
+                    Map<String, String> error = new HashMap<>();
+                    error.put("field", fe.getField());
+                    error.put("message", fe.getDefaultMessage());
+                    error.put("rejectedValue",
+                            fe.getRejectedValue() != null ? fe.getRejectedValue().toString() : "null");
+                    return error;
+                })
+                .toList();
+
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("timestamp", LocalDateTime.now().toString());
+        body.put("status", HttpStatus.BAD_REQUEST.value());
+        body.put("error", HttpStatus.BAD_REQUEST.getReasonPhrase());
+        body.put("code", "VALIDATION_ERROR");
+        body.put("message", "Request validation failed");
+        body.put("fieldErrors", fieldErrors);
+        body.put("path", request.getDescription(false).replace("uri=", ""));
+
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    }
+
     // ── BAD REQUEST (400) ─────────────────────────────────────────────────────
 
     @ExceptionHandler({
