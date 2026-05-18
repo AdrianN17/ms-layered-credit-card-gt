@@ -16,6 +16,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.BindingResult;
 
+import static com.bank.credit_card.generic.util.BindingValidator.validate;
+
 @Component
 @AllArgsConstructor
 public class CardDelegateImpl implements CardDelegate {
@@ -31,6 +33,7 @@ public class CardDelegateImpl implements CardDelegate {
     @Override
     public ResponseEntity<Long202Response> initiateCard(InitiateCardRequest initiateCardRequest,
                                                          BindingResult bindingResult) {
+        validate(bindingResult);
         var dto = cardMapper.toDto(initiateCardRequest.getData());
         Long id = cardService.save(dto);
 

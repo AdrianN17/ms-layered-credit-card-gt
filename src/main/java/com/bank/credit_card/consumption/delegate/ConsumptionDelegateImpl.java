@@ -22,6 +22,7 @@ import java.time.LocalDate;
 import java.util.UUID;
 
 import static com.bank.credit_card.balance.enums.BalanceUseCaseEnum.CONSUMPTION;
+import static com.bank.credit_card.generic.util.BindingValidator.validate;
 
 @Component
 @AllArgsConstructor
@@ -38,7 +39,7 @@ public class ConsumptionDelegateImpl implements ConsumptionDelegate {
     public ResponseEntity<UUID202Response> initiateConsumption(Long cardId,
                                                                 InitiateConsumptionRequest initiateConsumptionRequest,
                                                                 BindingResult bindingResult) {
-
+        validate(bindingResult);
         var data = initiateConsumptionRequest.getData();
         var dto = consumptionMapper.toDto(data, cardId);
         var dtoCard = cardService.find(cardId);
@@ -81,6 +82,7 @@ public class ConsumptionDelegateImpl implements ConsumptionDelegate {
                                                                     UUID consumptionId,
                                                                     ExchangeConsumptionRequest exchangeConsumptionRequest,
                                                                     BindingResult bindingResult) {
+        validate(bindingResult);
         var dtoCard = cardService.find(cardId);
 
         var consumption = consumptionService.get(consumptionId);

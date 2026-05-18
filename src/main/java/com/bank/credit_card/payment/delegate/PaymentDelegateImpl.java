@@ -19,6 +19,7 @@ import java.time.LocalDate;
 import java.util.UUID;
 
 import static com.bank.credit_card.balance.enums.BalanceUseCaseEnum.PAYMENT;
+import static com.bank.credit_card.generic.util.BindingValidator.validate;
 import static java.util.Objects.isNull;
 
 @Component
@@ -36,6 +37,7 @@ public class PaymentDelegateImpl implements PaymentDelegate {
     public ResponseEntity<UUID202Response> initiatePayment(Long cardId,
                                                             InitiatePaymentRequest initiatePaymentRequest,
                                                             BindingResult bindingResult) {
+        validate(bindingResult);
 
         var data = initiatePaymentRequest.getData();
 
