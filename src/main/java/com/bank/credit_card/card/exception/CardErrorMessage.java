@@ -12,4 +12,6 @@ public interface CardErrorMessage {
     String INCORRECT_CARD_STATUS_VALUE = "Incorrect card status value";
 
     String IN_DEBT_CARD = "No se puede pagar una tarjeta que esta en deuda";
+
+    String ACCOUNT_NOT_NULL = "The card account cannot be null.";
 }

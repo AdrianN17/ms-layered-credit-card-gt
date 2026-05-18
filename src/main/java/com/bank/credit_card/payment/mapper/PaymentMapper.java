@@ -18,6 +18,10 @@ import org.springframework.stereotype.Component;
 
 import java.time.ZoneOffset;
 import java.util.Arrays;
+import java.util.Objects;
+
+import static com.bank.credit_card.payment.exception.PaymentErrorMessage.PAYMENT_APPROBATION_DATE_NOT_NULL;
+import static com.bank.credit_card.payment.exception.PaymentErrorMessage.PAYMENT_DATE_NOT_NULL;
 
 @Component
 @AllArgsConstructor
@@ -28,10 +32,10 @@ public class PaymentMapper implements EntityMapper<PaymentRequestDto, PaymentEnt
 
     public PaymentRequestDto toDto(PaymentRequest request, Long cardId) {
         return PaymentRequestDto.of(
-                ChannelPaymentEnum.valueOf(request.getChannel()),
-                CurrencyEnum.valueOf(request.getCurrency()),
+                ChannelPaymentEnum.ofCode(request.getChannel()),
+                CurrencyEnum.ofCode(request.getCurrency()),
                 request.getAmount(),
-                CategoryPaymentEnum.valueOf(request.getCategory()),
+                CategoryPaymentEnum.ofCode(request.getCategory()),
                 request.getPointsUsed(),
                 cardId
         );
@@ -76,8 +80,8 @@ public class PaymentMapper implements EntityMapper<PaymentRequestDto, PaymentEnt
                 dto.currency().name(),
                 dto.amount(),
                 dto.category().name(),
-                dto.paymentDate().atOffset(ZoneOffset.UTC),
-                dto.paymentApprobationDate().atOffset(ZoneOffset.UTC)
+                Objects.requireNonNull(dto.paymentDate(),             PAYMENT_DATE_NOT_NULL).atOffset(ZoneOffset.UTC),
+                Objects.requireNonNull(dto.paymentApprobationDate(),  PAYMENT_APPROBATION_DATE_NOT_NULL).atOffset(ZoneOffset.UTC)
         );
     }
 

@@ -1,6 +1,7 @@
 package com.bank.credit_card.benefit.exception;
 
 public interface BenefitErrorMessage {
+    String BENEFIT_NOT_FOUND = "Benefit not found";
     String BENEFIT_NOT_SAVED = "Benefit not saved";
     String CATEGORY_NOT_NULL = "Categoria no debe ser nula";
     String POINT_NOT_NULL = "Puntos no debe ser nulo";

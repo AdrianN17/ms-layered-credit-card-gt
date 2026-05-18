@@ -15,6 +15,10 @@ import org.springframework.stereotype.Component;
 
 import java.time.ZoneOffset;
 import java.util.Arrays;
+import java.util.Objects;
+
+import static com.bank.credit_card.consumption.exception.ConsumptionErrorMessage.CONSUMPTION_APPROBATION_DATE_NOT_NULL;
+import static com.bank.credit_card.consumption.exception.ConsumptionErrorMessage.CONSUMPTION_DATE_NOT_NULL;
 
 @Component
 @AllArgsConstructor
@@ -25,7 +29,7 @@ public class ConsumptionMapper implements ResponseMapper<ConsumptionResponseDto,
     public ConsumptionRequestDto toDto(ConsumptionRequest request,  Long cardId) {
         return ConsumptionRequestDto.of(
                 request.getSellerName(),
-                CurrencyEnum.valueOf(request.getCurrency()),
+                CurrencyEnum.ofCode(request.getCurrency()),
                 request.getAmount(),
                 cardId
         );
@@ -68,8 +72,8 @@ public class ConsumptionMapper implements ResponseMapper<ConsumptionResponseDto,
                 dto.sellerName(),
                 dto.currency().name(),
                 dto.amount(),
-                dto.consumptionDate() != null ? dto.consumptionDate().atOffset(ZoneOffset.UTC) : null,
-                dto.consumptionApprobationDate() != null ? dto.consumptionApprobationDate().atOffset(ZoneOffset.UTC) : null
+                Objects.requireNonNull(dto.consumptionDate(),            CONSUMPTION_DATE_NOT_NULL).atOffset(ZoneOffset.UTC),
+                Objects.requireNonNull(dto.consumptionApprobationDate(), CONSUMPTION_APPROBATION_DATE_NOT_NULL).atOffset(ZoneOffset.UTC)
         );
     }
 }

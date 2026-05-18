@@ -21,4 +21,11 @@ public enum CurrencyEnum implements ValuedEnum {
                 .filter(c -> c.value == value)
                 .findFirst();
     }
+
+    public static CurrencyEnum ofCode(String code) {
+        return Arrays.stream(values())
+                .filter(c -> c.code.equalsIgnoreCase(code))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Invalid CurrencyEnum code: " + code));
+    }
 }

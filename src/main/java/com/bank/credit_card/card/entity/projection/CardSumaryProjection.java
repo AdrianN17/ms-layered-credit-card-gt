@@ -4,8 +4,8 @@ package com.bank.credit_card.card.entity.projection;
 import com.bank.credit_card.card.enums.CardStatusEnum;
 import com.bank.credit_card.card.enums.CategoryCardEnum;
 import com.bank.credit_card.card.enums.TypeCardEnum;
-import com.bank.credit_card.card.exception.CardPersistanceException;
 import com.bank.credit_card.generic.enums.CurrencyEnum;
+import com.bank.credit_card.generic.exception.BadRequestException;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -46,21 +46,21 @@ public interface CardSumaryProjection {
 
     default TypeCardEnum getTypeCardEnum() {
         return TypeCardEnum.ofValue(getTypeCard())
-                .orElseThrow(() -> new CardPersistanceException(INCORRECT_TYPE_CARD_VALUE));
+                .orElseThrow(() -> new BadRequestException(INCORRECT_TYPE_CARD_VALUE));
     }
 
     default CategoryCardEnum getCategoryCardEnum() {
         return CategoryCardEnum.ofValue(getCategoryCard())
-                .orElseThrow(() -> new CardPersistanceException(INCORRECT_CATEGORY_VALUE));
+                .orElseThrow(() -> new BadRequestException(INCORRECT_CATEGORY_VALUE));
     }
 
     default CurrencyEnum getCurrencyEnum() {
         return CurrencyEnum.ofValue(getCurrency())
-                .orElseThrow(() -> new CardPersistanceException(INCORRECT_CURRENCY_VALUE));
+                .orElseThrow(() -> new BadRequestException(INCORRECT_CURRENCY_VALUE));
     }
 
     default CardStatusEnum getCardStatusEnum() {
         return CardStatusEnum.ofValue(getCardStatus())
-                .orElseThrow(() -> new CardPersistanceException(INCORRECT_CARD_STATUS_VALUE));
+                .orElseThrow(() -> new BadRequestException(INCORRECT_CARD_STATUS_VALUE));
     }
 }

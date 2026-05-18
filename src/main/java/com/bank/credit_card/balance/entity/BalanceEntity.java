@@ -20,6 +20,14 @@ import java.time.LocalDate;
 @SuperBuilder
 @Entity
 @Table(name = "balances")
+@NamedStoredProcedureQuery(
+        name = "BalanceEntity.updateCardStatus",
+        procedureName = "sp_UpdateCardStatus",
+        parameters = {
+                @StoredProcedureParameter(name = "cardId",         mode = ParameterMode.IN, type = Long.class),
+                @StoredProcedureParameter(name = "overchargeLimit", mode = ParameterMode.IN, type = java.math.BigDecimal.class)
+        }
+)
 public class BalanceEntity extends GenericEntity {
 
     @Id

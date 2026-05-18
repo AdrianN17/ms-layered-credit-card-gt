@@ -1,8 +1,9 @@
 package com.bank.credit_card.balance.usecase;
 
 import com.bank.credit_card.balance.entity.BalanceEntity;
-import com.bank.credit_card.balance.exception.BalancePersistanceException;
 import com.bank.credit_card.balance.repository.BalanceJpaRepository;
+import com.bank.credit_card.generic.exception.BadRequestException;
+import com.bank.credit_card.generic.exception.UnprocessableEntityException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -22,14 +23,14 @@ public class PaymentBalanceUseCase implements BalanceUseCase {
 
     @Override
     public void apply(BigDecimal amount) {
-        isNotNull(amount, new BalancePersistanceException(PAYMENT_CANNOT_BE_NULL));
+        isNotNull(amount, new BadRequestException(PAYMENT_CANNOT_BE_NULL));
 
         BigDecimal available    = entity.getAvailableAmount();
         BigDecimal total        = entity.getTotalAmount();
         BigDecimal newAvailable = available.add(amount);
 
         isNotConditional(newAvailable.compareTo(total) > 0,
-                new BalancePersistanceException(PAYMENT_CATEGORY_EXCEED_LIKE
+                new UnprocessableEntityException(PAYMENT_CATEGORY_EXCEED_LIKE
                         + newAvailable.subtract(total)));
 
         entity.setAvailableAmount(newAvailable);
@@ -38,7 +39,7 @@ public class PaymentBalanceUseCase implements BalanceUseCase {
 
     @Override
     public void cancel(BigDecimal amount) {
-        isNotNull(amount, new BalancePersistanceException(PAYMENT_CANNOT_BE_NULL));
+        isNotNull(amount, new BadRequestException(PAYMENT_CANNOT_BE_NULL));
 
         BigDecimal available = entity.getAvailableAmount();
 

@@ -10,20 +10,26 @@ import com.bank.credit_card.generic.mapper.EntityMapper;
 import com.bank.credit_card.generic.mapper.RequestMapper;
 import org.springframework.stereotype.Component;
 
+import java.util.Objects;
+
+import static com.bank.credit_card.card.exception.CardErrorMessage.ACCOUNT_NOT_NULL;
+
 @Component
 public class CardMapper implements RequestMapper<CardRequest, CardDtoRequest>,
                                    EntityMapper<CardDtoRequest, CardEntity> {
 
-    public CardDtoRequest toDto(CardRequest request)
-    {
+    public CardDtoRequest toDto(CardRequest request) {
+
+        var account = Objects.requireNonNull(request.getAccount(), ACCOUNT_NOT_NULL);
+
         return new CardDtoRequest(
-            TypeCardEnum.valueOf(request.getTypeCard()),
-            CategoryCardEnum.valueOf(request.getCategoryCard()),
-            CurrencyEnum.valueOf(request.getAccount().getCurrency()),
-            request.getAccount().getCreditTotal(),
-            request.getAccount().getDebtTax(),
-            Short.valueOf(request.getAccount().getPaymentDate())
-            );
+            TypeCardEnum.ofCode(request.getTypeCard()),
+            CategoryCardEnum.ofCode(request.getCategoryCard()),
+            CurrencyEnum.ofCode(account.getCurrency()),
+            account.getCreditTotal(),
+            account.getDebtTax(),
+            Short.valueOf(account.getPaymentDate())
+        );
     }
 
     public CardEntity toEntity(CardDtoRequest dto) {
@@ -33,4 +39,3 @@ public class CardMapper implements RequestMapper<CardRequest, CardDtoRequest>,
                 .build();
     }
 }
-

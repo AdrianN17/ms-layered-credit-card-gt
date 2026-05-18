@@ -1,8 +1,8 @@
 package com.bank.credit_card.balance.usecase;
 
 import com.bank.credit_card.balance.entity.BalanceEntity;
-import com.bank.credit_card.balance.exception.BalancePersistanceException;
 import com.bank.credit_card.balance.repository.BalanceJpaRepository;
+import com.bank.credit_card.generic.exception.UnprocessableEntityException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -26,7 +26,7 @@ public class ConsumptionBalanceUseCase implements BalanceUseCase {
         BigDecimal newAvailable = available.subtract(amount);
 
         isNotConditional(newAvailable.compareTo(total) > 0,
-                new BalancePersistanceException(AMOUNT_EXCEED_CREDIT_LIMIT));
+                new UnprocessableEntityException(AMOUNT_EXCEED_CREDIT_LIMIT));
 
         entity.setAvailableAmount(newAvailable);
         balanceJpaRepository.save(entity);
@@ -46,4 +46,3 @@ public class ConsumptionBalanceUseCase implements BalanceUseCase {
         return this;
     }
 }
-

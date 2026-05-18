@@ -1,6 +1,7 @@
 package com.bank.credit_card.payment.exception;
 
 public interface PaymentErrorMessage {
+    String PAYMENT_NOT_FOUND = "Payment not found";
     String PAYMENT_CATEGORY_NOT_NULL = "La categoria del pay no puede ser nula";
     String PAYMENT_CURRENCY_NOT_NULL = "La moneda del pay no puede ser nula";
     String PAYMENT_AMOUNT_NOT_NULL = "El monto del pay no puede ser nulo";
@@ -19,4 +20,6 @@ public interface PaymentErrorMessage {
     String MINIMUN_PAYMENT_MUST_BE_THIRD_PART_OF_AVAILABLE = "The minimum payment must be a third part of the available balance.";
 
     String DATE_NOT_WITHIN_RANGE = "La fecha no está dentro del rango especificado.";
+    String PAYMENT_DATE_NOT_NULL = "Payment date cannot be null";
+    String PAYMENT_APPROBATION_DATE_NOT_NULL = "Payment approbation date cannot be null";
 }

@@ -24,4 +24,11 @@ public enum TypeCardEnum implements ValuedEnum {
                 .filter(c -> c.value == value)
                 .findFirst();
     }
+
+    public static TypeCardEnum ofCode(String code) {
+        return Arrays.stream(values())
+                .filter(c -> c.code.equalsIgnoreCase(code))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Invalid TypeCardEnum code: " + code));
+    }
 }

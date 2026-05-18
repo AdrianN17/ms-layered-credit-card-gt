@@ -23,4 +23,11 @@ public enum CardStatusEnum implements ValuedEnum {
                 .filter(c -> c.value == value)
                 .findFirst();
     }
+
+    public static CardStatusEnum ofCode(String code) {
+        return Arrays.stream(values())
+                .filter(c -> c.code.equalsIgnoreCase(code))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Invalid CardStatusEnum code: " + code));
+    }
 }

@@ -10,4 +10,6 @@ public interface ConsumptionErrorMessage {
     String SELLER_NAME_CANNOT_BE_NULL = "The seller name cannot be null.";
     String CONSUMPTION_SPLIT = " - SPLIT";
     String CONSUMPTION_NOT_FOUND = "Consumption not found";
+    String CONSUMPTION_DATE_NOT_NULL = "Consumption date cannot be null";
+    String CONSUMPTION_APPROBATION_DATE_NOT_NULL = "Consumption approbation date cannot be null";
 }

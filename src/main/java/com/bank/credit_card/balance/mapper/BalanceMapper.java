@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 
-import static com.bank.credit_card.balance.constants.DateRangeConstant.NEXT_MONTH;
+import static com.bank.credit_card.balance.constant.DateRangeConstant.NEXT_MONTH;
 
 @Component
 public class BalanceMapper implements EntityMapper<BalanceDtoRequest, BalanceEntity> {
@@ -17,7 +17,7 @@ public class BalanceMapper implements EntityMapper<BalanceDtoRequest, BalanceEnt
     public BalanceDtoRequest toDto(CardRequestAccount request, Long cardId)
     {
         return new BalanceDtoRequest(
-                CurrencyEnum.valueOf(request.getCurrency()),
+                CurrencyEnum.ofCode(request.getCurrency()),
                 cardId,
                 request.getCreditTotal(),
                 Short.valueOf(request.getPaymentDate())

@@ -215,7 +215,8 @@ databaseChangeLog:
             procedureName: sp_UpdateCardStatus
             procedureText: |
               CREATE OR ALTER PROCEDURE sp_UpdateCardStatus
-                  @cardId BIGINT
+                  @cardId        BIGINT,
+                  @overchargeLimit DECIMAL(5,4)
               AS
               BEGIN
                   SET NOCOUNT ON;
@@ -225,7 +226,7 @@ databaseChangeLog:
 
                   UPDATE ca
                   SET    ca.cardStatus = CASE
-                             WHEN b.availableAmount <= b.totalAmount * 0.10
+                             WHEN b.availableAmount <= b.totalAmount * @overchargeLimit
                              THEN 2   -- CardStatusEnum.OVERCHARGE  (usó >= 90% de su línea)
                              ELSE 1   -- CardStatusEnum.OPERATIVE
                          END

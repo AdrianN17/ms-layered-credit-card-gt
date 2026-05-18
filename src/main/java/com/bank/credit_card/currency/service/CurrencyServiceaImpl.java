@@ -1,14 +1,14 @@
 package com.bank.credit_card.currency.service;
 
-import com.bank.credit_card.currency.exception.ConverterWSClientException;
 import com.bank.credit_card.currency.repository.CurrencyJsonServerWSRepository;
 import com.bank.credit_card.generic.enums.CurrencyEnum;
+import com.bank.credit_card.generic.exception.BadGatewayException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 
-import static com.bank.credit_card.currency.constant.CurrencyErrorMessage.CURRENCY_NOT_FOUND;
+import static com.bank.credit_card.currency.exception.CurrencyErrorMessage.CURRENCY_NOT_FOUND;
 
 
 @Service
@@ -31,7 +31,7 @@ public class CurrencyServiceaImpl implements CurrencyService {
         {
             var currency = currencyJsonServerWSRepository.findByCurrency(currencyCard)
                     .orElseThrow(() ->
-                            new ConverterWSClientException(
+                            new BadGatewayException(
                                     String.format(CURRENCY_NOT_FOUND, currencyCard)));
 
             return currency.value().multiply(amount);

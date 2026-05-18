@@ -3,9 +3,10 @@ package com.bank.credit_card.consumption.service;
 import com.bank.credit_card.consumption.dto.ConsumptionRequestDto;
 import com.bank.credit_card.consumption.dto.ConsumptionResponseDto;
 import com.bank.credit_card.consumption.entity.ConsumptionEntity;
-import com.bank.credit_card.consumption.exception.ConsumptionPersistanceException;
 import com.bank.credit_card.consumption.mapper.ConsumptionMapper;
 import com.bank.credit_card.consumption.repository.ConsumptionRepository;
+import com.bank.credit_card.generic.exception.BadRequestException;
+import com.bank.credit_card.generic.exception.UnprocessableEntityException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -46,12 +47,12 @@ public class ConsumptionServiceImpl implements ConsumptionService {
     @Override
     public List<ConsumptionRequestDto> split(Integer quantity, String cardId, UUID consumptionId) {
         ConsumptionEntity entity = consumptionRepository.findById(consumptionId)
-                .orElseThrow(() -> new ConsumptionPersistanceException(CONSUMPTION_NOT_FOUND));
+                .orElseThrow(() -> new UnprocessableEntityException(CONSUMPTION_NOT_FOUND));
 
         isNotConditional(isNull(entity.getConsumptionApprobationDate()),
-                new ConsumptionPersistanceException(CONSUMPTION_IS_STILL_IN_APPROBATION));
+                new UnprocessableEntityException(CONSUMPTION_IS_STILL_IN_APPROBATION));
 
-        isNotNull(quantity, new ConsumptionPersistanceException(QUANTITY_CANNOT_BE_NULL));
+        isNotNull(quantity, new BadRequestException(QUANTITY_CANNOT_BE_NULL));
 
         BigDecimal splitAmount = entity.getAmount()
                 .divide(BigDecimal.valueOf(quantity), 2, RoundingMode.HALF_UP);
@@ -72,10 +73,10 @@ public class ConsumptionServiceImpl implements ConsumptionService {
     @Override
     public void delete(UUID id) {
         ConsumptionEntity entity = consumptionRepository.findById(id)
-                .orElseThrow(() -> new ConsumptionPersistanceException(CONSUMPTION_NOT_FOUND));
+                .orElseThrow(() -> new UnprocessableEntityException(CONSUMPTION_NOT_FOUND));
 
         isNotConditional(isNull(entity.getConsumptionApprobationDate()),
-                new ConsumptionPersistanceException(CONSUMPTION_IS_STILL_IN_APPROBATION));
+                new UnprocessableEntityException(CONSUMPTION_IS_STILL_IN_APPROBATION));
 
         consumptionRepository.softDelete(id);
     }
@@ -83,7 +84,7 @@ public class ConsumptionServiceImpl implements ConsumptionService {
     @Override
     public ConsumptionResponseDto get(UUID id) {
         ConsumptionEntity entity = consumptionRepository.findById(id)
-                .orElseThrow(() -> new ConsumptionPersistanceException(CONSUMPTION_NOT_FOUND));
+                .orElseThrow(() -> new UnprocessableEntityException(CONSUMPTION_NOT_FOUND));
 
         return consumptionMapper.toDto(entity);
     }

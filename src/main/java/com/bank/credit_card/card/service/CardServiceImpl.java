@@ -5,7 +5,6 @@ import com.bank.credit_card.card.dto.CardDtoResponse;
 import com.bank.credit_card.card.entity.CardEntity;
 import com.bank.credit_card.card.enums.CardStatusEnum;
 import com.bank.credit_card.card.enums.CategoryCardEnum;
-import com.bank.credit_card.card.exception.CardPersistanceException;
 import com.bank.credit_card.card.mapper.CardAccountMapper;
 import com.bank.credit_card.card.mapper.CardMapper;
 import com.bank.credit_card.card.mapper.CardSummaryMapper;
@@ -13,6 +12,7 @@ import com.bank.credit_card.card.repository.CardAccountJpaRepository;
 import com.bank.credit_card.card.repository.CardJpaRepository;
 import com.bank.credit_card.card.repository.vo.CardVOJpaRepository;
 import com.bank.credit_card.generic.enums.StatusEnum;
+import com.bank.credit_card.generic.exception.UnprocessableEntityException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +21,7 @@ import java.util.Objects;
 
 import static com.bank.credit_card.benefit.constant.BenefitConstant.*;
 import static com.bank.credit_card.card.enums.CardStatusEnum.IN_DEBT;
+import static com.bank.credit_card.card.exception.CardErrorMessage.CARD_NOT_FOUND;
 import static com.bank.credit_card.card.exception.CardErrorMessage.IN_DEBT_CARD;
 import static com.bank.credit_card.generic.util.Validation.isNotConditional;
 
@@ -48,16 +49,16 @@ public class CardServiceImpl implements CardService {
 
     @Override
     public CardDtoResponse find(Long id) {
-
         var card = cardVOJpaRepository.getCardAllProjectionByCardId(id)
-                .orElseThrow();
+                .orElseThrow(() -> new UnprocessableEntityException(CARD_NOT_FOUND));
 
         return cardSummaryMapper.toDto(card);
     }
 
     @Override
     public void delete(Long id) {
-        CardEntity entity = cardJpaRepository.findById(id).orElseThrow();
+        CardEntity entity = cardJpaRepository.findById(id)
+                .orElseThrow(() -> new UnprocessableEntityException(CARD_NOT_FOUND));
         entity.setStatus(StatusEnum.INACTIVE);
         cardJpaRepository.save(entity);
     }
@@ -78,6 +79,6 @@ public class CardServiceImpl implements CardService {
 
     @Override
     public void validate(CardStatusEnum cardStatus) {
-        isNotConditional(Objects.equals(cardStatus, IN_DEBT), new CardPersistanceException(IN_DEBT_CARD));
+        isNotConditional(Objects.equals(cardStatus, IN_DEBT), new UnprocessableEntityException(IN_DEBT_CARD));
     }
 }

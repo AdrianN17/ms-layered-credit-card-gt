@@ -29,4 +29,11 @@ public enum CategoryCardEnum implements ValuedEnum {
                 .filter(c -> c.value == value)
                 .findFirst();
     }
+
+    public static CategoryCardEnum ofCode(String code) {
+        return Arrays.stream(values())
+                .filter(c -> c.code.equalsIgnoreCase(code))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Invalid CategoryCardEnum code: " + code));
+    }
 }
