@@ -1,9 +1,15 @@
 package com.bank.credit_card.payment.enums;
 
+import com.bank.credit_card.generic.enums.ValuedEnum;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
 import java.util.Arrays;
 import java.util.Optional;
 
-public enum CategoryPaymentEnum {
+@Getter
+@AllArgsConstructor
+public enum CategoryPaymentEnum implements ValuedEnum {
 
     NORMAL("NORMAL", 1),
     TOTAL("TOTAL", 2),
@@ -13,18 +19,7 @@ public enum CategoryPaymentEnum {
     private final String code;
     private final int value;
 
-    CategoryPaymentEnum(String code, int value) {
-        this.code = code;
-        this.value = value;
-    }
 
-    public String getCode() {
-        return code;
-    }
-
-    public int getValue() {
-        return value;
-    }
 
     public static Optional<CategoryPaymentEnum> ofValue(Integer value) {
         if (value == null) return Optional.empty();

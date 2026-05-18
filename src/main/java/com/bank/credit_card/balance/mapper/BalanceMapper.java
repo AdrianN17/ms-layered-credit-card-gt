@@ -2,6 +2,9 @@ package com.bank.credit_card.balance.mapper;
 
 import com.bank.credit_card.balance.dto.BalanceDtoRequest;
 import com.bank.credit_card.balance.entity.BalanceEntity;
+import com.bank.credit_card.card.schema.request.CardRequestAccount;
+import com.bank.credit_card.generic.enums.CurrencyEnum;
+import com.bank.credit_card.generic.mapper.EntityMapper;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -9,16 +12,25 @@ import java.time.LocalDate;
 import static com.bank.credit_card.balance.constants.DateRangeConstant.NEXT_MONTH;
 
 @Component
-public class BalanceMapper {
+public class BalanceMapper implements EntityMapper<BalanceDtoRequest, BalanceEntity> {
 
-    public BalanceEntity toEntity(BalanceDtoRequest request, Long cardId) {
+    public BalanceDtoRequest toDto(CardRequestAccount request, Long cardId)
+    {
+        return new BalanceDtoRequest(
+                CurrencyEnum.valueOf(request.getCurrency()),
+                cardId,
+                request.getCreditTotal(),
+                Short.valueOf(request.getPaymentDate())
+        );
+    }
 
+    public BalanceEntity toEntity(BalanceDtoRequest request) {
 
         LocalDate startDate = LocalDate.now().withDayOfMonth(request.paymentDay());
         LocalDate endDate = startDate.plusMonths(NEXT_MONTH);
 
         return BalanceEntity.builder()
-                .cardId(cardId)
+                .cardId(request.cardId())
                 .totalAmount(request.total())
                 .availableAmount(request.total())
                 .oldAmount(request.total())

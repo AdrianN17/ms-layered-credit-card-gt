@@ -8,67 +8,47 @@ import com.bank.credit_card.consumption.entity.ConsumptionEntityMongo;
 import com.bank.credit_card.consumption.schema.request.ConsumptionRequest;
 import com.bank.credit_card.consumption.schema.response.ConsumptionResponse;
 import com.bank.credit_card.generic.enums.CurrencyEnum;
+import com.bank.credit_card.generic.mapper.ResponseMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Arrays;
 
 @Component
 @AllArgsConstructor
-public class ConsumptionMapper {
+public class ConsumptionMapper implements ResponseMapper<ConsumptionResponseDto, ConsumptionResponse> {
 
     private final Environment environment;
 
-    public ConsumptionRequestDto toDto(ConsumptionRequest request) {
-        return new ConsumptionRequestDto(
+    public ConsumptionRequestDto toDto(ConsumptionRequest request,  Long cardId) {
+        return ConsumptionRequestDto.of(
                 request.getSellerName(),
                 CurrencyEnum.valueOf(request.getCurrency()),
-                request.getAmount()
+                request.getAmount(),
+                cardId
         );
     }
 
-    public ConsumptionEntity toEntity(ConsumptionRequestDto dto, String cardId) {
+    public ConsumptionEntity toEntity(ConsumptionRequestDto dto) {
         boolean isNew = Arrays.asList(environment.getActiveProfiles()).contains("new");
 
         if (isNew) {
             return ConsumptionEntityCosmos.builder()
-                    .cardId(cardId)
+                    .consumptionId(dto.consumptionId())
+                    .cardId(dto.cardId().toString())
                     .sellerName(dto.sellerName())
                     .currency(dto.currency())
                     .amount(dto.amount())
                     .build();
         } else {
             return ConsumptionEntityMongo.builder()
-                    .cardId(cardId)
+                    .consumptionId(dto.consumptionId())
+                    .cardId(dto.cardId().toString())
                     .sellerName(dto.sellerName())
                     .currency(dto.currency())
                     .amount(dto.amount())
-                    .build();
-        }
-    }
-
-    public ConsumptionEntity toEntityFromSplit(ConsumptionEntity original, String sellerName, BigDecimal amount, LocalDateTime consumptionDate) {
-        boolean isNew = Arrays.asList(environment.getActiveProfiles()).contains("new");
-
-        if (isNew) {
-            return ConsumptionEntityCosmos.builder()
-                    .cardId(original.getCardId())
-                    .sellerName(sellerName)
-                    .currency(original.getCurrency())
-                    .amount(amount)
-                    .consumptionDate(consumptionDate)
-                    .build();
-        } else {
-            return ConsumptionEntityMongo.builder()
-                    .cardId(original.getCardId())
-                    .sellerName(sellerName)
-                    .currency(original.getCurrency())
-                    .amount(amount)
-                    .consumptionDate(consumptionDate)
                     .build();
         }
     }

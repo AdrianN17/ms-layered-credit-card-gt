@@ -4,24 +4,25 @@ import com.bank.credit_card.payment.dto.PaymentRequestDto;
 import com.bank.credit_card.payment.dto.PaymentResponseDto;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
 public interface PaymentService {
 
-    void save(PaymentRequestDto request,
-              String cardId);
+    void save(PaymentRequestDto request);
 
     List<PaymentResponseDto> findAll(String cardId,
-                                     LocalDateTime start,
-                                     LocalDateTime end);
+                                     LocalDate start,
+                                     LocalDate end);
 
     void delete(UUID id);
 
     void validate(BigDecimal available,
                   BigDecimal total,
-                  LocalDateTime startDate,
-                  LocalDateTime endDate,
+                  LocalDate startDate,
+                  LocalDate endDate,
                   PaymentRequestDto request);
+
+    PaymentResponseDto get(UUID id);
 }

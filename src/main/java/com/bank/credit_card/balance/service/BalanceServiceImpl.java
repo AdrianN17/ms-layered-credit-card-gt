@@ -8,14 +8,13 @@ import com.bank.credit_card.balance.mapper.BalanceMapper;
 import com.bank.credit_card.balance.repository.BalanceJpaRepository;
 import com.bank.credit_card.balance.usecase.BalanceUseCaseFactory;
 import com.bank.credit_card.generic.enums.StatusEnum;
-import com.bank.credit_card.generic.model.Amount;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 
 import static com.bank.credit_card.balance.constant.BalanceConstant.OVERCHARGE_LIMIT;
-import static com.bank.credit_card.balance.exception.BalanceErrorMessage.*;
+import static com.bank.credit_card.balance.exception.BalanceErrorMessage.BALANCE_NOT_FOUND;
 
 @Service
 @AllArgsConstructor
@@ -27,7 +26,7 @@ public class BalanceServiceImpl implements BalanceService {
 
     @Override
     public Long save(BalanceDtoRequest request, Long cardId) {
-        BalanceEntity entity = balanceMapper.toEntity(request, cardId);
+        BalanceEntity entity = balanceMapper.toEntity(request);
         return balanceJpaRepository.save(entity).getIdBalance();
     }
 
@@ -38,8 +37,6 @@ public class BalanceServiceImpl implements BalanceService {
         balanceJpaRepository.save(entity);
     }
 
-
-    //pasarlo a trigger / procedure
     @Override
     public Boolean isOvercharged(Long cardId) {
         var entity = findActiveOrThrow(cardId);

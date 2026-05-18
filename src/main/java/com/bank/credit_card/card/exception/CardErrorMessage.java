@@ -10,4 +10,6 @@ public interface CardErrorMessage {
     String INCORRECT_CATEGORY_VALUE = "Incorrect category value";
     String INCORRECT_TYPE_CARD_VALUE = "Incorrect type card value";
     String INCORRECT_CARD_STATUS_VALUE = "Incorrect card status value";
+
+    String IN_DEBT_CARD = "No se puede pagar una tarjeta que esta en deuda";
 }

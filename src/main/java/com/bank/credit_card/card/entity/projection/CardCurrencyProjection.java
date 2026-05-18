@@ -10,7 +10,7 @@ public interface CardCurrencyProjection {
     Integer getCurrency();
 
     default CurrencyEnum getCurrencyEnum() {
-        return CurrencyEnum.ofValue(getCurrency())
+        return CurrencyEnum.PEN.ofValue(getCurrency())
                 .orElseThrow(() -> new CardPersistanceException(INCORRECT_CURRENCY_VALUE));
     }
 }

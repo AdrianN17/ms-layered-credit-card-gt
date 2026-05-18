@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -29,13 +30,13 @@ public class ConsumptionServiceImpl implements ConsumptionService {
     private final ConsumptionMapper consumptionMapper;
 
     @Override
-    public void save(ConsumptionRequestDto request, String cardId) {
-        ConsumptionEntity entity = consumptionMapper.toEntity(request, cardId);
+    public void save(ConsumptionRequestDto request) {
+        ConsumptionEntity entity = consumptionMapper.toEntity(request);
         consumptionRepository.save(entity);
     }
 
     @Override
-    public List<ConsumptionResponseDto> findAll(String cardId, LocalDateTime start, LocalDateTime end) {
+    public List<ConsumptionResponseDto> findAll(String cardId, LocalDate start, LocalDate end) {
         return consumptionRepository.findByCardIdAndConsumptionDateBetween(cardId, start, end)
                 .stream()
                 .map(consumptionMapper::toDto)
@@ -43,7 +44,7 @@ public class ConsumptionServiceImpl implements ConsumptionService {
     }
 
     @Override
-    public List<UUID> split(Integer quantity, String cardId, UUID consumptionId) {
+    public List<ConsumptionRequestDto> split(Integer quantity, String cardId, UUID consumptionId) {
         ConsumptionEntity entity = consumptionRepository.findById(consumptionId)
                 .orElseThrow(() -> new ConsumptionPersistanceException(CONSUMPTION_NOT_FOUND));
 
@@ -59,14 +60,12 @@ public class ConsumptionServiceImpl implements ConsumptionService {
             String splitSellerName = entity.getSellerName() + " " + CONSUMPTION_SPLIT + " " + count;
             LocalDateTime splitDate = entity.getConsumptionApprobationDate().plusMonths(count);
 
-            ConsumptionEntity split = consumptionMapper.toEntityFromSplit(
-                    entity,
+            return ConsumptionRequestDto.of(
                     splitSellerName,
+                    entity.getCurrency(),
                     splitAmount,
-                    splitDate
+                    Long.valueOf(cardId)
             );
-
-            return consumptionRepository.save(split).getConsumptionId();
         }).toList();
     }
 
@@ -79,5 +78,13 @@ public class ConsumptionServiceImpl implements ConsumptionService {
                 new ConsumptionPersistanceException(CONSUMPTION_IS_STILL_IN_APPROBATION));
 
         consumptionRepository.softDelete(id);
+    }
+
+    @Override
+    public ConsumptionResponseDto get(UUID id) {
+        ConsumptionEntity entity = consumptionRepository.findById(id)
+                .orElseThrow(() -> new ConsumptionPersistanceException(CONSUMPTION_NOT_FOUND));
+
+        return consumptionMapper.toDto(entity);
     }
 }

@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -27,16 +26,16 @@ public class PaymentServiceImpl implements PaymentService {
     private final PaymentMapper paymentMapper;
 
     @Override
-    public void save(PaymentRequestDto request, String cardId) {
-        PaymentEntity entity = paymentMapper.toEntity(request, cardId);
+    public void save(PaymentRequestDto request) {
+        var entity = paymentMapper.toEntity(request);
         paymentRepository.save(entity);
     }
 
     @Override
     public void validate(BigDecimal available,
                          BigDecimal total,
-                         LocalDateTime startDate,
-                         LocalDateTime endDate,
+                         LocalDate startDate,
+                         LocalDate endDate,
                          PaymentRequestDto request) {
 
 
@@ -48,13 +47,21 @@ public class PaymentServiceImpl implements PaymentService {
 
         useCase.validateIfPaymentIsPossible(available,
                 total,
-                startDate.toLocalDate(),
-                endDate.toLocalDate());
+                startDate,
+                endDate);
+    }
+
+    @Override
+    public PaymentResponseDto get(UUID id) {
+        PaymentEntity entity = paymentRepository.findById(id)
+                .orElseThrow(() -> new PaymentPersistanceException(PAYMENT_CATEGORY_NOT_NULL));
+
+        return paymentMapper.toDto(entity);
     }
 
 
     @Override
-    public List<PaymentResponseDto> findAll(String cardId, LocalDateTime start, LocalDateTime end) {
+    public List<PaymentResponseDto> findAll(String cardId, LocalDate start, LocalDate end) {
         return paymentRepository.findByCardIdAndPaymentDateBetween(cardId, start, end)
                 .stream()
                 .map(paymentMapper::toDto)

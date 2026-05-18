@@ -1,19 +1,11 @@
 package com.bank.credit_card.generic.converter;
 
 import com.bank.credit_card.generic.enums.StatusEnum;
-import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 
 @Converter(autoApply = true)
-public class StatusEnumConverter implements AttributeConverter<StatusEnum, Short> {
-
-    @Override
-    public Short convertToDatabaseColumn(StatusEnum attribute) {
-        return attribute == null ? null : (short) attribute.getValue();
-    }
-
-    @Override
-    public StatusEnum convertToEntityAttribute(Short dbData) {
-        return dbData == null ? null : StatusEnum.ofValue(dbData.intValue()).orElse(null);
+public class StatusEnumConverter extends AbstractEnumConverter<StatusEnum> {
+    public StatusEnumConverter() {
+        super(StatusEnum::ofValue);
     }
 }

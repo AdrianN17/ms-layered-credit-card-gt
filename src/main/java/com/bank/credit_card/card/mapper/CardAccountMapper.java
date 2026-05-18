@@ -4,6 +4,8 @@ import com.bank.credit_card.card.dto.CardDtoRequest;
 import com.bank.credit_card.card.entity.CardAccountEntity;
 import org.springframework.stereotype.Component;
 
+import static com.bank.credit_card.card.enums.CardStatusEnum.OPERATIVE;
+
 @Component
 public class CardAccountMapper {
 
@@ -15,7 +17,7 @@ public class CardAccountMapper {
                 .debtTax(dto.debtTax())
                 .currency(dto.currency())
                 .paymentDate(dto.paymentDay())
-                .cardStatus(dto.cardStatus())
+                .cardStatus(OPERATIVE)
                 .build();
     }
 }

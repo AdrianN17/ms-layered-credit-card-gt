@@ -3,6 +3,9 @@ package com.bank.credit_card.card.service;
 import com.bank.credit_card.card.dto.CardDtoRequest;
 import com.bank.credit_card.card.dto.CardDtoResponse;
 import com.bank.credit_card.card.entity.CardEntity;
+import com.bank.credit_card.card.enums.CardStatusEnum;
+import com.bank.credit_card.card.enums.CategoryCardEnum;
+import com.bank.credit_card.card.exception.CardPersistanceException;
 import com.bank.credit_card.card.mapper.CardAccountMapper;
 import com.bank.credit_card.card.mapper.CardMapper;
 import com.bank.credit_card.card.mapper.CardSummaryMapper;
@@ -14,9 +17,12 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 
 import static com.bank.credit_card.benefit.constant.BenefitConstant.*;
-import static com.bank.credit_card.card.enums.CategoryCardEnum.*;
+import static com.bank.credit_card.card.enums.CardStatusEnum.IN_DEBT;
+import static com.bank.credit_card.card.exception.CardErrorMessage.IN_DEBT_CARD;
+import static com.bank.credit_card.generic.util.Validation.isNotConditional;
 
 @Service
 @AllArgsConstructor
@@ -57,12 +63,9 @@ public class CardServiceImpl implements CardService {
     }
 
     @Override
-    public BigDecimal getRatio(Long id) {
+    public BigDecimal getRatio(CategoryCardEnum categoryCardEnum) {
 
-        var card = cardVOJpaRepository.getCardAllProjectionByCardId(id)
-                .orElseThrow();
-
-        return switch (card.getCategoryCardEnum()) {
+        return switch (categoryCardEnum) {
             case NORMAL -> RATIO_NORMAL;
             case SILVER -> RATIO_SILVER;
             case GOLD -> RATIO_GOLD;
@@ -71,5 +74,10 @@ public class CardServiceImpl implements CardService {
             case SIGNATURE -> RATIO_SIGNATURE;
             case INFINITY -> RATIO_INFINITY;
         };
+    }
+
+    @Override
+    public void validate(CardStatusEnum cardStatus) {
+        isNotConditional(Objects.equals(cardStatus, IN_DEBT), new CardPersistanceException(IN_DEBT_CARD));
     }
 }

@@ -1,6 +1,8 @@
 package com.bank.credit_card.payment.mapper;
 
 import com.bank.credit_card.generic.enums.CurrencyEnum;
+import com.bank.credit_card.generic.mapper.EntityMapper;
+import com.bank.credit_card.generic.mapper.ResponseMapper;
 import com.bank.credit_card.payment.dto.PaymentRequestDto;
 import com.bank.credit_card.payment.dto.PaymentResponseDto;
 import com.bank.credit_card.payment.entity.PaymentEntity;
@@ -19,26 +21,28 @@ import java.util.Arrays;
 
 @Component
 @AllArgsConstructor
-public class PaymentMapper {
+public class PaymentMapper implements EntityMapper<PaymentRequestDto, PaymentEntity>,
+                                      ResponseMapper<PaymentResponseDto, PaymentResponse> {
 
     private final Environment environment;
 
-    public PaymentRequestDto toDto(PaymentRequest request) {
-        return new PaymentRequestDto(
+    public PaymentRequestDto toDto(PaymentRequest request, Long cardId) {
+        return PaymentRequestDto.of(
                 ChannelPaymentEnum.valueOf(request.getChannel()),
                 CurrencyEnum.valueOf(request.getCurrency()),
                 request.getAmount(),
                 CategoryPaymentEnum.valueOf(request.getCategory()),
-                request.getPointsUsed()
+                request.getPointsUsed(),
+                cardId
         );
     }
 
-    public PaymentEntity toEntity(PaymentRequestDto dto, String cardId) {
+    public PaymentEntity toEntity(PaymentRequestDto dto) {
         boolean isNew = Arrays.asList(environment.getActiveProfiles()).contains("new");
 
         if (isNew) {
             return PaymentEntityCosmos.builder()
-                    .cardId(cardId)
+                    .cardId(dto.cardId().toString())
                     .channel(dto.channel())
                     .currency(dto.currency())
                     .amount(dto.amount())
@@ -46,7 +50,7 @@ public class PaymentMapper {
                     .build();
         } else {
             return PaymentEntityMongo.builder()
-                    .cardId(cardId)
+                    .cardId(dto.cardId().toString())
                     .channel(dto.channel())
                     .currency(dto.currency())
                     .amount(dto.amount())

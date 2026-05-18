@@ -1,19 +1,12 @@
 package com.bank.credit_card.card.converter;
 
 import com.bank.credit_card.card.enums.TypeCardEnum;
-import jakarta.persistence.AttributeConverter;
+import com.bank.credit_card.generic.converter.AbstractEnumConverter;
 import jakarta.persistence.Converter;
 
 @Converter(autoApply = true)
-public class TypeCardEnumConverter implements AttributeConverter<TypeCardEnum, Short> {
-
-    @Override
-    public Short convertToDatabaseColumn(TypeCardEnum attribute) {
-        return attribute == null ? null : (short) attribute.getValue();
-    }
-
-    @Override
-    public TypeCardEnum convertToEntityAttribute(Short dbData) {
-        return dbData == null ? null : TypeCardEnum.ofValue(dbData.intValue()).orElse(null);
+public class TypeCardEnumConverter extends AbstractEnumConverter<TypeCardEnum> {
+    public TypeCardEnumConverter() {
+        super(TypeCardEnum::ofValue);
     }
 }

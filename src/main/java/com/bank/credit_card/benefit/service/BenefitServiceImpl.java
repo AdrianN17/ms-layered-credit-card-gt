@@ -25,7 +25,7 @@ public class BenefitServiceImpl implements BenefitService {
 
     @Override
     public Long save(BenefitRequestDto request, Long cardId) {
-        var entity = benefitMapper.toEntity(request, cardId);
+        var entity = benefitMapper.toEntity(request);
         var saved = benefitJpaRepository.save(entity);
         return saved.getIdBenefit();
     }
@@ -45,6 +45,8 @@ public class BenefitServiceImpl implements BenefitService {
         var totalPoints = entity.getTotalPoints() + pointEarned;
 
         entity.setTotalPoints(totalPoints);
+
+        benefitJpaRepository.save(entity);
     }
 
     @Override

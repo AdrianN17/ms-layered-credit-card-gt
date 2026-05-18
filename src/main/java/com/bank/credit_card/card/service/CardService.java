@@ -2,6 +2,8 @@ package com.bank.credit_card.card.service;
 
 import com.bank.credit_card.card.dto.CardDtoRequest;
 import com.bank.credit_card.card.dto.CardDtoResponse;
+import com.bank.credit_card.card.enums.CardStatusEnum;
+import com.bank.credit_card.card.enums.CategoryCardEnum;
 
 import java.math.BigDecimal;
 
@@ -12,5 +14,7 @@ public interface CardService {
 
     void delete(Long id);
 
-    BigDecimal getRatio(Long id);
+    BigDecimal getRatio(CategoryCardEnum categoryCardEnum);
+
+    void validate(CardStatusEnum cardStatus);
 }
