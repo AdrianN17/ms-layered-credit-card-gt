@@ -206,3 +206,33 @@ databaseChangeLog:
             referencedColumnNames: cardId
             constraintName: fk_benefits_cardid
 
+  - changeSet:
+      id: 013-sp-update-card-status
+      author: liquibase
+      runOnChange: true
+      changes:
+        - createProcedure:
+            procedureName: sp_UpdateCardStatus
+            procedureText: |
+              CREATE OR ALTER PROCEDURE sp_UpdateCardStatus
+                  @cardId BIGINT
+              AS
+              BEGIN
+                  SET NOCOUNT ON;
+
+                  IF NOT EXISTS (SELECT 1 FROM balances WHERE cardId = @cardId AND status = 1)
+                      THROW 50001, 'Balance not found for the given cardId', 1;
+
+                  UPDATE ca
+                  SET    ca.cardStatus = CASE
+                             WHEN b.availableAmount <= b.totalAmount * 0.10
+                             THEN 2   -- CardStatusEnum.OVERCHARGE  (usó >= 90% de su línea)
+                             ELSE 1   -- CardStatusEnum.OPERATIVE
+                         END
+                  FROM   CardAccounts ca
+                  JOIN   balances     b  ON b.cardId = @cardId AND b.status = 1
+                  WHERE  ca.cardId = @cardId
+                    AND  ca.status = 1;
+              END
+            dbms: mssql
+

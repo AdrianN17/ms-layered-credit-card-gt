@@ -55,8 +55,6 @@ public class ConsumptionDelegateImpl implements ConsumptionDelegate {
                 cardService.getRatio(dtoCard.categoryCard()),
                 cardId);
 
-        balanceService.isOvercharged(cardId);
-
         return MapperResponse.getUUID202Response(dto.consumptionId());
     }
 
@@ -74,8 +72,6 @@ public class ConsumptionDelegateImpl implements ConsumptionDelegate {
                 consumption.amount());
 
         balanceService.cancel(cardId, amountCurrencyCalculate, CONSUMPTION);
-
-        balanceService.isOvercharged(cardId);
 
         return MapperResponse.getUUID202Response(consumptionId);
     }
@@ -117,8 +113,6 @@ public class ConsumptionDelegateImpl implements ConsumptionDelegate {
         }).toList();
 
         cardService.validate(dtoCard.account().cardStatus());
-
-        balanceService.isOvercharged(cardId);
 
         return MapperResponse.getUUIDList202Response(consumptionsIds);
     }

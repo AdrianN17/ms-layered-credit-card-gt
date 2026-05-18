@@ -69,8 +69,6 @@ public class PaymentDelegateImpl implements PaymentDelegate {
 
         paymentService.save(dto);
 
-        balanceService.isOvercharged(cardId);
-
         return MapperResponse.getUUID202Response(dto.paymentId());
     }
 
@@ -87,8 +85,6 @@ public class PaymentDelegateImpl implements PaymentDelegate {
                 payment.amount());
 
         balanceService.cancel(cardId, amountCurrencyCalculate, PAYMENT);
-
-        balanceService.isOvercharged(cardId);
 
         return MapperResponse.getUUID202Response(paymentId);
     }

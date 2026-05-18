@@ -10,8 +10,6 @@ public interface BalanceService {
 
     void delete(Long cardId);
 
-    Boolean isOvercharged(Long cardId);
-
     void apply(Long cardId, BigDecimal amount, BalanceUseCaseEnum type);
 
     void cancel(Long cardId, BigDecimal amount, BalanceUseCaseEnum type);

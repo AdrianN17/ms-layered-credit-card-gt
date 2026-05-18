@@ -27,7 +27,8 @@ public class BalanceServiceImpl implements BalanceService {
     @Override
     public Long save(BalanceDtoRequest request, Long cardId) {
         BalanceEntity entity = balanceMapper.toEntity(request);
-        return balanceJpaRepository.save(entity).getIdBalance();
+        return balanceJpaRepository.save(entity)
+                .getIdBalance();
     }
 
     @Override
@@ -35,14 +36,6 @@ public class BalanceServiceImpl implements BalanceService {
         var entity = findActiveOrThrow(cardId);
         entity.setStatus(StatusEnum.INACTIVE);
         balanceJpaRepository.save(entity);
-    }
-
-    @Override
-    public Boolean isOvercharged(Long cardId) {
-        var entity = findActiveOrThrow(cardId);
-        BigDecimal limitOvercharge = entity.getTotalAmount().multiply(OVERCHARGE_LIMIT);
-        BigDecimal totalLimit = entity.getTotalAmount().add(limitOvercharge);
-        return entity.getAvailableAmount().compareTo(totalLimit) > 0;
     }
 
     @Override
