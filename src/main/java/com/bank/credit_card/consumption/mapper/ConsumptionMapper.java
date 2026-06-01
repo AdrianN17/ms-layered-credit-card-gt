@@ -8,11 +8,16 @@ import com.bank.credit_card.consumption.entity.ConsumptionEntityMongo;
 import com.bank.credit_card.consumption.schema.request.ConsumptionRequest;
 import com.bank.credit_card.consumption.schema.response.ConsumptionResponse;
 import com.bank.credit_card.generic.enums.CurrencyEnum;
+import com.bank.credit_card.generic.enums.StatusEnum;
+import com.bank.credit_card.generic.mapper.EntityMapper;
+import com.bank.credit_card.generic.mapper.RequestDtoMapper;
+import com.bank.credit_card.generic.mapper.ResponseDtoMapper;
 import com.bank.credit_card.generic.mapper.ResponseMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.Objects;
@@ -22,11 +27,16 @@ import static com.bank.credit_card.consumption.exception.ConsumptionErrorMessage
 
 @Component
 @AllArgsConstructor
-public class ConsumptionMapper implements ResponseMapper<ConsumptionResponseDto, ConsumptionResponse> {
+public class ConsumptionMapper implements
+        ResponseDtoMapper<ConsumptionResponseDto, ConsumptionEntity>,
+        EntityMapper<ConsumptionRequestDto, ConsumptionEntity>,
+        RequestDtoMapper<ConsumptionRequest, ConsumptionRequestDto>,
+        ResponseMapper<ConsumptionResponseDto, ConsumptionResponse> {
 
     private final Environment environment;
 
-    public ConsumptionRequestDto toDto(ConsumptionRequest request,  Long cardId) {
+    @Override
+    public ConsumptionRequestDto toRequestDto(ConsumptionRequest request, Long cardId) {
         return ConsumptionRequestDto.of(
                 request.getSellerName(),
                 CurrencyEnum.ofCode(request.getCurrency()),
@@ -35,6 +45,7 @@ public class ConsumptionMapper implements ResponseMapper<ConsumptionResponseDto,
         );
     }
 
+    @Override
     public ConsumptionEntity toEntity(ConsumptionRequestDto dto) {
         boolean isNew = Arrays.asList(environment.getActiveProfiles()).contains("new");
 
@@ -45,6 +56,10 @@ public class ConsumptionMapper implements ResponseMapper<ConsumptionResponseDto,
                     .sellerName(dto.sellerName())
                     .currency(dto.currency())
                     .amount(dto.amount())
+                    .consumptionDate(LocalDateTime.now())
+                    .consumptionApprobationDate(LocalDateTime.now())
+                    .status(StatusEnum.ACTIVE)
+                    .createdDate(LocalDateTime.now())
                     .build();
         } else {
             return ConsumptionEntityMongo.builder()
@@ -53,11 +68,16 @@ public class ConsumptionMapper implements ResponseMapper<ConsumptionResponseDto,
                     .sellerName(dto.sellerName())
                     .currency(dto.currency())
                     .amount(dto.amount())
+                    .consumptionDate(LocalDateTime.now())
+                    .consumptionApprobationDate(LocalDateTime.now())
+                    .status(StatusEnum.ACTIVE)
+                    .createdDate(LocalDateTime.now())
                     .build();
         }
     }
 
-    public ConsumptionResponseDto toDto(ConsumptionEntity entity) {
+
+    public ConsumptionResponseDto toResponseDto(ConsumptionEntity entity) {
         return new ConsumptionResponseDto(
                 entity.getSellerName(),
                 entity.getCurrency(),
@@ -67,6 +87,7 @@ public class ConsumptionMapper implements ResponseMapper<ConsumptionResponseDto,
         );
     }
 
+    @Override
     public ConsumptionResponse toResponse(ConsumptionResponseDto dto) {
         return new ConsumptionResponse(
                 dto.sellerName(),

@@ -5,6 +5,7 @@ import com.bank.credit_card.balance.entity.BalanceEntity;
 import com.bank.credit_card.card.schema.request.CardRequestAccount;
 import com.bank.credit_card.generic.enums.CurrencyEnum;
 import com.bank.credit_card.generic.mapper.EntityMapper;
+import com.bank.credit_card.generic.mapper.RequestIDDtoMapper;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -12,11 +13,15 @@ import java.time.LocalDate;
 import static com.bank.credit_card.balance.constant.DateRangeConstant.NEXT_MONTH;
 
 @Component
-public class BalanceMapper implements EntityMapper<BalanceDtoRequest, BalanceEntity> {
+public class BalanceMapper implements
+        RequestIDDtoMapper<CardRequestAccount, BalanceDtoRequest>,
+        EntityMapper<BalanceDtoRequest, BalanceEntity> {
 
-    public BalanceDtoRequest toDto(CardRequestAccount request, Long cardId)
+    @Override
+    public BalanceDtoRequest toRequestDto(CardRequestAccount request, Long cardId, Long id)
     {
         return new BalanceDtoRequest(
+                id,
                 CurrencyEnum.ofCode(request.getCurrency()),
                 cardId,
                 request.getCreditTotal(),
@@ -24,12 +29,21 @@ public class BalanceMapper implements EntityMapper<BalanceDtoRequest, BalanceEnt
         );
     }
 
+    @Override
     public BalanceEntity toEntity(BalanceDtoRequest request) {
 
-        LocalDate startDate = LocalDate.now().withDayOfMonth(request.paymentDay());
-        LocalDate endDate = startDate.plusMonths(NEXT_MONTH);
+        LocalDate today = LocalDate.now();
+
+        LocalDate startDate = today.withDayOfMonth(request.paymentDay());
+
+        if (today.isBefore(startDate)) {
+            startDate = startDate.minusMonths(1);
+        }
+
+        LocalDate endDate = startDate.plusMonths(1);
 
         return BalanceEntity.builder()
+                .idBalance(request.idBalance())
                 .cardId(request.cardId())
                 .totalAmount(request.total())
                 .availableAmount(request.total())

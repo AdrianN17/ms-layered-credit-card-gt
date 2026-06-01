@@ -2,7 +2,6 @@ package com.bank.credit_card.consumption.delegate;
 
 import com.bank.credit_card.balance.service.BalanceService;
 import com.bank.credit_card.benefit.service.BenefitService;
-import com.bank.credit_card.card.enums.CategoryCardEnum;
 import com.bank.credit_card.card.service.CardService;
 import com.bank.credit_card.consumption.mapper.ConsumptionMapper;
 import com.bank.credit_card.consumption.schema.request.ExchangeConsumptionRequest;
@@ -41,7 +40,7 @@ public class ConsumptionDelegateImpl implements ConsumptionDelegate {
                                                                 BindingResult bindingResult) {
         validate(bindingResult);
         var data = initiateConsumptionRequest.getData();
-        var dto = consumptionMapper.toDto(data, cardId);
+        var dto = consumptionMapper.toRequestDto(data, cardId);
         var dtoCard = cardService.find(cardId);
 
         cardService.validate(dtoCard.account().cardStatus());
@@ -55,6 +54,8 @@ public class ConsumptionDelegateImpl implements ConsumptionDelegate {
         benefitService.accumulate(amountCurrencyCalculate,
                 cardService.getRatio(dtoCard.categoryCard()),
                 cardId);
+
+        balanceService.apply(cardId, amountCurrencyCalculate, CONSUMPTION);
 
         return MapperResponse.getUUID202Response(dto.consumptionId());
     }
@@ -99,7 +100,7 @@ public class ConsumptionDelegateImpl implements ConsumptionDelegate {
 
         var consumptionsSplit = consumptionService.split(exchangeConsumptionRequest.getData().getInstallments(),
                 cardId.toString(),
-                consumptionId);
+                consumptionId, dtoCard.account().debtTax());
 
         var consumptionsIds = consumptionsSplit.stream().map(consumptionRequestDto -> {
 

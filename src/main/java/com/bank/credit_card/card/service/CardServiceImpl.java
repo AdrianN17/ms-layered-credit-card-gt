@@ -41,7 +41,7 @@ public class CardServiceImpl implements CardService {
         var cardEntity = cardMapper.toEntity(dto);
         var savedCard = cardJpaRepository.save(cardEntity);
 
-        var cardAccountEntity = cardAccountMapper.toEntity(dto, savedCard.getCardId());
+        var cardAccountEntity = cardAccountMapper.toEntity(dto);
         cardAccountJpaRepository.save(cardAccountEntity);
 
         return savedCard.getCardId();
@@ -52,14 +52,14 @@ public class CardServiceImpl implements CardService {
         var card = cardVOJpaRepository.getCardAllProjectionByCardId(id)
                 .orElseThrow(() -> new UnprocessableEntityException(CARD_NOT_FOUND));
 
-        return cardSummaryMapper.toDto(card);
+        return cardSummaryMapper.toResponseDto(card);
     }
 
     @Override
     public void delete(Long id) {
         CardEntity entity = cardJpaRepository.findById(id)
                 .orElseThrow(() -> new UnprocessableEntityException(CARD_NOT_FOUND));
-        entity.setStatus(StatusEnum.INACTIVE);
+        entity.softDelete();
         cardJpaRepository.save(entity);
     }
 

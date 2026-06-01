@@ -49,7 +49,7 @@ public class PaymentDelegateImpl implements PaymentDelegate {
             data.setAmount(amount);
         }
 
-        var dto = paymentMapper.toDto(data, cardId);
+        var dto = paymentMapper.toRequestDto(data, cardId);
         var dtoCard = cardService.find(cardId);
 
         paymentService.validate(

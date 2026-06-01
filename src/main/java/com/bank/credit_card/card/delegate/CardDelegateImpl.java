@@ -9,6 +9,8 @@ import com.bank.credit_card.card.mapper.CardSummaryMapper;
 import com.bank.credit_card.card.schema.request.InitiateCardRequest;
 import com.bank.credit_card.card.schema.response.RetrieveBalance200Response;
 import com.bank.credit_card.card.service.CardService;
+import com.bank.credit_card.generator.IdGenerate;
+import com.bank.credit_card.generic.exception.UnprocessableEntityException;
 import com.bank.credit_card.generic.schema.response.Long202Response;
 import com.bank.credit_card.generic.util.MapperResponse;
 import lombok.AllArgsConstructor;
@@ -16,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.BindingResult;
 
+import static com.bank.credit_card.generator.GeneratorErrorMessage.FAILED_TO_GENERATE_ID;
 import static com.bank.credit_card.generic.util.BindingValidator.validate;
 
 @Component
@@ -29,21 +32,29 @@ public class CardDelegateImpl implements CardDelegate {
     private final BalanceMapper balanceMapper;
     private final BenefitMapper benefitMapper;
     private final CardSummaryMapper cardSummaryMapper;
+    private final IdGenerate idGenerate;
 
     @Override
     public ResponseEntity<Long202Response> initiateCard(InitiateCardRequest initiateCardRequest,
                                                          BindingResult bindingResult) {
         validate(bindingResult);
-        var dto = cardMapper.toDto(initiateCardRequest.getData());
-        Long id = cardService.save(dto);
 
-        var dtoBenefit = benefitMapper.toDto(initiateCardRequest.getData().getBenefit(), id);
-        benefitService.save(dtoBenefit, id);
+        var cardId = idGenerate.load().orElseThrow(()-> new UnprocessableEntityException(FAILED_TO_GENERATE_ID));
+        var cardAccountId = idGenerate.load().orElseThrow(()-> new UnprocessableEntityException(FAILED_TO_GENERATE_ID));
+        var dto = cardMapper.toRequestDto(initiateCardRequest.getData(), cardId, cardAccountId);
+        cardService.save(dto);
 
-        var dtoBalance = balanceMapper.toDto(initiateCardRequest.getData().getAccount(), id);
-        balanceService.save(dtoBalance, id);
+        var benefitId= idGenerate.load().orElseThrow(()-> new UnprocessableEntityException(FAILED_TO_GENERATE_ID));
+        var dtoBenefit = benefitMapper.toRequestDto(initiateCardRequest.getData().getBenefit(), cardId, benefitId);
 
-        return MapperResponse.getLong202Response(id);
+        benefitService.save(dtoBenefit);
+
+        var balanceId = idGenerate.load().orElseThrow(()-> new UnprocessableEntityException(FAILED_TO_GENERATE_ID));
+        var dtoBalance = balanceMapper.toRequestDto(initiateCardRequest.getData().getAccount(), cardId, balanceId);
+
+        balanceService.save(dtoBalance);
+
+        return MapperResponse.getLong202Response(cardId);
     }
 
     @Override

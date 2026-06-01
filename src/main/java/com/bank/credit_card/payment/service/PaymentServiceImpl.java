@@ -56,7 +56,7 @@ public class PaymentServiceImpl implements PaymentService {
         PaymentEntity entity = paymentRepository.findById(id)
                 .orElseThrow(() -> new UnprocessableEntityException(PAYMENT_NOT_FOUND));
 
-        return paymentMapper.toDto(entity);
+        return paymentMapper.toResponseDto(entity);
     }
 
 
@@ -64,7 +64,7 @@ public class PaymentServiceImpl implements PaymentService {
     public List<PaymentResponseDto> findAll(String cardId, LocalDate start, LocalDate end) {
         return paymentRepository.findByCardIdAndPaymentDateBetween(cardId, start, end)
                 .stream()
-                .map(paymentMapper::toDto)
+                .map(paymentMapper::toResponseDto)
                 .toList();
     }
 

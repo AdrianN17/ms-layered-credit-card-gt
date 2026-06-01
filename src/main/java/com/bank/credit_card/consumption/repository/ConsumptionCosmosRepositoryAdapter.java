@@ -44,7 +44,7 @@ public class ConsumptionCosmosRepositoryAdapter implements ConsumptionRepository
     @Override
     public void softDelete(UUID id) {
         repository.findById(id).ifPresent(entity -> {
-            entity.setStatus(StatusEnum.INACTIVE);
+            entity.softDelete();
             repository.save(entity);
         });
     }

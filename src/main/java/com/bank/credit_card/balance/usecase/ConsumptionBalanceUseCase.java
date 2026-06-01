@@ -3,7 +3,7 @@ package com.bank.credit_card.balance.usecase;
 import com.bank.credit_card.balance.entity.BalanceEntity;
 import com.bank.credit_card.balance.repository.BalanceJpaRepository;
 import com.bank.credit_card.generic.exception.UnprocessableEntityException;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -12,7 +12,7 @@ import static com.bank.credit_card.balance.exception.BalanceErrorMessage.AMOUNT_
 import static com.bank.credit_card.generic.util.Validation.isNotConditional;
 
 @Component
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class ConsumptionBalanceUseCase implements BalanceUseCase {
 
     private final BalanceJpaRepository balanceJpaRepository;
@@ -37,7 +37,7 @@ public class ConsumptionBalanceUseCase implements BalanceUseCase {
 
         BigDecimal available = entity.getAvailableAmount();
 
-        entity.setAvailableAmount(available.subtract(amount));
+        entity.setAvailableAmount(available.add(amount));
         balanceJpaRepository.save(entity);
     }
 

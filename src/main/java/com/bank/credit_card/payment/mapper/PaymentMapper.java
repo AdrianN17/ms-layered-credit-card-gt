@@ -1,7 +1,10 @@
 package com.bank.credit_card.payment.mapper;
 
 import com.bank.credit_card.generic.enums.CurrencyEnum;
+import com.bank.credit_card.generic.enums.StatusEnum;
 import com.bank.credit_card.generic.mapper.EntityMapper;
+import com.bank.credit_card.generic.mapper.RequestDtoMapper;
+import com.bank.credit_card.generic.mapper.ResponseDtoMapper;
 import com.bank.credit_card.generic.mapper.ResponseMapper;
 import com.bank.credit_card.payment.dto.PaymentRequestDto;
 import com.bank.credit_card.payment.dto.PaymentResponseDto;
@@ -16,6 +19,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.Objects;
@@ -25,12 +29,16 @@ import static com.bank.credit_card.payment.exception.PaymentErrorMessage.PAYMENT
 
 @Component
 @AllArgsConstructor
-public class PaymentMapper implements EntityMapper<PaymentRequestDto, PaymentEntity>,
-                                      ResponseMapper<PaymentResponseDto, PaymentResponse> {
+public class PaymentMapper implements
+        ResponseDtoMapper<PaymentResponseDto, PaymentEntity>,
+        EntityMapper<PaymentRequestDto, PaymentEntity>,
+        RequestDtoMapper<PaymentRequest, PaymentRequestDto>,
+        ResponseMapper<PaymentResponseDto, PaymentResponse> {
 
     private final Environment environment;
 
-    public PaymentRequestDto toDto(PaymentRequest request, Long cardId) {
+    @Override
+    public PaymentRequestDto toRequestDto(PaymentRequest request, Long cardId) {
         return PaymentRequestDto.of(
                 ChannelPaymentEnum.ofCode(request.getChannel()),
                 CurrencyEnum.ofCode(request.getCurrency()),
@@ -41,29 +49,41 @@ public class PaymentMapper implements EntityMapper<PaymentRequestDto, PaymentEnt
         );
     }
 
+    @Override
     public PaymentEntity toEntity(PaymentRequestDto dto) {
         boolean isNew = Arrays.asList(environment.getActiveProfiles()).contains("new");
 
         if (isNew) {
             return PaymentEntityCosmos.builder()
+                    .paymentId(dto.paymentId())
                     .cardId(dto.cardId().toString())
                     .channel(dto.channel())
                     .currency(dto.currency())
                     .amount(dto.amount())
                     .category(dto.category())
+                    .paymentDate(LocalDateTime.now())
+                    .paymentApprobationDate(LocalDateTime.now())
+                    .status(StatusEnum.ACTIVE)
+                    .createdDate(LocalDateTime.now())
                     .build();
         } else {
             return PaymentEntityMongo.builder()
+                    .paymentId(dto.paymentId())
                     .cardId(dto.cardId().toString())
                     .channel(dto.channel())
                     .currency(dto.currency())
                     .amount(dto.amount())
                     .category(dto.category())
+                    .paymentDate(LocalDateTime.now())
+                    .paymentApprobationDate(LocalDateTime.now())
+                    .status(StatusEnum.ACTIVE)
+                    .createdDate(LocalDateTime.now())
                     .build();
         }
     }
 
-    public PaymentResponseDto toDto(PaymentEntity entity) {
+    @Override
+    public PaymentResponseDto toResponseDto(PaymentEntity entity) {
         return new PaymentResponseDto(
                 entity.getChannel(),
                 entity.getCurrency(),
@@ -74,6 +94,7 @@ public class PaymentMapper implements EntityMapper<PaymentRequestDto, PaymentEnt
         );
     }
 
+    @Override
     public PaymentResponse toResponse(PaymentResponseDto dto) {
         return new PaymentResponse(
                 dto.channel().name(),

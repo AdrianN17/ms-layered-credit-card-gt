@@ -26,7 +26,7 @@ public class BenefitServiceImpl implements BenefitService {
     private final BenefitMapper benefitMapper;
 
     @Override
-    public Long save(BenefitRequestDto request, Long cardId) {
+    public Long save(BenefitRequestDto request) {
         var entity = benefitMapper.toEntity(request);
         var saved = benefitJpaRepository.save(entity);
         return saved.getIdBenefit();
@@ -36,7 +36,7 @@ public class BenefitServiceImpl implements BenefitService {
     public void delete(Long cardId) {
         var entity = benefitJpaRepository.findActiveByCardId(cardId)
                 .orElseThrow(() -> new UnprocessableEntityException(BENEFIT_NOT_FOUND));
-        entity.setStatus(StatusEnum.INACTIVE);
+        entity.softDelete();
         benefitJpaRepository.save(entity);
     }
 
@@ -71,7 +71,6 @@ public class BenefitServiceImpl implements BenefitService {
 
         entity.setTotalPoints(entity.getTotalPoints() - calculatePoints);
         benefitJpaRepository.save(entity);
-
 
         return amount.subtract(discount);
     }

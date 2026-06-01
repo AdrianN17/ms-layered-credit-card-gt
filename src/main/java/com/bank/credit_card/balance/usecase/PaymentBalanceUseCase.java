@@ -4,7 +4,7 @@ import com.bank.credit_card.balance.entity.BalanceEntity;
 import com.bank.credit_card.balance.repository.BalanceJpaRepository;
 import com.bank.credit_card.generic.exception.BadRequestException;
 import com.bank.credit_card.generic.exception.UnprocessableEntityException;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -15,7 +15,7 @@ import static com.bank.credit_card.generic.util.Validation.isNotConditional;
 import static com.bank.credit_card.generic.util.Validation.isNotNull;
 
 @Component
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class PaymentBalanceUseCase implements BalanceUseCase {
 
     private final BalanceJpaRepository balanceJpaRepository;
@@ -31,7 +31,7 @@ public class PaymentBalanceUseCase implements BalanceUseCase {
 
         isNotConditional(newAvailable.compareTo(total) > 0,
                 new UnprocessableEntityException(PAYMENT_CATEGORY_EXCEED_LIKE
-                        + newAvailable.subtract(total)));
+                        + total.subtract(available)));
 
         entity.setAvailableAmount(newAvailable);
         balanceJpaRepository.save(entity);

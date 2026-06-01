@@ -7,6 +7,8 @@ import com.bank.credit_card.generic.enums.CurrencyEnum;
 import java.math.BigDecimal;
 
 public record CardDtoRequest(
+        Long cardId,
+        Long cardAccountId,
         TypeCardEnum typeCard,
         CategoryCardEnum categoryCard,
         CurrencyEnum currency,

@@ -6,7 +6,7 @@ import com.bank.credit_card.balance.enums.BalanceUseCaseEnum;
 import java.math.BigDecimal;
 
 public interface BalanceService {
-    Long save(BalanceDtoRequest request, Long cardId);
+    Long save(BalanceDtoRequest request);
 
     void delete(Long cardId);
 

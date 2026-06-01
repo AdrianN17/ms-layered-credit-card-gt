@@ -9,13 +9,14 @@ import com.bank.credit_card.card.schema.response.CardResponse;
 import com.bank.credit_card.card.schema.response.CardResponseAccount;
 import com.bank.credit_card.card.schema.response.CardResponseBalance;
 import com.bank.credit_card.card.schema.response.CardResponseBenefit;
-import com.bank.credit_card.generic.mapper.RequestMapper;
+import com.bank.credit_card.generic.mapper.ResponseDtoMapper;
 import com.bank.credit_card.generic.mapper.ResponseMapper;
 import org.springframework.stereotype.Component;
 
 @Component
-public class CardSummaryMapper implements RequestMapper<CardSumaryProjection, CardDtoResponse>,
-                                          ResponseMapper<CardDtoResponse, CardResponse> {
+public class CardSummaryMapper implements
+        ResponseDtoMapper<CardDtoResponse, CardSumaryProjection>,
+        ResponseMapper<CardDtoResponse, CardResponse> {
 
     private CardAccountDtoResponse toAccountDto(CardSumaryProjection projection) {
         return new CardAccountDtoResponse(
@@ -45,7 +46,8 @@ public class CardSummaryMapper implements RequestMapper<CardSumaryProjection, Ca
         );
     }
 
-    public CardDtoResponse toDto(CardSumaryProjection projection) {
+    @Override
+    public CardDtoResponse toResponseDto(CardSumaryProjection projection) {
 
         return new CardDtoResponse(
                 projection.getTypeCardEnum(),
@@ -56,6 +58,7 @@ public class CardSummaryMapper implements RequestMapper<CardSumaryProjection, Ca
         );
     }
 
+    @Override
     public CardResponse toResponse(CardDtoResponse dto) {
         CardResponseBenefit benefit = new CardResponseBenefit(
                 dto.benefit().hasDiscount(),

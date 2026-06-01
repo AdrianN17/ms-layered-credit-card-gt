@@ -5,3 +5,16 @@ spring:
     name: credit-card
   profiles:
     active: old
+
+logging:
+  level:
+    root: INFO
+    com.bank.credit_bank: DEBUG
+    org.springframework.web: DEBUG
+    org.springframework.web.servlet.DispatcherServlet: DEBUG
+    org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.orm.jdbc.bind: TRACE
+    org.springframework.data: DEBUG
+    org.springframework.transaction: DEBUG
+  exception-conversion-word: "%wEx"

@@ -40,12 +40,12 @@ public class ConsumptionServiceImpl implements ConsumptionService {
     public List<ConsumptionResponseDto> findAll(String cardId, LocalDate start, LocalDate end) {
         return consumptionRepository.findByCardIdAndConsumptionDateBetween(cardId, start, end)
                 .stream()
-                .map(consumptionMapper::toDto)
+                .map(consumptionMapper::toResponseDto)
                 .toList();
     }
 
     @Override
-    public List<ConsumptionRequestDto> split(Integer quantity, String cardId, UUID consumptionId) {
+    public List<ConsumptionRequestDto> split(Integer quantity, String cardId, UUID consumptionId, BigDecimal debTax) {
         ConsumptionEntity entity = consumptionRepository.findById(consumptionId)
                 .orElseThrow(() -> new UnprocessableEntityException(CONSUMPTION_NOT_FOUND));
 
@@ -55,7 +55,7 @@ public class ConsumptionServiceImpl implements ConsumptionService {
         isNotNull(quantity, new BadRequestException(QUANTITY_CANNOT_BE_NULL));
 
         BigDecimal splitAmount = entity.getAmount()
-                .divide(BigDecimal.valueOf(quantity), 2, RoundingMode.HALF_UP);
+                .divide(BigDecimal.valueOf(quantity), 2).add(entity.getAmount().multiply(debTax));
 
         return IntStream.rangeClosed(1, quantity).mapToObj(count -> {
             String splitSellerName = entity.getSellerName() + " " + CONSUMPTION_SPLIT + " " + count;
@@ -86,6 +86,6 @@ public class ConsumptionServiceImpl implements ConsumptionService {
         ConsumptionEntity entity = consumptionRepository.findById(id)
                 .orElseThrow(() -> new UnprocessableEntityException(CONSUMPTION_NOT_FOUND));
 
-        return consumptionMapper.toDto(entity);
+        return consumptionMapper.toResponseDto(entity);
     }
 }

@@ -6,7 +6,8 @@ package com.bank.credit_card.generic.mapper;
  * @param <R> Request  (schema layer)
  * @param <D> DTO      (domain layer)
  */
-public interface RequestMapper<R, D> {
-    D toDto(R request);
+@FunctionalInterface
+public interface RequestIDDtoMapper<R, D> {
+    D toRequestDto(R request, Long cardId, Long Id);
 }
 

@@ -27,7 +27,7 @@ public class BalanceServiceImpl implements BalanceService {
     private final BalanceUseCaseFactory balanceUseCaseFactory;
 
     @Override
-    public Long save(BalanceDtoRequest request, Long cardId) {
+    public Long save(BalanceDtoRequest request) {
         BalanceEntity entity = balanceMapper.toEntity(request);
         return balanceJpaRepository.save(entity)
                 .getIdBalance();
@@ -36,7 +36,7 @@ public class BalanceServiceImpl implements BalanceService {
     @Override
     public void delete(Long cardId) {
         var entity = findActiveOrThrow(cardId);
-        entity.setStatus(StatusEnum.INACTIVE);
+        entity.softDelete();
         balanceJpaRepository.save(entity);
     }
 
