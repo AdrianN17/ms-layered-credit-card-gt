@@ -37,10 +37,10 @@ public class BalanceMapper implements
         LocalDate startDate = today.withDayOfMonth(request.paymentDay());
 
         if (today.isBefore(startDate)) {
-            startDate = startDate.minusMonths(1);
+            startDate = startDate.minusMonths(NEXT_MONTH);
         }
 
-        LocalDate endDate = startDate.plusMonths(1);
+        LocalDate endDate = startDate.plusMonths(NEXT_MONTH);
 
         return BalanceEntity.builder()
                 .idBalance(request.idBalance())
