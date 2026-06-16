@@ -29,4 +29,5 @@ spring:
         populate-query-metrics: false
 api:
   convert:
-    url: http://localhost:3001/convert/currency/
+    url: https://v6.exchangerate-api.com/v6
+    api-key: ${EXCHANGE_RATE_API_KEY}

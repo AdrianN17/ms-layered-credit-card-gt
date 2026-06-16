@@ -27,10 +27,9 @@ public class BalanceServiceImpl implements BalanceService {
     private final BalanceUseCaseFactory balanceUseCaseFactory;
 
     @Override
-    public Long save(BalanceDtoRequest request) {
+    public void save(BalanceDtoRequest request) {
         BalanceEntity entity = balanceMapper.toEntity(request);
-        return balanceJpaRepository.save(entity)
-                .getIdBalance();
+        balanceJpaRepository.save(entity);
     }
 
     @Override

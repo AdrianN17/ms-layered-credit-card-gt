@@ -37,14 +37,12 @@ public class CardServiceImpl implements CardService {
     private final CardSummaryMapper cardSummaryMapper;
 
     @Override
-    public Long save(CardDtoRequest dto) {
+    public void save(CardDtoRequest dto) {
         var cardEntity = cardMapper.toEntity(dto);
-        var savedCard = cardJpaRepository.save(cardEntity);
+        cardJpaRepository.save(cardEntity);
 
         var cardAccountEntity = cardAccountMapper.toEntity(dto);
         cardAccountJpaRepository.save(cardAccountEntity);
-
-        return savedCard.getCardId();
     }
 
     @Override

@@ -26,10 +26,9 @@ public class BenefitServiceImpl implements BenefitService {
     private final BenefitMapper benefitMapper;
 
     @Override
-    public Long save(BenefitRequestDto request) {
+    public void save(BenefitRequestDto request) {
         var entity = benefitMapper.toEntity(request);
-        var saved = benefitJpaRepository.save(entity);
-        return saved.getIdBenefit();
+        benefitJpaRepository.save(entity);
     }
 
     @Override
