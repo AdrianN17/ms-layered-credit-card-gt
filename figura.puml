@@ -1,0 +1,995 @@
+@startuml figura
+' ============================================================
+' C4 Level 4 – Code Diagram
+' ms-layered-credit-card-gt
+' Arquitectura: Layered + Ports & Adapters (Hexagonal híbrida)
+' Generado: 2026-06-16
+' ============================================================
+
+!theme plain
+skinparam linetype ortho
+skinparam nodesep 50
+skinparam ranksep 60
+skinparam classAttributeIconSize 0
+skinparam classFontSize 11
+skinparam packageFontSize 12
+skinparam packageBorderColor #888888
+skinparam classBorderColor #555555
+skinparam classBackgroundColor #FAFAFA
+skinparam stereotypeCBackgroundColor #DCE8FF
+skinparam stereotypeIBackgroundColor #D5F5E3
+skinparam stereotypeABackgroundColor #FFF3CD
+skinparam arrowColor #444444
+skinparam arrowFontSize 10
+hide empty members
+
+' ===========================================================
+' LEYENDA DE COLORES POR CAPA
+' ===========================================================
+' Presentation  → #B3D9FF (azul claro)
+' Application   → #C8E6C9 (verde claro)
+' Use Cases     → #FFF9C4 (amarillo)
+' Domain        → #FFCCBC (naranja claro)
+' Ports         → #E1BEE7 (lila)
+' Adapters      → #F8BBD0 (rosa)
+' Infrastructure→ #CFD8DC (gris azulado)
+' Generic/Cross → #EEEEEE (gris)
+
+' ============================================================
+' PACKAGE: PRESENTATION LAYER
+' ============================================================
+package "Presentation Layer" #B3D9FF {
+
+    ' ── CARD ──────────────────────────────────────────────
+    package "card.controller / card.delegate" #D6EAFF {
+
+        interface CardApi <<API Interface>> {
+            + initiateCard(InitiateCardRequest, BindingResult) : ResponseEntity<Long202Response>
+            + controlCard(Long) : ResponseEntity<Long202Response>
+            + retrieveBalance(Long) : ResponseEntity<RetrieveBalance200Response>
+        }
+
+        class CardController <<@RestController>> {
+            - delegate : CardDelegate
+            + initiateCard(...)
+            + controlCard(...)
+            + retrieveBalance(...)
+        }
+
+        interface CardDelegate <<Delegate Interface>> {
+            + initiateCard(InitiateCardRequest, BindingResult) : ResponseEntity<Long202Response>
+            + controlCard(Long) : ResponseEntity<Long202Response>
+            + retrieveBalance(Long) : ResponseEntity<RetrieveBalance200Response>
+        }
+
+        class CardDelegateImpl <<@Component>> {
+            - cardService : CardService
+            - balanceService : BalanceService
+            - benefitService : BenefitService
+            - cardMapper : CardMapper
+            - balanceMapper : BalanceMapper
+            - benefitMapper : BenefitMapper
+            - cardSummaryMapper : CardSummaryMapper
+            - idGenerate : IdGenerate
+            + initiateCard(...)
+            + controlCard(...)
+            + retrieveBalance(...)
+        }
+    }
+
+    ' ── CONSUMPTION ───────────────────────────────────────
+    package "consumption.controller / consumption.delegate" #D6EAFF {
+
+        interface ConsumptionApi <<API Interface>> {
+            + initiateConsumption(Long, InitiateConsumptionRequest, BindingResult) : ResponseEntity<UUID202Response>
+            + controlConsumption(Long, UUID) : ResponseEntity<UUID202Response>
+            + exchangeConsumption(Long, UUID, ExchangeConsumptionRequest, BindingResult) : ResponseEntity<UUIDList202Response>
+            + retrieveConsumption(Long, LocalDate, LocalDate) : ResponseEntity<RetrieveConsumption200Response>
+        }
+
+        class ConsumptionController <<@RestController>> {
+            - delegate : ConsumptionDelegate
+            + initiateConsumption(...)
+            + controlConsumption(...)
+            + exchangeConsumption(...)
+            + retrieveConsumption(...)
+        }
+
+        interface ConsumptionDelegate <<Delegate Interface>> {
+            + initiateConsumption(...) : ResponseEntity<UUID202Response>
+            + controlConsumption(...) : ResponseEntity<UUID202Response>
+            + exchangeConsumption(...) : ResponseEntity<UUIDList202Response>
+            + retrieveConsumption(...) : ResponseEntity<RetrieveConsumption200Response>
+        }
+
+        class ConsumptionDelegateImpl <<@Component>> {
+            - benefitService : BenefitService
+            - balanceService : BalanceService
+            - cardService : CardService
+            - consumptionService : ConsumptionService
+            - consumptionMapper : ConsumptionMapper
+            - currencyService : CurrencyService
+            + initiateConsumption(...)
+            + controlConsumption(...)
+            + exchangeConsumption(...)
+            + retrieveConsumption(...)
+        }
+    }
+
+    ' ── PAYMENT ───────────────────────────────────────────
+    package "payment.controller / payment.delegate" #D6EAFF {
+
+        interface PaymentApi <<API Interface>> {
+            + initiatePayment(Long, InitiatePaymentRequest, BindingResult) : ResponseEntity<UUID202Response>
+            + controlPayment(Long, UUID) : ResponseEntity<UUID202Response>
+            + retrievePayment(Long, LocalDate, LocalDate) : ResponseEntity<RetrievePayment200Response>
+        }
+
+        class PaymentController <<@RestController>> {
+            - delegate : PaymentDelegate
+            + initiatePayment(...)
+            + controlPayment(...)
+            + retrievePayment(...)
+        }
+
+        interface PaymentDelegate <<Delegate Interface>> {
+            + initiatePayment(...) : ResponseEntity<UUID202Response>
+            + controlPayment(...) : ResponseEntity<UUID202Response>
+            + retrievePayment(...) : ResponseEntity<RetrievePayment200Response>
+        }
+
+        class PaymentDelegateImpl <<@Component>> {
+            - benefitService : BenefitService
+            - balanceService : BalanceService
+            - cardService : CardService
+            - paymentService : PaymentService
+            - paymentMapper : PaymentMapper
+            - currencyService : CurrencyService
+            + initiatePayment(...)
+            + controlPayment(...)
+            + retrievePayment(...)
+        }
+    }
+
+    ' ── SCHEMAS (Request / Response) ──────────────────────
+    package "*.schema" #E8F4FD {
+
+        class InitiateCardRequest <<Request DTO>>
+        class InitiateConsumptionRequest <<Request DTO>>
+        class ExchangeConsumptionRequest <<Request DTO>>
+        class InitiatePaymentRequest <<Request DTO>>
+        class RetrieveBalance200Response <<Response DTO>>
+        class RetrieveConsumption200Response <<Response DTO>>
+        class RetrievePayment200Response <<Response DTO>>
+        class Long202Response <<Response DTO>>
+        class UUID202Response <<Response DTO>>
+        class UUIDList202Response <<Response DTO>>
+    }
+}
+
+' ============================================================
+' PACKAGE: APPLICATION / SERVICE LAYER
+' ============================================================
+package "Application / Service Layer" #C8E6C9 {
+
+    ' ── CARD SERVICE ──────────────────────────────────────
+    package "card.service" #DCEDC8 {
+        interface CardService <<Service Interface>> {
+            + save(CardDtoRequest)
+            + find(Long) : CardDtoResponse
+            + delete(Long)
+            + getRatio(CategoryCardEnum) : BigDecimal
+            + validate(CardStatusEnum)
+        }
+
+        class CardServiceImpl <<@Service>> {
+            - cardJpaRepository : CardJpaRepository
+            - cardAccountJpaRepository : CardAccountJpaRepository
+            - cardVOJpaRepository : CardVOJpaRepository
+            - cardMapper : CardMapper
+            - cardAccountMapper : CardAccountMapper
+            - cardSummaryMapper : CardSummaryMapper
+            + save(CardDtoRequest)
+            + find(Long) : CardDtoResponse
+            + delete(Long)
+            + getRatio(CategoryCardEnum) : BigDecimal
+            + validate(CardStatusEnum)
+        }
+    }
+
+    ' ── CONSUMPTION SERVICE ───────────────────────────────
+    package "consumption.service" #DCEDC8 {
+        interface ConsumptionService <<Service Interface>> {
+            + save(ConsumptionRequestDto)
+            + findAll(String, LocalDate, LocalDate) : List<ConsumptionResponseDto>
+            + split(Integer, String, UUID, BigDecimal) : List<ConsumptionRequestDto>
+            + delete(UUID)
+            + get(UUID) : ConsumptionResponseDto
+        }
+
+        class ConsumptionServiceImpl <<@Service>> {
+            - consumptionRepository : ConsumptionRepository
+            - consumptionMapper : ConsumptionMapper
+            + save(...)
+            + findAll(...)
+            + split(...)
+            + delete(...)
+            + get(...)
+        }
+    }
+
+    ' ── PAYMENT SERVICE ───────────────────────────────────
+    package "payment.service" #DCEDC8 {
+        interface PaymentService <<Service Interface>> {
+            + save(PaymentRequestDto)
+            + validate(BigDecimal, BigDecimal, LocalDate, LocalDate, PaymentRequestDto)
+            + get(UUID) : PaymentResponseDto
+            + findAll(String, LocalDate, LocalDate) : List<PaymentResponseDto>
+            + delete(UUID)
+        }
+
+        class PaymentServiceImpl <<@Service>> {
+            - paymentRepository : PaymentRepository
+            - paymentMapper : PaymentMapper
+            + save(...)
+            + validate(...)
+            + get(...)
+            + findAll(...)
+            + delete(...)
+        }
+    }
+
+    ' ── BALANCE SERVICE ───────────────────────────────────
+    package "balance.service" #DCEDC8 {
+        interface BalanceService <<Service Interface>> {
+            + save(BalanceDtoRequest)
+            + delete(Long)
+            + apply(Long, BigDecimal, BalanceUseCaseEnum)
+            + cancel(Long, BigDecimal, BalanceUseCaseEnum)
+        }
+
+        class BalanceServiceImpl <<@Service>> {
+            - balanceJpaRepository : BalanceJpaRepository
+            - balanceMapper : BalanceMapper
+            - balanceUseCaseFactory : BalanceUseCaseFactory
+            + save(...)
+            + delete(...)
+            + apply(...)
+            + cancel(...)
+            - updateCardStatus(Long)
+            - findActiveOrThrow(Long) : BalanceEntity
+        }
+    }
+
+    ' ── BENEFIT SERVICE ───────────────────────────────────
+    package "benefit.service" #DCEDC8 {
+        interface BenefitService <<Service Interface>> {
+            + save(BenefitRequestDto)
+            + delete(Long)
+            + accumulate(BigDecimal, BigDecimal, Long)
+            + discount(BigDecimal, Integer, Long) : BigDecimal
+        }
+
+        class BenefitServiceImpl <<@Service>> {
+            - benefitJpaRepository : BenefitJpaRepository
+            - benefitMapper : BenefitMapper
+            + save(...)
+            + delete(...)
+            + accumulate(...)
+            + discount(...)
+        }
+    }
+
+    ' ── CURRENCY SERVICE ──────────────────────────────────
+    package "currency.service" #DCEDC8 {
+        interface CurrencyService <<Service Interface>> {
+            + get(CurrencyEnum, CurrencyEnum, BigDecimal) : BigDecimal
+        }
+
+        class CurrencyServiceImpl <<@Service>> {
+            - currencyExchangeRateRepository : CurrencyExchangeRateRepository
+            + get(CurrencyEnum, CurrencyEnum, BigDecimal) : BigDecimal
+        }
+    }
+
+    ' ── DTOs ──────────────────────────────────────────────
+    package "*.dto" #F1F8E9 {
+        class CardDtoRequest <<DTO>>
+        class CardDtoResponse <<DTO>>
+        class ConsumptionRequestDto <<DTO>>
+        class ConsumptionResponseDto <<DTO>>
+        class PaymentRequestDto <<DTO>>
+        class PaymentResponseDto <<DTO>>
+        class BalanceDtoRequest <<DTO>>
+        class BenefitRequestDto <<DTO>>
+        class ExchangeRateApiDto <<DTO>>
+        class CurrencyDto <<DTO>>
+    }
+}
+
+' ============================================================
+' PACKAGE: USE CASES (Domain Logic / Business Rules)
+' ============================================================
+package "Use Cases" #FFF9C4 {
+
+    ' ── PAYMENT USE CASES ─────────────────────────────────
+    package "payment.usecase" #FFF3CD {
+        interface PaymentUseCase <<Use Case Interface>> {
+            + close()
+            + validateIfPaymentIsPossible(BigDecimal, BigDecimal, LocalDate, LocalDate)
+        }
+
+        abstract class AbstractPaymentUseCase <<Abstract Use Case>> {
+            # amount : BigDecimal
+            # paymentApprobationDate : LocalDate
+        }
+
+        class NormalPaymentUseCase <<Use Case>> {
+            + close()
+            + validateIfPaymentIsPossible(...)
+        }
+
+        class TotalPaymentUseCase <<Use Case>> {
+            + close()
+            + validateIfPaymentIsPossible(...)
+        }
+
+        class MinimumPaymentUseCase <<Use Case>> {
+            + close()
+            + validateIfPaymentIsPossible(...)
+        }
+
+        class PrepaymentUseCase <<Use Case>> {
+            + close()
+            + validateIfPaymentIsPossible(...)
+        }
+
+        class PaymentUseCaseFactory <<Factory>> {
+            + {static} create(BigDecimal, LocalDate, CategoryPaymentEnum) : PaymentUseCase
+            - {static} build(AbstractPaymentUseCase, BigDecimal, LocalDate) : PaymentUseCase
+        }
+    }
+
+    ' ── BALANCE USE CASES ─────────────────────────────────
+    package "balance.usecase" #FFF3CD {
+        interface BalanceUseCase <<Use Case Interface>> {
+            + apply(BigDecimal)
+            + cancel(BigDecimal)
+        }
+
+        class ConsumptionBalanceUseCase <<@Component Use Case>> {
+            - balanceJpaRepository : BalanceJpaRepository
+            - entity : BalanceEntity
+            + apply(BigDecimal)
+            + cancel(BigDecimal)
+            + withEntity(BalanceEntity) : ConsumptionBalanceUseCase
+        }
+
+        class PaymentBalanceUseCase <<@Component Use Case>> {
+            - balanceJpaRepository : BalanceJpaRepository
+            - entity : BalanceEntity
+            + apply(BigDecimal)
+            + cancel(BigDecimal)
+            + withEntity(BalanceEntity) : PaymentBalanceUseCase
+        }
+
+        class BalanceUseCaseFactory <<@Component Factory>> {
+            - consumptionUseCase : ConsumptionBalanceUseCase
+            - paymentUseCase : PaymentBalanceUseCase
+            + create(BalanceUseCaseEnum, BalanceEntity) : BalanceUseCase
+        }
+    }
+}
+
+' ============================================================
+' PACKAGE: DOMAIN
+' ============================================================
+package "Domain" #FFCCBC {
+
+    ' ── ENTITIES (JPA) ────────────────────────────────────
+    package "*.entity (JPA)" #FFE0B2 {
+        class GenericEntity <<@MappedSuperclass>> {
+            # createdDate : LocalDateTime
+            # updatedDate : LocalDateTime
+            # status : StatusEnum
+            + softDelete()
+        }
+
+        class CardEntity <<@Entity "Cards">> {
+            - cardId : Long
+            - typeCard : TypeCardEnum
+            - categoryCard : CategoryCardEnum
+        }
+
+        class CardAccountEntity <<@Entity "CardAccounts">> {
+            - cardAccountId : Long
+            - cardId : Long
+            - creditTotal : BigDecimal
+            - debtTax : BigDecimal
+            - currency : CurrencyEnum
+            - paymentDate : Short
+            - cardStatus : CardStatusEnum
+        }
+
+        class BalanceEntity <<@Entity "balances">> {
+            - idBalance : Long
+            - cardId : Long
+            - totalAmount : BigDecimal
+            - availableAmount : BigDecimal
+            - oldAmount : BigDecimal
+            - currency : CurrencyEnum
+            - startDate : LocalDate
+            - endDate : LocalDate
+        }
+
+        class BenefitEntity <<@Entity "Benefits">> {
+            - idBenefit : Long
+            - cardId : Long
+            - hasDiscount : Boolean
+            - totalPoints : Integer
+            - multiplierPoints : BigDecimal
+        }
+    }
+
+    ' ── ENTITIES (NoSQL) ──────────────────────────────────
+    package "*.entity (NoSQL)" #FFE0B2 {
+        interface ConsumptionEntity <<Entity Interface>> {
+            + getConsumptionId() : UUID
+            + getCardId() : String
+            + getSellerName() : String
+            + getCurrency() : CurrencyEnum
+            + getAmount() : BigDecimal
+            + getConsumptionDate() : LocalDateTime
+            + getConsumptionApprobationDate() : LocalDateTime
+        }
+
+        class ConsumptionEntityMongo <<@Document "Consumptions">> {
+            - consumptionId : UUID
+            - cardId : String
+            - sellerName : String
+            - currency : CurrencyEnum
+            - amount : BigDecimal
+            - consumptionDate : LocalDateTime
+            - consumptionApprobationDate : LocalDateTime
+        }
+
+        class ConsumptionEntityCosmos <<@Container "Consumptions">> {
+            - consumptionId : UUID
+            - cardId : String
+            - sellerName : String
+            - currency : CurrencyEnum
+            - amount : BigDecimal
+            - consumptionDate : LocalDateTime
+            - consumptionApprobationDate : LocalDateTime
+        }
+
+        interface PaymentEntity <<Entity Interface>> {
+            + getPaymentId() : UUID
+            + getCardId() : String
+            + getAmount() : BigDecimal
+            + getCurrency() : CurrencyEnum
+            + getPaymentDate() : LocalDateTime
+            + getPaymentApprobationDate() : LocalDateTime
+            + getChannel() : ChannelPaymentEnum
+            + getCategory() : CategoryPaymentEnum
+        }
+
+        class PaymentEntityMongo <<@Document "Payments">>
+        class PaymentEntityCosmos <<@Container "Payments">>
+    }
+
+    ' ── VALUE OBJECTS ─────────────────────────────────────
+    package "generic.model" #FFCCBC {
+        class Amount <<Value Object>> {
+            - currency : CurrencyEnum
+            - exchangeRate : BigDecimal
+            - amount : BigDecimal
+            + {static} create(CurrencyEnum, BigDecimal, BigDecimal) : Amount
+            + mas(Amount) : Amount
+            + menos(Amount) : Amount
+            + dividir(Integer) : Amount
+            + fraccionar(Integer, BigDecimal) : Amount
+            + descuento(BigDecimal) : Amount
+            + {static} convertir(Amount, Amount) : Amount
+        }
+    }
+
+    ' ── ENUMS ─────────────────────────────────────────────
+    package "*.enums" #FFE0B2 {
+        enum CardStatusEnum <<Enum>> {
+            ACTIVE
+            IN_DEBT
+            INACTIVE
+        }
+        enum CategoryCardEnum <<Enum>> {
+            NORMAL
+            SILVER
+            GOLD
+            PLATINUM
+            BLACK
+            SIGNATURE
+            INFINITY
+        }
+        enum TypeCardEnum <<Enum>> {
+            VISA
+            MASTERCARD
+        }
+        enum CategoryPaymentEnum <<Enum>> {
+            NORMAL
+            TOTAL
+            MINIMO
+            ADELANTADO
+        }
+        enum ChannelPaymentEnum <<Enum>>
+        enum BalanceUseCaseEnum <<Enum>> {
+            CONSUMPTION
+            PAYMENT
+        }
+        enum CurrencyEnum <<Enum>>
+        enum StatusEnum <<Enum>> {
+            ACTIVE
+            INACTIVE
+        }
+    }
+
+    ' ── EXCEPTIONS ────────────────────────────────────────
+    package "generic.exception" #FFE0B2 {
+        class ServiceException <<Exception>>
+        class BadRequestException <<Exception>>
+        class UnprocessableEntityException <<Exception>>
+        class InternalServerErrorException <<Exception>>
+        class BadGatewayException <<Exception>>
+        class UnauthorizedException <<Exception>>
+        class RequestValidationException <<Exception>>
+    }
+}
+
+' ============================================================
+' PACKAGE: PORTS (Output Ports)
+' ============================================================
+package "Ports (Output)" #E1BEE7 {
+
+    interface ConsumptionRepository <<Output Port>> {
+        + save(ConsumptionEntity) : ConsumptionEntity
+        + findById(UUID) : Optional<ConsumptionEntity>
+        + findByCardIdAndConsumptionDateBetween(String, LocalDate, LocalDate) : List<ConsumptionEntity>
+        + softDelete(UUID)
+    }
+
+    interface PaymentRepository <<Output Port>> {
+        + save(PaymentEntity) : PaymentEntity
+        + findById(UUID) : Optional<PaymentEntity>
+        + findByCardIdAndPaymentDateBetween(String, LocalDate, LocalDate) : List<PaymentEntity>
+        + softDelete(UUID)
+    }
+
+    interface CurrencyExchangeRateRepository <<Output Port>> {
+        + getExchangeRate(CurrencyEnum, CurrencyEnum) : BigDecimal
+    }
+
+    interface IdGenerate <<Functional Interface Port>> {
+        + load() : Optional<Long>
+    }
+}
+
+' ============================================================
+' PACKAGE: ADAPTERS (Outbound)
+' ============================================================
+package "Adapters (Outbound)" #F8BBD0 {
+
+    ' ── CONSUMPTION ADAPTERS ──────────────────────────────
+    package "consumption.repository (Adapters)" #FFCDD2 {
+        class ConsumptionMongoRepositoryAdapter <<@Component @Profile("old")>> {
+            - repository : ConsumptionMongoRepository
+            + save(ConsumptionEntity) : ConsumptionEntity
+            + findById(UUID) : Optional<ConsumptionEntity>
+            + findByCardIdAndConsumptionDateBetween(...) : List<ConsumptionEntity>
+            + softDelete(UUID)
+        }
+
+        class ConsumptionCosmosRepositoryAdapter <<@Component @Profile("new")>> {
+            - repository : ConsumptionCosmosRepository
+            + save(ConsumptionEntity) : ConsumptionEntity
+            + findById(UUID) : Optional<ConsumptionEntity>
+            + findByCardIdAndConsumptionDateBetween(...) : List<ConsumptionEntity>
+            + softDelete(UUID)
+        }
+    }
+
+    ' ── PAYMENT ADAPTERS ──────────────────────────────────
+    package "payment.repository (Adapters)" #FFCDD2 {
+        class PaymentMongoRepositoryAdapter <<@Component @Profile("old")>> {
+            - repository : PaymentMongoRepository
+            + save(PaymentEntity) : PaymentEntity
+            + findById(UUID) : Optional<PaymentEntity>
+            + findByCardIdAndPaymentDateBetween(...) : List<PaymentEntity>
+            + softDelete(UUID)
+        }
+
+        class PaymentCosmosRepositoryAdapter <<@Component @Profile("new")>> {
+            - repository : PaymentCosmosRepository
+            + save(PaymentEntity) : PaymentEntity
+            + findById(UUID) : Optional<PaymentEntity>
+            + findByCardIdAndPaymentDateBetween(...) : List<PaymentEntity>
+            + softDelete(UUID)
+        }
+    }
+
+    ' ── CURRENCY ADAPTERS (External REST) ─────────────────
+    package "currency.repository (External Adapters)" #FFCDD2 {
+        class CurrencyNewWSRepository <<@Repository @Profile("new")>> {
+            - restClient : RestClient
+            - apiKey : String
+            + getExchangeRate(CurrencyEnum, CurrencyEnum) : BigDecimal
+        }
+
+        class CurrencyOldWSRepository <<@Repository @Profile("old")>> {
+            - restClient : RestClient
+            + getExchangeRate(CurrencyEnum, CurrencyEnum) : BigDecimal
+        }
+    }
+
+    ' ── ID GENERATOR ──────────────────────────────────────
+    package "generator" #FFCDD2 {
+        class SnowflakeGenerator <<@Component>> {
+            - machineId : long
+            - sequence : long
+            - lastTimestamp : long
+            + load() : Optional<Long>
+            - nextId() : Long
+        }
+    }
+}
+
+' ============================================================
+' PACKAGE: INFRASTRUCTURE
+' ============================================================
+package "Infrastructure" #CFD8DC {
+
+    ' ── JPA REPOSITORIES ──────────────────────────────────
+    package "JPA Repositories" #ECEFF1 {
+        interface GenericJpaRepository <<@NoRepositoryBean>> {
+            + findActiveById(ID) : Optional<T>
+        }
+
+        interface CardJpaRepository <<@Repository extends GenericJpaRepository>> {
+        }
+
+        interface CardAccountJpaRepository <<@Repository extends GenericJpaRepository>> {
+        }
+
+        interface CardVOJpaRepository <<@Repository extends GenericJpaRepository>> {
+            + getCardAllProjectionByCardId(Long) : Optional<CardSumaryProjection>
+            + getCardCurrencyProjectionByCardId(Long) : Optional<CardCurrencyProjection>
+        }
+
+        interface BalanceJpaRepository <<@Repository extends GenericJpaRepository>> {
+            + findActiveByCardId(Long) : Optional<BalanceEntity>
+            + callUpdateCardStatus(Long, BigDecimal)
+        }
+
+        interface BenefitJpaRepository <<@Repository extends GenericJpaRepository>> {
+            + findActiveByCardId(Long) : Optional<BenefitEntity>
+        }
+    }
+
+    ' ── NOSQL REPOSITORIES ────────────────────────────────
+    package "NoSQL Repositories" #ECEFF1 {
+        interface GenericMongoRepository <<@NoRepositoryBean extends MongoRepository>> {
+            + findActiveById(ID, String) : Optional<T>
+        }
+
+        interface GenericCosmosRepository <<@NoRepositoryBean extends CosmosRepository>> {
+            + findActiveById(ID, String) : Optional<T>
+        }
+
+        interface ConsumptionMongoRepository <<@Repository extends GenericMongoRepository>> {
+            + findByCardIdAndConsumptionDateBetween(String, LocalDateTime, LocalDateTime) : List<ConsumptionEntityMongo>
+        }
+
+        interface ConsumptionCosmosRepository <<@Repository extends GenericCosmosRepository>> {
+            + findByCardIdAndConsumptionDateBetween(String, LocalDateTime, LocalDateTime) : List<ConsumptionEntityCosmos>
+        }
+
+        interface PaymentMongoRepository <<@Repository extends GenericMongoRepository>> {
+            + findByCardIdAndPaymentDateBetween(String, LocalDateTime, LocalDateTime) : List<PaymentEntityMongo>
+        }
+
+        interface PaymentCosmosRepository <<@Repository extends GenericCosmosRepository>> {
+            + findByCardIdAndPaymentDateBetween(String, LocalDateTime, LocalDateTime) : List<PaymentEntityCosmos>
+        }
+    }
+
+    ' ── CONFIGURACIÓN ─────────────────────────────────────
+    package "Configuration" #ECEFF1 {
+        class JpaRepositoryConfig <<@Configuration @EnableJpaRepositories>> {
+            ' basePackages: balance, card, benefit
+        }
+
+        class RestClientConfig <<@Configuration>> {
+            + restClientOld(@Profile("old")) : RestClient
+            + restClientNew(@Profile("new")) : RestClient
+        }
+    }
+
+    ' ── AOP ───────────────────────────────────────────────
+    package "AOP / Cross-cutting" #ECEFF1 {
+        class TransactionalUseCaseAspect <<@Aspect @Component>> {
+            - transactionManager : PlatformTransactionManager
+            + manageTransaction(ProceedingJoinPoint) : Object
+        }
+
+        class GlobalControllAdvice <<@ControllerAdvice>> {
+            + handleMethodArgumentNotValid(...) : ResponseEntity
+            + handleBadRequestException(...) : ResponseEntity
+            + handleUnprocessableEntityException(...) : ResponseEntity
+            + handleBadGatewayException(...) : ResponseEntity
+            + handleInternalServerErrorException(...) : ResponseEntity
+        }
+    }
+
+    ' ── MAPPERS ───────────────────────────────────────────
+    package "Mappers" #ECEFF1 {
+        class CardMapper <<@Component Mapper>>
+        class CardAccountMapper <<@Component Mapper>>
+        class CardSummaryMapper <<@Component Mapper>>
+        class ConsumptionMapper <<@Component Mapper>>
+        class PaymentMapper <<@Component Mapper>>
+        class BalanceMapper <<@Component Mapper>>
+        class BenefitMapper <<@Component Mapper>>
+    }
+
+    ' ── EXTERNAL SYSTEMS ──────────────────────────────────
+    package "External Systems" #B0BEC5 {
+        database "SQL Server\n(JPA/Hibernate)" as SQLServer
+        database "MongoDB" as MongoDB
+        database "Azure Cosmos DB" as CosmosDB
+        cloud "ExchangeRate API (new)" as ExchangeRateAPI
+        cloud "Currency WS (old)" as CurrencyOldAPI
+    }
+}
+
+' ============================================================
+' RELACIONES – PRESENTATION LAYER
+' ============================================================
+
+' Controller implements API
+CardController .up.|> CardApi
+ConsumptionController .up.|> ConsumptionApi
+PaymentController .up.|> PaymentApi
+
+' Controller --> Delegate (interface)
+CardController --> CardDelegate : delegates to
+ConsumptionController --> ConsumptionDelegate : delegates to
+PaymentController --> PaymentDelegate : delegates to
+
+' Impl implements interface
+CardDelegateImpl .up.|> CardDelegate
+ConsumptionDelegateImpl .up.|> ConsumptionDelegate
+PaymentDelegateImpl .up.|> PaymentDelegate
+
+' Controller usa Schemas
+CardController ..> InitiateCardRequest : <<uses>>
+CardController ..> RetrieveBalance200Response : <<produces>>
+ConsumptionController ..> InitiateConsumptionRequest : <<uses>>
+ConsumptionController ..> ExchangeConsumptionRequest : <<uses>>
+ConsumptionController ..> RetrieveConsumption200Response : <<produces>>
+PaymentController ..> InitiatePaymentRequest : <<uses>>
+PaymentController ..> RetrievePayment200Response : <<produces>>
+
+' ============================================================
+' RELACIONES – DELEGATE → SERVICE
+' ============================================================
+
+CardDelegateImpl --> CardService : <<calls>>
+CardDelegateImpl --> BalanceService : <<calls>>
+CardDelegateImpl --> BenefitService : <<calls>>
+CardDelegateImpl --> IdGenerate : <<calls>>
+
+ConsumptionDelegateImpl --> ConsumptionService : <<calls>>
+ConsumptionDelegateImpl --> CardService : <<calls>>
+ConsumptionDelegateImpl --> BalanceService : <<calls>>
+ConsumptionDelegateImpl --> BenefitService : <<calls>>
+ConsumptionDelegateImpl --> CurrencyService : <<calls>>
+
+PaymentDelegateImpl --> PaymentService : <<calls>>
+PaymentDelegateImpl --> CardService : <<calls>>
+PaymentDelegateImpl --> BalanceService : <<calls>>
+PaymentDelegateImpl --> BenefitService : <<calls>>
+PaymentDelegateImpl --> CurrencyService : <<calls>>
+
+' ============================================================
+' RELACIONES – SERVICE IMPL
+' ============================================================
+
+CardServiceImpl .up.|> CardService
+CardServiceImpl --> CardJpaRepository : <<uses>>
+CardServiceImpl --> CardAccountJpaRepository : <<uses>>
+CardServiceImpl --> CardVOJpaRepository : <<uses>>
+CardServiceImpl --> CardMapper : <<uses>>
+CardServiceImpl --> CardAccountMapper : <<uses>>
+CardServiceImpl --> CardSummaryMapper : <<uses>>
+
+ConsumptionServiceImpl .up.|> ConsumptionService
+ConsumptionServiceImpl --> ConsumptionRepository : <<port>>
+ConsumptionServiceImpl --> ConsumptionMapper : <<uses>>
+
+PaymentServiceImpl .up.|> PaymentService
+PaymentServiceImpl --> PaymentRepository : <<port>>
+PaymentServiceImpl --> PaymentMapper : <<uses>>
+PaymentServiceImpl --> PaymentUseCaseFactory : <<uses>>
+
+BalanceServiceImpl .up.|> BalanceService
+BalanceServiceImpl --> BalanceJpaRepository : <<uses>>
+BalanceServiceImpl --> BalanceMapper : <<uses>>
+BalanceServiceImpl --> BalanceUseCaseFactory : <<uses>>
+
+BenefitServiceImpl .up.|> BenefitService
+BenefitServiceImpl --> BenefitJpaRepository : <<uses>>
+BenefitServiceImpl --> BenefitMapper : <<uses>>
+
+CurrencyServiceImpl .up.|> CurrencyService
+CurrencyServiceImpl --> CurrencyExchangeRateRepository : <<port>>
+
+' ============================================================
+' RELACIONES – USE CASES
+' ============================================================
+
+' Payment Use Cases
+AbstractPaymentUseCase .up.|> PaymentUseCase
+NormalPaymentUseCase --|> AbstractPaymentUseCase
+TotalPaymentUseCase --|> AbstractPaymentUseCase
+MinimumPaymentUseCase --|> AbstractPaymentUseCase
+PrepaymentUseCase --|> AbstractPaymentUseCase
+
+PaymentUseCaseFactory ..> NormalPaymentUseCase : <<creates>>
+PaymentUseCaseFactory ..> TotalPaymentUseCase : <<creates>>
+PaymentUseCaseFactory ..> MinimumPaymentUseCase : <<creates>>
+PaymentUseCaseFactory ..> PrepaymentUseCase : <<creates>>
+PaymentUseCaseFactory ..> PaymentUseCase : <<returns>>
+
+PaymentServiceImpl --> PaymentUseCaseFactory : <<uses>>
+
+' Balance Use Cases
+ConsumptionBalanceUseCase .up.|> BalanceUseCase
+PaymentBalanceUseCase .up.|> BalanceUseCase
+
+ConsumptionBalanceUseCase --> BalanceJpaRepository : <<uses>>
+PaymentBalanceUseCase --> BalanceJpaRepository : <<uses>>
+
+BalanceUseCaseFactory --> ConsumptionBalanceUseCase : <<injects>>
+BalanceUseCaseFactory --> PaymentBalanceUseCase : <<injects>>
+BalanceUseCaseFactory ..> BalanceUseCase : <<creates>>
+
+BalanceServiceImpl --> BalanceUseCaseFactory : <<uses>>
+
+' ============================================================
+' RELACIONES – DOMAIN / ENTITIES
+' ============================================================
+
+CardEntity --|> GenericEntity
+CardAccountEntity --|> GenericEntity
+BalanceEntity --|> GenericEntity
+BenefitEntity --|> GenericEntity
+
+ConsumptionEntityMongo --|> GenericEntity
+ConsumptionEntityMongo .up.|> ConsumptionEntity
+ConsumptionEntityCosmos --|> GenericEntity
+ConsumptionEntityCosmos .up.|> ConsumptionEntity
+
+PaymentEntityMongo .up.|> PaymentEntity
+PaymentEntityCosmos .up.|> PaymentEntity
+
+' ============================================================
+' RELACIONES – PORTS → ADAPTERS (Outbound)
+' ============================================================
+
+' Consumption Port → Adapters
+ConsumptionMongoRepositoryAdapter .up.|> ConsumptionRepository
+ConsumptionCosmosRepositoryAdapter .up.|> ConsumptionRepository
+ConsumptionMongoRepositoryAdapter --> ConsumptionMongoRepository : <<uses>>
+ConsumptionCosmosRepositoryAdapter --> ConsumptionCosmosRepository : <<uses>>
+
+' Payment Port → Adapters
+PaymentMongoRepositoryAdapter .up.|> PaymentRepository
+PaymentCosmosRepositoryAdapter .up.|> PaymentRepository
+PaymentMongoRepositoryAdapter --> PaymentMongoRepository : <<uses>>
+PaymentCosmosRepositoryAdapter --> PaymentCosmosRepository : <<uses>>
+
+' Currency Port → Adapters
+CurrencyNewWSRepository .up.|> CurrencyExchangeRateRepository
+CurrencyOldWSRepository .up.|> CurrencyExchangeRateRepository
+
+' ID Generator
+SnowflakeGenerator .up.|> IdGenerate
+
+' ============================================================
+' RELACIONES – INFRASTRUCTURE / JPA
+' ============================================================
+
+GenericJpaRepository --|> JpaRepository : <<extends>>
+CardJpaRepository --|> GenericJpaRepository
+CardAccountJpaRepository --|> GenericJpaRepository
+CardVOJpaRepository --|> GenericJpaRepository
+BalanceJpaRepository --|> GenericJpaRepository
+BenefitJpaRepository --|> GenericJpaRepository
+
+GenericMongoRepository --|> MongoRepository : <<extends>>
+ConsumptionMongoRepository --|> GenericMongoRepository
+PaymentMongoRepository --|> GenericMongoRepository
+
+GenericCosmosRepository --|> CosmosRepository : <<extends>>
+ConsumptionCosmosRepository --|> GenericCosmosRepository
+PaymentCosmosRepository --|> GenericCosmosRepository
+
+' ============================================================
+' RELACIONES – ADAPTERS → EXTERNAL SYSTEMS
+' ============================================================
+
+CardJpaRepository ..> SQLServer : SQL Server (JPA)
+CardAccountJpaRepository ..> SQLServer : SQL Server (JPA)
+CardVOJpaRepository ..> SQLServer : SQL Server (native query)
+BalanceJpaRepository ..> SQLServer : SQL Server (JPA + Stored Proc)
+BenefitJpaRepository ..> SQLServer : SQL Server (JPA)
+
+ConsumptionMongoRepository ..> MongoDB : MongoDB
+PaymentMongoRepository ..> MongoDB : MongoDB
+
+ConsumptionCosmosRepository ..> CosmosDB : Azure Cosmos DB
+PaymentCosmosRepository ..> CosmosDB : Azure Cosmos DB
+
+CurrencyNewWSRepository ..> ExchangeRateAPI : REST GET /v6/{key}/latest/{base}
+CurrencyOldWSRepository ..> CurrencyOldAPI : REST GET /{from}
+
+' ============================================================
+' RELACIONES – CONFIG / AOP
+' ============================================================
+
+RestClientConfig ..> CurrencyNewWSRepository : <<provides RestClient>>
+RestClientConfig ..> CurrencyOldWSRepository : <<provides RestClient>>
+JpaRepositoryConfig ..> BalanceJpaRepository : <<registers>>
+JpaRepositoryConfig ..> CardJpaRepository : <<registers>>
+JpaRepositoryConfig ..> BenefitJpaRepository : <<registers>>
+
+TransactionalUseCaseAspect ..> CardApi : @TransactionalUseCase intercepts
+GlobalControllAdvice ..> BadRequestException : handles
+GlobalControllAdvice ..> UnprocessableEntityException : handles
+GlobalControllAdvice ..> BadGatewayException : handles
+GlobalControllAdvice ..> InternalServerErrorException : handles
+
+' ============================================================
+' CLASES EXTERNAS (Spring / Azure) – solo referenciadas
+' ============================================================
+
+interface JpaRepository <<Spring Data JPA>>
+interface MongoRepository <<Spring Data MongoDB>>
+interface CosmosRepository <<Azure Spring Data Cosmos>>
+
+' ============================================================
+' NOTA FINAL
+' ============================================================
+note as N1
+  <b>Perfil "old":</b>
+  - ConsumptionMongoRepositoryAdapter activo
+  - PaymentMongoRepositoryAdapter activo
+  - CurrencyOldWSRepository activo
+  - MongoDB como almacén NoSQL
+
+  <b>Perfil "new":</b>
+  - ConsumptionCosmosRepositoryAdapter activo
+  - PaymentCosmosRepositoryAdapter activo
+  - CurrencyNewWSRepository activo
+  - Azure Cosmos DB como almacén NoSQL
+end note
+
+note as N2
+  <b>Arquitectura:</b> Layered + Ports & Adapters (Híbrida)
+  <b>Persistencia relacional:</b> SQL Server (JPA/Hibernate)
+  <b>Persistencia NoSQL:</b> MongoDB | Azure Cosmos DB
+  <b>ID generación:</b> Snowflake Algorithm
+  <b>AOP:</b> @TransactionalUseCase intercepta métodos en API
+  <b>Generación de API:</b> OpenAPI Generator (spring, interfaceOnly)
+end note
+
+@enduml
+
