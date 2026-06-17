@@ -31,3 +31,5 @@ api:
   convert:
     url: https://v6.exchangerate-api.com/v6
     api-key: ${EXCHANGE_RATE_API_KEY}
+    connect-timeout-ms: 3000
+    read-timeout-sec: 5

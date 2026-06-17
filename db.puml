@@ -1,0 +1,86 @@
+@startuml db-er
+
+!define TABLE(name,desc) class name as "desc" << (T, #FFAAAA) >>
+!define PK(x) <b><color:#b8860b>PK</color> x</b>
+!define FK(x) <color:#aaaaaa>FK</color> x
+!define NOT_NULL(x) <u>x</u>
+
+hide methods
+hide stereotypes
+
+skinparam class {
+    BackgroundColor White
+    BorderColor #4A90D9
+    ArrowColor #4A90D9
+    FontName Arial
+    HeaderBackgroundColor #4A90D9
+    HeaderFontColor White
+}
+
+skinparam shadowing false
+skinparam classFontSize 12
+
+entity Cards {
+    * PK(cardId) : BIGINT
+    --
+    typeCard      : SMALLINT
+    categoryCard  : SMALLINT
+    createdDate   : TIMESTAMP
+    updatedDate   : TIMESTAMP
+    status        : SMALLINT
+}
+
+entity CardAccounts {
+    * PK(cardAccountId) : BIGINT
+    --
+    * FK(cardId)    : BIGINT
+    creditTotal     : DECIMAL(19,2)
+    debtTax         : DECIMAL(19,2)
+    currency        : SMALLINT
+    paymentDate     : SMALLINT
+    cardStatus      : SMALLINT
+    createdDate     : TIMESTAMP
+    updatedDate     : TIMESTAMP
+    status          : SMALLINT
+}
+
+entity balances {
+    * PK(idBalance) : BIGINT
+    --
+    * FK(cardId)      : BIGINT
+    currency          : SMALLINT
+    totalAmount       : DECIMAL(19,2)
+    availableAmount   : DECIMAL(19,2)
+    oldAmount         : DECIMAL(19,2)
+    startDate         : DATE
+    endDate           : DATE
+    createdDate       : TIMESTAMP
+    updatedDate       : TIMESTAMP
+    status            : SMALLINT
+}
+
+entity Benefits {
+    * PK(idBenefit) : BIGINT
+    --
+    * FK(cardId)       : BIGINT
+    hasDiscount        : BIT
+    totalPoints        : INT
+    multiplierPoints   : DECIMAL(5,2)
+    createdDate        : TIMESTAMP
+    updatedDate        : TIMESTAMP
+    status             : SMALLINT
+}
+
+' Relaciones
+Cards ||--o{ CardAccounts : "fk_cardaccounts_cardid\n cardId"
+Cards ||--o{ balances     : "fk_balances_cardid\n cardId"
+Cards ||--o{ Benefits     : "fk_benefits_cardid\n cardId"
+
+note bottom of balances
+  Usado por <b>sp_UpdateCardStatus</b>:
+  Evalúa availableAmount vs totalAmount
+  para actualizar cardStatus en CardAccounts.
+end note
+
+@enduml
+

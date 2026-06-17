@@ -30,3 +30,5 @@ spring:
 api:
   convert:
     url: http://localhost:3001/convert/currency/
+    connect-timeout-ms: 3000
+    read-timeout-sec: 5

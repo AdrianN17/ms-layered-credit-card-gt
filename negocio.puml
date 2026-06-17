@@ -1,0 +1,238 @@
+@startuml negocio
+' ============================================================
+' Diagrama de Negocio – ms-layered-credit-card-gt
+' Vista: Capacidades de Negocio / Mapa de Valor
+' Nivel: Negocio (sin detalles técnicos)
+' ============================================================
+
+!theme plain
+skinparam linetype ortho
+skinparam nodesep 40
+skinparam ranksep 55
+skinparam defaultFontSize 12
+skinparam defaultFontName Arial
+skinparam packageFontSize 13
+skinparam packageBorderColor #555555
+skinparam ArrowColor #444444
+skinparam ArrowFontSize 10
+skinparam actorBorderColor #2C3E50
+skinparam actorBackgroundColor #D6EAF8
+skinparam actorFontSize 12
+
+' ============================================================
+' COLORES POR DOMINIO DE NEGOCIO
+' ============================================================
+' Tarjeta   → #B3D9FF  (azul)
+' Consumo   → #C8E6C9  (verde)
+' Pago      → #FFF9C4  (amarillo)
+' Balance   → #FFCCBC  (naranja)
+' Beneficio → #E1BEE7  (lila)
+' Divisa    → #F8BBD0  (rosa)
+
+' ============================================================
+' ACTORES DE NEGOCIO
+' ============================================================
+
+actor "Cliente\n(Tarjetahabiente)" as Cliente #D6EAF8
+actor "Ejecutivo\nde Cuenta" as Ejecutivo #D5F5E3
+actor "Sistema\nBancario Core" as BancoCore #FDEBD0
+
+cloud "Servicio de\nTipo de Cambio\n(API Externa)" as APIExterna #F2F3F4
+database "Historial de\nMovimientos\n(NoSQL)" as HistorialDB #FDFEFE
+database "Datos Maestros\nde Tarjeta\n(SQL Server)" as DatosMaestros #FDFEFE
+
+' ============================================================
+' MICROSERVICIO: Gestión de Tarjeta de Crédito
+' ============================================================
+rectangle "**Microservicio · Gestión de Tarjeta de Crédito**" #FFFDE7 {
+
+    ' ── CAPACIDAD 1: GESTIÓN DE TARJETA ───────────────────
+    package "💳  Gestión de Tarjeta" #B3D9FF {
+
+        usecase "Crear Tarjeta\nde Crédito" as UC_CrearTarjeta
+        usecase "Activar / Desactivar\nTarjeta" as UC_ControlTarjeta
+        usecase "Consultar Saldo\ny Estado" as UC_ConsultarSaldo
+
+        note right of UC_CrearTarjeta
+          Tipos: VISA · MASTERCARD
+          Categorías: NORMAL · SILVER ·
+          GOLD · PLATINUM · BLACK ·
+          SIGNATURE · INFINITY
+          ID único generado con
+          algoritmo Snowflake
+        end note
+    }
+
+    ' ── CAPACIDAD 2: GESTIÓN DE CONSUMOS ──────────────────
+    package "🛒  Gestión de Consumos" #C8E6C9 {
+
+        usecase "Registrar\nConsumo" as UC_RegistrarConsumo
+        usecase "Cancelar\nConsumo" as UC_CancelarConsumo
+        usecase "Fraccionar\nConsumo" as UC_FraccionarConsumo
+        usecase "Consultar\nConsumos" as UC_ConsultarConsumos
+
+        note right of UC_FraccionarConsumo
+          Divide un consumo en N cuotas
+          respetando el crédito disponible
+          y los beneficios acumulados
+        end note
+    }
+
+    ' ── CAPACIDAD 3: GESTIÓN DE PAGOS ─────────────────────
+    package "💰  Gestión de Pagos" #FFF9C4 {
+
+        usecase "Realizar Pago\nNormal" as UC_PagoNormal
+        usecase "Realizar Pago\nTotal" as UC_PagoTotal
+        usecase "Realizar Pago\nMínimo" as UC_PagoMinimo
+        usecase "Pago\nAdelantado" as UC_PagoAdelantado
+        usecase "Cancelar\nPago" as UC_CancelarPago
+        usecase "Consultar\nPagos" as UC_ConsultarPagos
+
+        note right of UC_PagoNormal
+          Validaciones:
+          • Monto vs. deuda actual
+          • Fecha de corte / vencimiento
+          • Divisa del pago
+        end note
+    }
+
+    ' ── CAPACIDAD 4: CONTROL DE BALANCE ───────────────────
+    package "⚖️  Control de Balance" #FFCCBC {
+
+        usecase "Actualizar\nCrédito Disponible" as UC_ActualizarBalance
+        usecase "Gestionar\nEstado de Tarjeta\n(ACTIVE / IN_DEBT / INACTIVE)" as UC_EstadoTarjeta
+
+        note right of UC_EstadoTarjeta
+          ACTIVE  → Crédito disponible > 0
+          IN_DEBT → Deuda supera límite
+          INACTIVE → Tarjeta cancelada
+        end note
+    }
+
+    ' ── CAPACIDAD 5: PROGRAMA DE BENEFICIOS ───────────────
+    package "🎁  Programa de Beneficios" #E1BEE7 {
+
+        usecase "Acumular\nPuntos" as UC_AcumularPuntos
+        usecase "Aplicar\nDescuentos" as UC_AplicarDescuentos
+
+        note right of UC_AcumularPuntos
+          Puntos = Monto × Multiplicador
+          según categoría de tarjeta
+          Descuento aplicado al fraccionar
+        end note
+    }
+
+    ' ── CAPACIDAD 6: CONVERSIÓN DE DIVISAS ────────────────
+    package "💱  Conversión de Divisas" #F8BBD0 {
+
+        usecase "Convertir Monto\na Divisa Local" as UC_ConvertirDivisa
+        usecase "Obtener Tipo\nde Cambio" as UC_TipoCambio
+
+        note right of UC_ConvertirDivisa
+          Aplica en consumos y pagos
+          en moneda extranjera
+        end note
+    }
+}
+
+' ============================================================
+' RELACIONES – ACTORES → CASOS DE USO
+' ============================================================
+
+' Cliente
+Cliente --> UC_CrearTarjeta         : solicita
+Cliente --> UC_ConsultarSaldo       : consulta
+Cliente --> UC_RegistrarConsumo     : genera
+Cliente --> UC_CancelarConsumo      : solicita
+Cliente --> UC_FraccionarConsumo    : solicita
+Cliente --> UC_PagoNormal           : realiza
+Cliente --> UC_PagoTotal            : realiza
+Cliente --> UC_PagoMinimo           : realiza
+Cliente --> UC_PagoAdelantado       : realiza
+Cliente --> UC_CancelarPago         : solicita
+Cliente --> UC_ConsultarPagos       : consulta
+Cliente --> UC_ConsultarConsumos    : consulta
+
+' Ejecutivo
+Ejecutivo --> UC_CrearTarjeta       : crea / configura
+Ejecutivo --> UC_ControlTarjeta     : activa / desactiva
+Ejecutivo --> UC_ConsultarSaldo     : revisa
+
+' Sistema bancario Core
+BancoCore --> UC_ActualizarBalance  : actualiza límites
+BancoCore --> UC_EstadoTarjeta      : notifica estado
+
+' ============================================================
+' RELACIONES – CAPACIDADES INTERNAS (flujos de negocio)
+' ============================================================
+
+UC_RegistrarConsumo  --> UC_ActualizarBalance   : reduce crédito disponible
+UC_CancelarConsumo   --> UC_ActualizarBalance   : libera crédito
+UC_FraccionarConsumo --> UC_ActualizarBalance   : aplica cuotas
+UC_FraccionarConsumo --> UC_AplicarDescuentos   : aplica beneficio
+UC_RegistrarConsumo  --> UC_AcumularPuntos      : acumula puntos por gasto
+UC_PagoNormal        --> UC_ActualizarBalance   : incrementa crédito disponible
+UC_PagoTotal         --> UC_ActualizarBalance   : liquida deuda total
+UC_PagoMinimo        --> UC_ActualizarBalance   : pago parcial mínimo
+UC_PagoAdelantado    --> UC_ActualizarBalance   : anticipa cuotas
+UC_CancelarPago      --> UC_ActualizarBalance   : revierte saldo
+UC_ActualizarBalance --> UC_EstadoTarjeta       : evalúa y cambia estado
+UC_RegistrarConsumo  --> UC_ConvertirDivisa     : si divisa ≠ local
+UC_PagoNormal        --> UC_ConvertirDivisa     : si divisa ≠ local
+UC_ConvertirDivisa   --> UC_TipoCambio          : solicita tasa
+
+' ============================================================
+' RELACIONES – MICROSERVICIO ↔ SISTEMAS EXTERNOS
+' ============================================================
+
+UC_TipoCambio       --> APIExterna      : consulta tasa de cambio vigente
+UC_RegistrarConsumo --> HistorialDB     : persiste movimiento
+UC_CancelarConsumo  --> HistorialDB     : marca cancelado
+UC_PagoNormal       --> HistorialDB     : persiste pago
+UC_CancelarPago     --> HistorialDB     : marca cancelado
+UC_CrearTarjeta     --> DatosMaestros   : almacena datos de tarjeta
+UC_ControlTarjeta   --> DatosMaestros   : actualiza estado
+UC_ActualizarBalance --> DatosMaestros  : actualiza saldo / límite
+
+' ============================================================
+' REGLAS Y FLUJOS CLAVE
+' ============================================================
+
+note as N_ReglasNegocio
+  <b>Reglas de Negocio Clave</b>
+  ─────────────────────────────────────────
+  1. Un consumo reduce el crédito disponible
+     de forma inmediata.
+  2. El pago incrementa el crédito disponible
+     según el tipo: Normal · Total · Mínimo · Adelantado.
+  3. Si la deuda supera el límite, la tarjeta
+     pasa automáticamente a estado IN_DEBT.
+  4. Los puntos se acumulan en cada consumo
+     aplicando el multiplicador por categoría.
+  5. Al fraccionar un consumo se aplican
+     descuentos según puntos acumulados.
+  6. Los consumos/pagos en divisa extranjera
+     se convierten usando el tipo de cambio
+     vigente obtenido en tiempo real.
+end note
+
+note as N_Canales
+  <b>Canales de Pago Soportados</b>
+  ─────────────────────────────
+  • Banca en línea
+  • App móvil
+  • Ventanilla bancaria
+  • Transferencia interbancaria
+end note
+
+note as N_Tipos
+  <b>Tipos de Pago</b>
+  ─────────────────────────────────
+  NORMAL    → Abono parcial libre
+  TOTAL     → Liquida saldo completo
+  MÍNIMO    → Pago mínimo requerido
+  ADELANTADO→ Anticipa cuotas futuras
+end note
+
+@enduml
+

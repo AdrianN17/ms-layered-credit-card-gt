@@ -1,0 +1,154 @@
+@startuml nosql_db
+
+' ─────────────────────────────────────────────
+'  Diagrama NoSQL – Collections MongoDB / CosmosDB
+'  ms-layered-credit-card-gt
+' ─────────────────────────────────────────────
+
+skinparam backgroundColor #FAFAFA
+skinparam class {
+    BackgroundColor White
+    BorderColor     #5A9FD4
+    FontName        Arial
+    FontSize        12
+    HeaderBackgroundColor #5A9FD4
+    HeaderFontColor       White
+    AttributeFontSize     11
+}
+skinparam note {
+    BackgroundColor #FFFDE7
+    BorderColor     #F9A825
+}
+skinparam arrow {
+    Color           #5A9FD4
+    FontSize        10
+}
+skinparam shadowing false
+hide methods
+hide circle
+
+' ─── Leyenda de estereotipos ───────────────────
+' (C) = Collection (MongoDB) / Container (CosmosDB)
+' (E) = Enum
+
+' ══════════════════════════════════════════════
+'  SUPER-CLASE COMPARTIDA
+' ══════════════════════════════════════════════
+abstract class GenericEntity << (A, #BBDEFB) Superclass >> {
+    + createdDate       : LocalDateTime
+    + updatedDate       : LocalDateTime
+    + status            : StatusEnum
+}
+
+' ══════════════════════════════════════════════
+'  COLECCIÓN: Consumptions
+'  MongoDB  → @Document(collection = "Consumptions")
+'  CosmosDB → @Container(containerName = "Consumptions")
+' ══════════════════════════════════════════════
+entity Consumptions << (C, #C8E6C9) Collection >> {
+    * <b><color:#b8860b>_id</color></b>  consumptionId           : UUID
+    --
+    <color:#aaaaaa>idx</color>  cardId                  : String
+    sellerName                      : String
+    currency                        : CurrencyEnum
+    amount                          : BigDecimal
+    consumptionDate                 : LocalDateTime
+    consumptionApprobationDate      : LocalDateTime
+    ..heredado de GenericEntity..
+    createdDate                     : LocalDateTime
+    updatedDate                     : LocalDateTime
+    status                          : StatusEnum
+}
+
+note right of Consumptions
+  <b>MongoDB</b>: cardId indexado con @Indexed
+  <b>CosmosDB</b>: cardId es @PartitionKey
+end note
+
+' ══════════════════════════════════════════════
+'  COLECCIÓN: Payments
+'  MongoDB  → @Document(collection = "Payments")
+'  CosmosDB → @Container(containerName = "Payments")
+' ══════════════════════════════════════════════
+entity Payments << (C, #C8E6C9) Collection >> {
+    * <b><color:#b8860b>_id</color></b>  paymentId               : UUID
+    --
+    <color:#aaaaaa>idx</color>  cardId                  : String
+    amount                          : BigDecimal
+    currency                        : CurrencyEnum
+    paymentDate                     : LocalDateTime
+    paymentApprobationDate          : LocalDateTime
+    channel                         : ChannelPaymentEnum
+    category                        : CategoryPaymentEnum
+    ..heredado de GenericEntity..
+    createdDate                     : LocalDateTime
+    updatedDate                     : LocalDateTime
+    status                          : StatusEnum
+}
+
+note right of Payments
+  <b>MongoDB</b>: cardId indexado con @Indexed
+  <b>CosmosDB</b>: cardId es @PartitionKey
+end note
+
+' ══════════════════════════════════════════════
+'  REFERENCIA LÓGICA – Tabla SQL Cards
+'  (no hay FK real en NoSQL; cardId es String)
+' ══════════════════════════════════════════════
+entity Cards << (T, #FFCCBC) SQL Table >> {
+    * <b><color:#b8860b>PK</color></b> cardId  : BIGINT
+    --
+    typeCard     : SMALLINT
+    categoryCard : SMALLINT
+    createdDate  : TIMESTAMP
+    updatedDate  : TIMESTAMP
+    status       : SMALLINT
+}
+
+' ══════════════════════════════════════════════
+'  ENUMS
+' ══════════════════════════════════════════════
+enum CurrencyEnum << (E, #EDE7F6) >> {
+    GTQ
+    USD
+}
+
+enum StatusEnum << (E, #EDE7F6) >> {
+    ACTIVE
+    INACTIVE
+}
+
+enum ChannelPaymentEnum << (E, #EDE7F6) >> {
+    ONLINE
+    ATM
+    BRANCH
+}
+
+enum CategoryPaymentEnum << (E, #EDE7F6) >> {
+    MINIMUM
+    TOTAL
+    PARTIAL
+}
+
+' ══════════════════════════════════════════════
+'  HERENCIA
+' ══════════════════════════════════════════════
+GenericEntity <|-- Consumptions
+GenericEntity <|-- Payments
+
+' ══════════════════════════════════════════════
+'  RELACIONES
+' ══════════════════════════════════════════════
+Cards  ||--o{  Consumptions : "cardId (lógica)\n String → BIGINT"
+Cards  ||--o{  Payments     : "cardId (lógica)\n String → BIGINT"
+
+Consumptions  ..>  CurrencyEnum      : uses
+Consumptions  ..>  StatusEnum        : uses
+
+Payments      ..>  CurrencyEnum      : uses
+Payments      ..>  StatusEnum        : uses
+Payments      ..>  ChannelPaymentEnum  : uses
+Payments      ..>  CategoryPaymentEnum : uses
+
+@enduml
+
