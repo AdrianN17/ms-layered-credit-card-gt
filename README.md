@@ -20,22 +20,22 @@ classDiagram
     namespace PresentationLayer {
         class CardApi {
             <<API Interface>>
-            +initiateCard(InitiateCardRequest, BindingResult) ResponseEntity
-            +controlCard(Long) ResponseEntity
-            +retrieveBalance(Long) ResponseEntity
+            +initiateCard(InitiateCardRequest, BindingResult) ResponseEntity~Long202Response~
+            +controlCard(Long) ResponseEntity~Long202Response~
+            +retrieveBalance(Long) ResponseEntity~RetrieveBalance200Response~
         }
         class CardController {
             <<RestController>>
             -delegate CardDelegate
-            +initiateCard()
-            +controlCard()
-            +retrieveBalance()
-        }
-        class CardDelegate {
-            <<Delegate Interface>>
             +initiateCard(InitiateCardRequest, BindingResult) ResponseEntity
             +controlCard(Long) ResponseEntity
             +retrieveBalance(Long) ResponseEntity
+        }
+        class CardDelegate {
+            <<Delegate Interface>>
+            +initiateCard(InitiateCardRequest, BindingResult) ResponseEntity~Long202Response~
+            +controlCard(Long) ResponseEntity~Long202Response~
+            +retrieveBalance(Long) ResponseEntity~RetrieveBalance200Response~
         }
         class CardDelegateImpl {
             <<Component>>
@@ -47,31 +47,31 @@ classDiagram
             -benefitMapper BenefitMapper
             -cardSummaryMapper CardSummaryMapper
             -idGenerate IdGenerate
-            +initiateCard()
-            +controlCard()
-            +retrieveBalance()
+            +initiateCard(InitiateCardRequest, BindingResult) ResponseEntity
+            +controlCard(Long) ResponseEntity
+            +retrieveBalance(Long) ResponseEntity
         }
         class ConsumptionApi {
             <<API Interface>>
+            +initiateConsumption(Long, InitiateConsumptionRequest, BindingResult) ResponseEntity~UUID202Response~
+            +controlConsumption(Long, UUID) ResponseEntity~UUID202Response~
+            +exchangeConsumption(Long, UUID, ExchangeConsumptionRequest, BindingResult) ResponseEntity~UUIDList202Response~
+            +retrieveConsumption(Long, LocalDate, LocalDate) ResponseEntity~RetrieveConsumption200Response~
+        }
+        class ConsumptionController {
+            <<RestController>>
+            -delegate ConsumptionDelegate
             +initiateConsumption(Long, InitiateConsumptionRequest, BindingResult) ResponseEntity
             +controlConsumption(Long, UUID) ResponseEntity
             +exchangeConsumption(Long, UUID, ExchangeConsumptionRequest, BindingResult) ResponseEntity
             +retrieveConsumption(Long, LocalDate, LocalDate) ResponseEntity
         }
-        class ConsumptionController {
-            <<RestController>>
-            -delegate ConsumptionDelegate
-            +initiateConsumption()
-            +controlConsumption()
-            +exchangeConsumption()
-            +retrieveConsumption()
-        }
         class ConsumptionDelegate {
             <<Delegate Interface>>
-            +initiateConsumption() ResponseEntity
-            +controlConsumption() ResponseEntity
-            +exchangeConsumption() ResponseEntity
-            +retrieveConsumption() ResponseEntity
+            +initiateConsumption(Long, InitiateConsumptionRequest, BindingResult) ResponseEntity~UUID202Response~
+            +controlConsumption(Long, UUID) ResponseEntity~UUID202Response~
+            +exchangeConsumption(Long, UUID, ExchangeConsumptionRequest, BindingResult) ResponseEntity~UUIDList202Response~
+            +retrieveConsumption(Long, LocalDate, LocalDate) ResponseEntity~RetrieveConsumption200Response~
         }
         class ConsumptionDelegateImpl {
             <<Component>>
@@ -81,29 +81,29 @@ classDiagram
             -consumptionService ConsumptionService
             -consumptionMapper ConsumptionMapper
             -currencyService CurrencyService
-            +initiateConsumption()
-            +controlConsumption()
-            +exchangeConsumption()
-            +retrieveConsumption()
+            +initiateConsumption(Long, InitiateConsumptionRequest, BindingResult) ResponseEntity
+            +controlConsumption(Long, UUID) ResponseEntity
+            +exchangeConsumption(Long, UUID, ExchangeConsumptionRequest, BindingResult) ResponseEntity
+            +retrieveConsumption(Long, LocalDate, LocalDate) ResponseEntity
         }
         class PaymentApi {
             <<API Interface>>
-            +initiatePayment(Long, InitiatePaymentRequest, BindingResult) ResponseEntity
-            +controlPayment(Long, UUID) ResponseEntity
-            +retrievePayment(Long, LocalDate, LocalDate) ResponseEntity
+            +initiatePayment(Long, InitiatePaymentRequest, BindingResult) ResponseEntity~UUID202Response~
+            +controlPayment(Long, UUID) ResponseEntity~UUID202Response~
+            +retrievePayment(Long, LocalDate, LocalDate) ResponseEntity~RetrievePayment200Response~
         }
         class PaymentController {
             <<RestController>>
             -delegate PaymentDelegate
-            +initiatePayment()
-            +controlPayment()
-            +retrievePayment()
+            +initiatePayment(Long, InitiatePaymentRequest, BindingResult) ResponseEntity
+            +controlPayment(Long, UUID) ResponseEntity
+            +retrievePayment(Long, LocalDate, LocalDate) ResponseEntity
         }
         class PaymentDelegate {
             <<Delegate Interface>>
-            +initiatePayment() ResponseEntity
-            +controlPayment() ResponseEntity
-            +retrievePayment() ResponseEntity
+            +initiatePayment(Long, InitiatePaymentRequest, BindingResult) ResponseEntity~UUID202Response~
+            +controlPayment(Long, UUID) ResponseEntity~UUID202Response~
+            +retrievePayment(Long, LocalDate, LocalDate) ResponseEntity~RetrievePayment200Response~
         }
         class PaymentDelegateImpl {
             <<Component>>
@@ -113,9 +113,9 @@ classDiagram
             -paymentService PaymentService
             -paymentMapper PaymentMapper
             -currencyService CurrencyService
-            +initiatePayment()
-            +controlPayment()
-            +retrievePayment()
+            +initiatePayment(Long, InitiatePaymentRequest, BindingResult) ResponseEntity
+            +controlPayment(Long, UUID) ResponseEntity
+            +retrievePayment(Long, LocalDate, LocalDate) ResponseEntity
         }
         class InitiateCardRequest { <<Request DTO>> }
         class InitiateConsumptionRequest { <<Request DTO>> }
@@ -167,11 +167,11 @@ classDiagram
             <<Service>>
             -consumptionRepository ConsumptionRepository
             -consumptionMapper ConsumptionMapper
-            +save()
-            +findAll()
-            +split()
-            +delete()
-            +get()
+            +save(ConsumptionRequestDto)
+            +findAll(String, LocalDate, LocalDate) List
+            +split(Integer, String, UUID, BigDecimal) List
+            +delete(UUID)
+            +get(UUID) ConsumptionResponseDto
         }
         class PaymentService {
             <<Service Interface>>
@@ -185,11 +185,11 @@ classDiagram
             <<Service>>
             -paymentRepository PaymentRepository
             -paymentMapper PaymentMapper
-            +save()
-            +validate()
-            +get()
-            +findAll()
-            +delete()
+            +save(PaymentRequestDto)
+            +validate(BigDecimal, BigDecimal, LocalDate, LocalDate, PaymentRequestDto)
+            +get(UUID) PaymentResponseDto
+            +findAll(String, LocalDate, LocalDate) List
+            +delete(UUID)
         }
         class BalanceService {
             <<Service Interface>>
@@ -203,10 +203,10 @@ classDiagram
             -balanceJpaRepository BalanceJpaRepository
             -balanceMapper BalanceMapper
             -balanceUseCaseFactory BalanceUseCaseFactory
-            +save()
-            +delete()
-            +apply()
-            +cancel()
+            +save(BalanceDtoRequest)
+            +delete(Long)
+            +apply(Long, BigDecimal, BalanceUseCaseEnum)
+            +cancel(Long, BigDecimal, BalanceUseCaseEnum)
             -updateCardStatus(Long)
             -findActiveOrThrow(Long) BalanceEntity
         }
@@ -221,10 +221,10 @@ classDiagram
             <<Service>>
             -benefitJpaRepository BenefitJpaRepository
             -benefitMapper BenefitMapper
-            +save()
-            +delete()
-            +accumulate()
-            +discount()
+            +save(BenefitRequestDto)
+            +delete(Long)
+            +accumulate(BigDecimal, BigDecimal, Long)
+            +discount(BigDecimal, Integer, Long) BigDecimal
         }
         class CurrencyService {
             <<Service Interface>>
@@ -264,22 +264,22 @@ classDiagram
         class NormalPaymentUseCase {
             <<Use Case>>
             +close()
-            +validateIfPaymentIsPossible()
+            +validateIfPaymentIsPossible(BigDecimal, BigDecimal, LocalDate, LocalDate)
         }
         class TotalPaymentUseCase {
             <<Use Case>>
             +close()
-            +validateIfPaymentIsPossible()
+            +validateIfPaymentIsPossible(BigDecimal, BigDecimal, LocalDate, LocalDate)
         }
         class MinimumPaymentUseCase {
             <<Use Case>>
             +close()
-            +validateIfPaymentIsPossible()
+            +validateIfPaymentIsPossible(BigDecimal, BigDecimal, LocalDate, LocalDate)
         }
         class PrepaymentUseCase {
             <<Use Case>>
             +close()
-            +validateIfPaymentIsPossible()
+            +validateIfPaymentIsPossible(BigDecimal, BigDecimal, LocalDate, LocalDate)
         }
         class PaymentUseCaseFactory {
             <<Factory>>
@@ -503,7 +503,7 @@ classDiagram
             -repository ConsumptionMongoRepository
             +save(ConsumptionEntity) ConsumptionEntity
             +findById(UUID) Optional
-            +findByCardIdAndConsumptionDateBetween() List
+            +findByCardIdAndConsumptionDateBetween(String, LocalDate, LocalDate) List
             +softDelete(UUID)
         }
         class ConsumptionCosmosRepositoryAdapter {
@@ -511,7 +511,7 @@ classDiagram
             -repository ConsumptionCosmosRepository
             +save(ConsumptionEntity) ConsumptionEntity
             +findById(UUID) Optional
-            +findByCardIdAndConsumptionDateBetween() List
+            +findByCardIdAndConsumptionDateBetween(String, LocalDate, LocalDate) List
             +softDelete(UUID)
         }
         class PaymentMongoRepositoryAdapter {
@@ -519,7 +519,7 @@ classDiagram
             -repository PaymentMongoRepository
             +save(PaymentEntity) PaymentEntity
             +findById(UUID) Optional
-            +findByCardIdAndPaymentDateBetween() List
+            +findByCardIdAndPaymentDateBetween(String, LocalDate, LocalDate) List
             +softDelete(UUID)
         }
         class PaymentCosmosRepositoryAdapter {
@@ -527,7 +527,7 @@ classDiagram
             -repository PaymentCosmosRepository
             +save(PaymentEntity) PaymentEntity
             +findById(UUID) Optional
-            +findByCardIdAndPaymentDateBetween() List
+            +findByCardIdAndPaymentDateBetween(String, LocalDate, LocalDate) List
             +softDelete(UUID)
         }
         class CurrencyNewWSRepository {
