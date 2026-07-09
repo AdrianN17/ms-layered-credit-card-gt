@@ -1,0 +1,347 @@
+{
+  "info": {
+    "name": "Proyecto_Final_GT",
+    "description": null,
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Initiate Consumption",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "auth": {
+          "type": "noauth"
+        },
+        "description": "",
+        "url": {
+          "raw": "http://localhost:8081/CardManagement/7480811619186905088/Consumption/Initiate",
+          "protocol": "http",
+          "host": [
+            "localhost:8081"
+          ],
+          "path": [
+            "CardManagement",
+            "7480811619186905088",
+            "Consumption",
+            "Initiate"
+          ],
+          "query": [],
+          "variable": []
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"data\": {\n        \"sellerName\": \"test\",\n        \"currency\": \"USD\",\n        \"amount\":  140\n    }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Initiate Card",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "auth": {
+          "type": "noauth"
+        },
+        "description": "",
+        "url": {
+          "raw": "http://localhost:8081/CardManagement/Initiate",
+          "protocol": "http",
+          "host": [
+            "localhost:8081"
+          ],
+          "path": [
+            "CardManagement",
+            "Initiate"
+          ],
+          "query": [],
+          "variable": []
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"data\": {\r\n        \"typeCard\": \"VISA\",\r\n        \"categoryCard\": \"NORMAL\",\r\n        \"benefit\": {\r\n            \"hasDiscount\": true,\r\n            \"multiplierPoints\": 0.5\r\n        },\r\n        \"account\": {\r\n            \"creditTotal\": 10000,\r\n            \"debtTax\": 0.2,\r\n            \"currency\": \"PEN\",\r\n            \"paymentDate\": \"27\"\r\n        }\r\n    }\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Initiate Payment",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "auth": {
+          "type": "noauth"
+        },
+        "description": "",
+        "url": {
+          "raw": "http://localhost:8081/CardManagement/7480765987621441536/Payment/Initiate",
+          "protocol": "http",
+          "host": [
+            "localhost:8081"
+          ],
+          "path": [
+            "CardManagement",
+            "7480765987621441536",
+            "Payment",
+            "Initiate"
+          ],
+          "query": [],
+          "variable": []
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"data\": {\n        \"channel\": \"WEB\",\n        \"currency\": \"USD\",\n        \"amount\": 60,\n        \"category\": \"ADELANTADO\"\n    }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Retrieve Card",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "auth": {
+          "type": "noauth"
+        },
+        "description": "",
+        "url": {
+          "raw": "http://localhost:8081/CardManagement/7480811619186905088/Retrieve",
+          "protocol": "http",
+          "host": [
+            "localhost:8081"
+          ],
+          "path": [
+            "CardManagement",
+            "7480811619186905088",
+            "Retrieve"
+          ],
+          "query": [],
+          "variable": []
+        }
+      }
+    },
+    {
+      "name": "Retrieve Payment",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "GET",
+        "header": [],
+        "auth": {
+          "type": "noauth"
+        },
+        "description": "",
+        "url": {
+          "raw": "http://localhost:8081/CardManagement/7480765987621441536/Payment/Retrieve?dateStart=2026-05-01&dateEnd=2027-05-31",
+          "protocol": "http",
+          "host": [
+            "localhost:8081"
+          ],
+          "path": [
+            "CardManagement",
+            "7480765987621441536",
+            "Payment",
+            "Retrieve"
+          ],
+          "query": [
+            {
+              "key": "dateStart",
+              "value": "2026-05-01"
+            },
+            {
+              "key": "dateEnd",
+              "value": "2027-05-31"
+            }
+          ],
+          "variable": []
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"data\": {\r\n        \"typeCard\": \"VISA\",\r\n        \"categoryCard\": \"NORMAL\",\r\n        \"benefit\": {\r\n            \"hasDiscount\": true,\r\n            \"multiplierPoints\": 0.5\r\n        },\r\n        \"account\": {\r\n            \"creditTotal\": 10000,\r\n            \"debtTax\": 0.2,\r\n            \"currency\": \"PEN\",\r\n            \"paymentDate\": \"27\"\r\n        }\r\n    }\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Retrieve Consumption",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "GET",
+        "header": [],
+        "auth": {
+          "type": "noauth"
+        },
+        "description": "",
+        "url": {
+          "raw": "http://localhost:8081/CardManagement/7480811619186905088/Consumption/Retrieve?dateStart=2026-05-01&dateEnd=2027-05-31",
+          "protocol": "http",
+          "host": [
+            "localhost:8081"
+          ],
+          "path": [
+            "CardManagement",
+            "7480811619186905088",
+            "Consumption",
+            "Retrieve"
+          ],
+          "query": [
+            {
+              "key": "dateStart",
+              "value": "2026-05-01"
+            },
+            {
+              "key": "dateEnd",
+              "value": "2027-05-31"
+            }
+          ],
+          "variable": []
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"data\": {\r\n        \"typeCard\": \"VISA\",\r\n        \"categoryCard\": \"NORMAL\",\r\n        \"benefit\": {\r\n            \"hasDiscount\": true,\r\n            \"multiplierPoints\": 0.5\r\n        },\r\n        \"account\": {\r\n            \"creditTotal\": 10000,\r\n            \"debtTax\": 0.2,\r\n            \"currency\": \"PEN\",\r\n            \"paymentDate\": \"27\"\r\n        }\r\n    }\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Exchange Consumption",
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "auth": {
+          "type": "noauth"
+        },
+        "description": "",
+        "url": {
+          "raw": "http://localhost:8081/CardManagement/7480811619186905088/Consumption/7f4aa35f-39d9-4dc7-9a2c-3455d5b307fe/Exchange",
+          "protocol": "http",
+          "host": [
+            "localhost:8081"
+          ],
+          "path": [
+            "CardManagement",
+            "7480811619186905088",
+            "Consumption",
+            "7f4aa35f-39d9-4dc7-9a2c-3455d5b307fe",
+            "Exchange"
+          ],
+          "query": [],
+          "variable": []
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"data\": {\n        \"installments\": 2\n    }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Control Consumption",
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "auth": {
+          "type": "noauth"
+        },
+        "description": "",
+        "url": {
+          "raw": "http://localhost:8081/CardManagement/7480765987621441536/Consumption/6548b924-90be-4bd7-b35d-c2af855c1f9a/Control",
+          "protocol": "http",
+          "host": [
+            "localhost:8081"
+          ],
+          "path": [
+            "CardManagement",
+            "7480765987621441536",
+            "Consumption",
+            "6548b924-90be-4bd7-b35d-c2af855c1f9a",
+            "Control"
+          ],
+          "query": [],
+          "variable": []
+        }
+      }
+    },
+    {
+      "name": "Control Payment",
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "auth": {
+          "type": "noauth"
+        },
+        "description": "",
+        "url": {
+          "raw": "http://localhost:8081/CardManagement/7480765987621441536/Payment/c8e9451a-6a3c-42f4-945a-04f3e9cf243f/Control",
+          "protocol": "http",
+          "host": [
+            "localhost:8081"
+          ],
+          "path": [
+            "CardManagement",
+            "7480765987621441536",
+            "Payment",
+            "c8e9451a-6a3c-42f4-945a-04f3e9cf243f",
+            "Control"
+          ],
+          "query": [],
+          "variable": []
+        }
+      }
+    },
+    {
+      "name": "Control Card",
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "auth": {
+          "type": "noauth"
+        },
+        "description": "",
+        "url": {
+          "raw": "http://localhost:8081/CardManagement/7472647189571833856/Control",
+          "protocol": "http",
+          "host": [
+            "localhost:8081"
+          ],
+          "path": [
+            "CardManagement",
+            "7472647189571833856",
+            "Control"
+          ],
+          "query": [],
+          "variable": []
+        }
+      }
+    }
+  ],
+  "variable": []
+}
